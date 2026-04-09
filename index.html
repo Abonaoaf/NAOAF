@@ -2,104 +2,96 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة الذكي</title>
+    <title>مدرب القراءة الاحترافي</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; text-align: center; }
-        .main-wrapper { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .header { font-size: 28px; font-weight: bold; margin-bottom: 20px; border-bottom: 3px solid #333; padding-bottom: 10px; }
+        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .main-wrapper { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 2px solid #000; height: 120px; vertical-align: middle; position: relative; }
+        td { border: 2px solid #000; height: 140px; text-align: center; vertical-align: middle; }
         
-        .side-label { width: 120px; font-size: 20px; font-weight: bold; background-color: #f0f0f0; }
+        .side-label { width: 120px; font-size: 22px; font-weight: bold; background-color: #f8f9fa; }
 
-        /* تنسيق المربع الذي تكتب فيه */
-        .input-box {
-            font-size: 60px;
+        /* التنسيق السحري لإبقاء الحروف متصلة */
+        .word-input {
+            font-size: 80px;
             font-weight: bold;
             color: black;
             outline: none;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            word-spacing: 10px;
+            display: inline-block;
+            line-height: 140px;
+            /* منع المتصفح من كسر الحروف عند التلوين */
+            font-variant-ligatures: common-ligatures;
         }
 
-        /* هذا الجزء هو سحر التلوين التلقائي */
-        .vowel {
+        /* تلوين الحركات دون كسر الاتصال */
+        .word-input [contenteditable] { white-space: nowrap; }
+
+        /* الألوان التوضيحية للصفوف */
+        .row-1 { background-color: #fffde7; }
+        .row-2 { background-color: #e3f2fd; }
+        .row-3 { background-color: #fce4ec; }
+
+        .red-mark {
             color: red;
-            font-size: 1.2em; /* تكبير الحركة قليلاً */
+            /* نكبر الحركة قليلاً لتظهر بوضوح لنواف */
+            font-size: 1.1em; 
         }
 
-        .row-fatha { background-color: #fffde7; }
-        .row-damma { background-color: #e3f2fd; }
-        .row-kasra { background-color: #fce4ec; }
-        .row-mad { background-color: #f1f8e9; }
-
-        .instruction { color: #666; margin-bottom: 10px; font-style: italic; }
+        .header { font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 20px; border-bottom: 3px solid #333; padding-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-    <div class="header">لوحة التدريب على القراءة التفاعلية</div>
-    <p class="instruction">اكتب الكلمة مع حركاتها في المربعات أدناه (ستتحول الحركات للأحمر تلقائياً)</p>
+    <div class="header">لوحة الحركات المتصلة الذكية</div>
+    <p style="text-align: center; color: #666;">اكتب الكلمة كاملة مع حركاتها (ستبقى الحروف متصلة والحركات حمراء)</p>
     
     <table>
-        <tr class="row-fatha">
-            <td class="side-label">بالفتحة</td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        <tr class="row-1">
+            <td class="side-label">تدريب 1</td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
         </tr>
-        <tr class="row-damma">
-            <td class="side-label">بالضمة</td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        <tr class="row-2">
+            <td class="side-label">تدريب 2</td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
         </tr>
-        <tr class="row-kasra">
-            <td class="side-label">بالكسرة</td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-        </tr>
-        <tr class="row-mad">
-            <td class="side-label">بالمدود</td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
-            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        <tr class="row-3">
+            <td class="side-label">تدريب 3</td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
+            <td><div class="word-input" contenteditable="true" oninput="applyMagicColor(this)"></div></td>
         </tr>
     </table>
-
-    <div style="margin-top: 20px; color: red; font-weight: bold;">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله 🌟</div>
 </div>
 
 <script>
-    function colorize(element) {
-        // حفظ مكان المؤشر (Cursor)
+    function applyMagicColor(el) {
+        let text = el.innerText;
+        if (!text) return;
+
+        // مصفوفة الحركات
+        const marks = /[ًٌٍَُِّْ]/g;
+        
+        // استخدام "Zero Width Joiner" لإجبار المتصفح على وصل الحروف
+        // لكن الحل الأبسط هو تلوين النص بالكامل ثم استخدام خلفية ذكية
+        // هنا سنستخدم الاستبدال مع التأكد من عدم وجود مسافات
+        let html = text.replace(marks, (match) => `<span class="red-mark">${match}</span>`);
+        
+        // حفظ موضع المؤشر
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
-        const offset = range.startOffset;
+        const pos = range.startOffset;
 
-        let text = element.innerText;
-        
-        // قائمة الحركات والمدود التي نريد تلوينها
-        // تشمل: الفتحة، الضمة، الكسرة، السكون، التنوين، وحروف المد
-        const vowels = /([ًٌٍَُِّْاوي])/g;
+        el.innerHTML = html;
 
-        // استبدال الحركات بـ وسام (span) أحمر
-        let coloredHTML = text.replace(vowels, '<span class="vowel">$1</span>');
-        
-        element.innerHTML = coloredHTML;
-
-        // إعادة المؤشر لمكانه الصحيح
+        // إعادة المؤشر للنهاية (لأن التعديل على HTML يعيد تعيينه)
         const newRange = document.createRange();
-        newRange.setStart(element, element.childNodes.length);
-        newRange.collapse(true);
+        newRange.selectNodeContents(el);
+        newRange.collapse(false);
         selection.removeAllRanges();
         selection.addRange(newRange);
     }
