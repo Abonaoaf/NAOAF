@@ -3,103 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نشاط القراءة المبسط - عبدالعزيز</title>
+    <title>نشاط القراءة - عبدالعزيز</title>
     <style>
-        /* استخدام خطوط النظام الأساسية لضمان البساطة والوضوح التام */
-        body { 
-            font-family: "Traditional Arabic", "Sakkal Majalla", "Microsoft Sans Serif", sans-serif; 
-            background: #ffffff; 
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
+        /* خط النسخ البسيط والواضح */
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
         
-        .no-print { 
-            background: #f9f9f9; 
-            padding: 15px; 
-            border: 1px solid #ccc; 
-            margin-bottom: 20px; 
-            text-align: center; 
-            width: 90%; 
-            max-width: 600px; 
-        }
+        body { font-family: 'Amiri', serif; background: #eee; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; width: 100%; max-width: 600px; border: 1px solid #ccc; }
+        
+        select, button { padding: 10px; font-size: 1rem; border-radius: 5px; margin: 5px; cursor: pointer; font-family: sans-serif; }
 
         .paper { 
-            width: 210mm; 
-            min-height: 280mm; 
-            padding: 15mm; 
-            border: 1px solid #000; 
-            box-sizing: border-box; 
-            display: flex; 
-            flex-direction: column;
+            background: white; width: 210mm; min-height: 280mm; padding: 15mm; 
+            border: 2px solid #000; box-sizing: border-box; display: flex; flex-direction: column;
         }
 
-        .title-box { 
-            border: 2px solid #000; 
-            padding: 10px; 
-            text-align: center; 
-            margin-bottom: 20px; 
-            font-size: 2rem; 
-            font-weight: bold; 
-        }
+        .title-box { border: 2px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; font-size: 2.2rem; font-weight: bold; }
 
-        .main-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            table-layout: fixed; 
-        }
+        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .main-table td { border: 2px solid #000; height: 100px; text-align: center; vertical-align: middle; position: relative; font-size: 4.5rem; font-weight: bold; color: #000; }
 
-        .main-table td { 
-            border: 1px solid #000; 
-            height: 100px; 
-            text-align: center; 
-            vertical-align: middle; 
-            font-size: 4rem; /* حجم كبير جداً للطفل */
-            font-weight: bold;
-            color: #000;
-        }
+        /* تلوين الحركات فقط باللون الأحمر */
+        .h { color: #d32f2f; }
 
-        /* تلوين الحركات فقط بالأحمر */
-        .haraka { color: #ff0000; font-weight: bold; }
+        /* عمود اليمين بالألوان */
+        .level-cell { width: 60px; font-size: 1.2rem; font-weight: bold; text-align: center; vertical-align: middle; color: #333; }
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
 
-        .level-cell { 
-            width: 70px; 
-            font-size: 1.1rem; 
-            background: #fafafa; 
-            font-weight: bold;
-        }
+        /* الألوان الجانبية الستة */
+        .bg-1 { background-color: #fff9c4; } .bg-2 { background-color: #e3f2fd; }
+        .bg-3 { background-color: #fce4ec; } .bg-4 { background-color: #f1f8e9; }
+        .bg-5 { background-color: #ede7f6; } .bg-6 { background-color: #e0f2f1; }
 
-        .vertical-text { 
-            writing-mode: vertical-rl; 
-            transform: rotate(180deg); 
-            display: inline-block; 
-            white-space: nowrap; 
-        }
-
-        .footer { 
-            text-align: center; 
-            margin-top: auto; 
-            padding-top: 20px; 
-            color: #ff0000; 
-            font-weight: bold; 
-            font-size: 1.5rem; 
-        }
+        .footer { text-align: center; margin-top: auto; padding-top: 20px; color: #d32f2f; font-weight: bold; font-size: 1.5rem; }
 
         @media print {
             .no-print { display: none; }
-            body { padding: 0; }
-            .paper { border: none; }
+            body { background: white; padding: 0; }
+            .paper { border: 2px solid #000; width: 100%; margin: 0; }
         }
     </style>
 </head>
 <body>
 
 <div class="no-print">
-    <strong>اختيار الحرف للنشاط:</strong>
+    <strong>اختر الحرف لإنشاء النشاط:</strong>
     <select id="letterPicker" onchange="render()"></select>
-    <button onclick="window.print()" style="padding: 10px; cursor: pointer;">طباعة الورقة</button>
+    <button onclick="window.print()">🖨️ طباعة</button>
 </div>
 
 <div class="paper">
@@ -111,25 +62,26 @@
 <script>
     const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
     const levels = [
-        { t: "بالفتحة", c: "#ffffff" }, { t: "بالضمة", c: "#ffffff" },
-        { t: "بالكسرة", c: "#ffffff" }, { t: "بالمد بالألف", c: "#ffffff" },
-        { t: "بالمد بالواو", c: "#ffffff" }, { t: "بالمد بالياء", c: "#ffffff" }
+        { t: "بالفتحة", c: "bg-1" }, { t: "بالضمة", c: "bg-2" },
+        { t: "بالكسرة", c: "bg-3" }, { t: "بالمد بالألف", c: "bg-4" },
+        { t: "بالمد بالواو", c: "bg-5" }, { t: "بالمد بالياء", c: "bg-6" }
     ];
 
-    // كلمات ثلاثية سهلة جداً (أفعال بسيطة)
-    const easyWords = {
-        'أ': ["أَكَلَ", "أَخَذَ", "أَمَرَ"],
-        'ب': ["بَرَأَ", "بَحَثَ", "بَلَغَ"],
-        'ت': ["تَرَكَ", "تَلَا", "تَابَ"],
-        'ك': ["كَتَبَ", "كَسَرَ", "كَسَبَ"],
-        'س': ["سَجَدَ", "سَمِعَ", "سَأَلَ"],
-        'ق': ["قَرَأَ", "قَسَمَ", "قَطَعَ"],
-        'د': ["دَخَلَ", "دَرَسَ", "دَفَعَ"]
-        // يمكن إضافة باقي الحروف بنفس النمط البسيط
-    };
-
+    // دالة لتلوين الحركات فقط بالأحمر
     function colorize(word) {
-        return word.replace(/([ًٌٍَُِّْ])/g, '<span class="haraka">$1</span>');
+        return word.replace(/([ًٌٍَُِّْ])/g, '<span class="h">$1</span>');
+    }
+
+    // كلمات ثلاثية سهلة جداً تناسب طفل 6 سنوات
+    function getWords(h) {
+        return {
+            "بالفتحة": [`${h}َـبَـرَ`, `سَـ${h}َـدَ`, `كَـتَـ${h}َ`],
+            "بالضمة": [`${h}ُـكِـمَ`, `رُ${h}ِـمَ`, `كُـتُـ${h}ُ`],
+            "بالكسرة": [`${h}ِـرَام`, `بِـ${h}ِـر`, `لِـ${h}ِـي`],
+            "بالمد بالألف": [`${h}َـادَ`, `بَـ${h}ـا`, `سَـ${h}ـا`],
+            "بالمد بالواو": [`${h}ُـور`, `دُ${h}ُـور`, `تُـ${h}ـوت`],
+            "بالمد بالياء": [`رَ${h}ِـيد`, `تِـ${h}ـين`, `فِـ${h}ـيل`]
+        };
     }
 
     const sel = document.getElementById('letterPicker');
@@ -143,32 +95,19 @@
         document.getElementById('charH').innerText = h;
         const table = document.getElementById('table');
         table.innerHTML = "";
-
-        // توليد كلمات ثلاثية تلقائية بسيطة إذا لم تكن موجودة في القائمة أعلاه
-        const getRowWords = (type) => {
-            if (easyWords[h] && type === "بالفتحة") return easyWords[h];
-            
-            // نماذج عامة للقياس (ثلاثية بسيطة)
-            if (type === "بالفتحة") return [`${h}َـرَجَ`, `دَرَ${h}َ`, `رَ${h}َـدَ`].slice(0,3);
-            if (type === "بالضمة") return [`${h}ُـكِمَ`, `رُ${h}ِـمَ`, `خُـ${h}ِـفَ`].slice(0,3);
-            if (type === "بالكسرة") return [`${h}ِـرَمَ`, `بِـ${h}ِـرَ`, `لِـ${h}ِـسَ`].slice(0,3);
-            if (type === "بالمد بالألف") return [`${h}َـادَ`, `بَـ${h}ـا`, `سَـ${h}ـا`].slice(0,3);
-            if (type === "بالمد بالواو") return [`${h}ُـور`, `دُ${h}ُـور`, `فُـ${h}ـول`].slice(0,3);
-            if (type === "بالمد بالياء") return [`${h}ِـيد`, `تِـ${h}ـين`, `فِـ${h}ـيل`].slice(0,3);
-        };
+        const data = getWords(h);
 
         levels.forEach(lvl => {
             const row = document.createElement('tr');
             
-            // عمود القسم
+            // عمود اليمين الملون
             const lTd = document.createElement('td');
-            lTd.className = "level-cell";
+            lTd.className = `level-cell ${lvl.c}`;
             lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
             row.appendChild(lTd);
 
             // الكلمات الثلاث
-            const words = getRowWords(lvl.t);
-            words.forEach(word => {
+            data[lvl.t].forEach(word => {
                 const td = document.createElement('td');
                 td.innerHTML = colorize(word);
                 row.appendChild(td);
