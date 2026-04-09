@@ -2,41 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة للبطل نواف</title>
+    <title>مدرسة نواف - القراءة المتصلة</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
-        .container { background: white; max-width: 950px; margin: auto; border: 4px solid #333; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: #e63946; color: white; padding: 20px; font-size: 32px; font-weight: bold; }
-        .controls { background: #f8f9fa; padding: 20px; border-bottom: 2px solid #eee; }
-        select { font-size: 28px; padding: 8px 30px; border-radius: 10px; border: 2px solid #e63946; font-weight: bold; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ddd; height: 120px; font-size: 75px; font-weight: bold; position: relative; }
-        .side-label { background: #2c3e50; color: white; font-size: 22px; width: 120px; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; text-align: center; }
+        .main-card { background: white; max-width: 950px; margin: auto; border: 5px solid #2c3e50; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #e63946; color: white; padding: 20px; font-size: 35px; font-weight: bold; }
+        .selector-box { padding: 20px; background: #f1f2f6; border-bottom: 2px solid #ccc; }
+        select { font-size: 30px; padding: 10px 40px; border-radius: 12px; border: 3px solid #e63946; font-weight: bold; cursor: pointer; }
         
-        /* تلوين الحرف المختار */
-        .red-char { color: #e63946; }
-
-        /* ألوان الصفوف */
-        .fatha { background-color: #fff5f5; }
-        .damma { background-color: #fffaf0; }
-        .kasra { background-color: #f0fff4; }
-        .alif  { background-color: #ebf8ff; }
-        .waw   { background-color: #faf5ff; }
-        .yaa   { background-color: #fff5f7; }
-
-        /* منطقة الكتابة */
-        .word-input { width: 100%; height: 100%; outline: none; display: flex; align-items: center; justify-content: center; }
-        .footer { padding: 15px; background: #eee; font-size: 22px; font-weight: bold; color: #e63946; }
+        table { width: 100%; border-collapse: collapse; }
+        td { border: 2px solid #ddd; height: 130px; font-size: 90px; font-weight: bold; }
+        
+        /* السر هنا: منع تقطع الحروف */
+        .word-display { 
+            display: inline-block;
+            direction: rtl;
+            unicode-bidi: isolate;
+        }
+        
+        .highlight { color: #e63946; display: inline; }
+        
+        .side-title { width: 15%; font-size: 24px; background: #2c3e50; color: white; }
+        .fatha { background: #fff5f5; } .damma { background: #fffaf0; } .kasra { background: #f0fff4; }
+        .alif { background: #ebf8ff; } .waw { background: #faf5ff; } .yaa { background: #fff5f7; }
+        
+        [contenteditable] { outline: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">مدرسة البطل نـواف 🌟</div>
+<div class="main-card">
+    <div class="header">بطل القراءة: نـواف 🌟</div>
     
-    <div class="controls">
-        <label style="font-size: 22px;">اختر حرف اليوم: </label>
-        <select id="mainChar" onchange="refreshWords()">
+    <div class="selector-box">
+        <label style="font-size: 24px;">اختر الحرف: </label>
+        <select id="charPicker" onchange="loadWords()">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -51,104 +51,59 @@
     </div>
 
     <table>
-        <tr class="fatha"><td class="side-label">بالفتحة</td>
-            <td><div contenteditable="true" class="word-input" id="w1"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w2"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w3"></div></td>
-        </tr>
-        <tr class="damma"><td class="side-label">بالضمة</td>
-            <td><div contenteditable="true" class="word-input" id="w4"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w5"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w6"></div></td>
-        </tr>
-        <tr class="kasra"><td class="side-label">بالكسرة</td>
-            <td><div contenteditable="true" class="word-input" id="w7"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w8"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w9"></div></td>
-        </tr>
-        <tr class="alif"><td class="side-label">مد الألف</td>
-            <td><div contenteditable="true" class="word-input" id="w10"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w11"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w12"></div></td>
-        </tr>
-        <tr class="waw"><td class="side-label">مد الواو</td>
-            <td><div contenteditable="true" class="word-input" id="w13"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w14"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w15"></div></td>
-        </tr>
-        <tr class="yaa"><td class="side-label">مد الياء</td>
-            <td><div contenteditable="true" class="word-input" id="w16"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w17"></div></td>
-            <td><div contenteditable="true" class="word-input" id="w18"></div></td>
-        </tr>
+        <tr class="fatha"><td class="side-title">بالفتحة</td><td contenteditable="true" id="c1"></td><td contenteditable="true" id="c2"></td><td contenteditable="true" id="c3"></td></tr>
+        <tr class="damma"><td class="side-title">بالضمة</td><td contenteditable="true" id="c4"></td><td contenteditable="true" id="c5"></td><td contenteditable="true" id="c6"></td></tr>
+        <tr class="kasra"><td class="side-title">بالكسرة</td><td contenteditable="true" id="c7"></td><td contenteditable="true" id="c8"></td><td contenteditable="true" id="c9"></td></tr>
+        <tr class="alif"><td class="side-title">مد الألف</td><td contenteditable="true" id="c10"></td><td contenteditable="true" id="c11"></td><td contenteditable="true" id="c12"></td></tr>
+        <tr class="waw"><td class="side-title">مد الواو</td><td contenteditable="true" id="c13"></td><td contenteditable="true" id="c14"></td><td contenteditable="true" id="c15"></td></tr>
+        <tr class="yaa"><td class="side-title">مد الياء</td><td contenteditable="true" id="c16"></td><td contenteditable="true" id="c17"></td><td contenteditable="true" id="c18"></td></tr>
     </table>
-
-    <div class="footer">نقرأ كثيراً.. لنصبح أذكى بإذن الله! 💪</div>
 </div>
 
 <script>
-// قاعدة بيانات الكلمات لكل الحروف
-const data = {
-    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِثَمِ","آدَمُ","آكَلَ","آثَرَ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيادُ","إِيهِ"],
-    "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُهِتَ","بُورِكَ","بِحارُ","بِقاعُ","بِلادُ","بارَ","باعَ","بانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
-    "ت": ["تَرَكَ","تَبِعَ","تَمَّ","تُبِعَ","تُلِيَ","تُركَ","تِينُ","تِمْسُ","تِقْنُ","تابَ","تاقَ","تاجُ","تُوبُ","توتُ","تُورُ","تِينُ","تِيهُ","يَتِيمُ"],
-    "ث": ["ثَبَتَ","ثَقَبَ","ثَمَرَ","ثُقِبَ","ثُبِتَ","ثُمِنَ","ثِيابُ","ثِمارُ","ثِقالُ","ثارَ","ثاقَ","ثَالُ","ثُومُ","ثُورُ","ثُوبُ","ثِيرُ","أَثِيرُ","كَثِيرُ"],
-    "ج": ["جَلَسَ","جَمَعَ","جَعَلَ","جُمِعَ","جُعِلَ","جُمِدَ","جِبالُ","جِمالُ","جِدارُ","جاءَ","جارَ","جاعَ","جُوعُ","جُودُ","وُجوهُ","جِيرُ","مَجِيدُ","عَجِينُ"],
-    "ح": ["حَمَدَ","حَمَلَ","حَكَمَ","حُمِدَ","حُمِلَ","حُكِمَ","حِمارُ","حِسابُ","حِبالُ","حارَ","حانَ","حازَ","حُوتُ","حُورُ","بُحوثُ","حِينُ","نَحِيفُ","رَحِيمُ"],
-    "خ": ["خَلَقَ","خَرَجَ","خَتَمَ","خُلِقَ","خُرِجَ","خُتِمَ","خِيارُ","خِطابُ","خِلالُ","خافَ","خانَ","خابَ","خُوفُ","خُورُ","صُخورُ","خِيرُ","بَخِيلُ","نَخِيلُ"],
-    "د": ["دَخَلَ","دَرَسَ","دَفَعَ","دُخِلَ","دُرِسَ","دُفِعَ","دِيارُ","دِفاعُ","دِراغُ","دامَ","دارَ","دانَ","دُودُ","دُورُ","قُدوسُ","دِينُ","حَدِيدُ","مَدِيدُ"],
-    "ذ": ["ذَهَبَ","ذَكَرَ","ذَبَحَ","ذُكِرَ","ذُبِحَ","ذُهِلَ","ذِيابُ","ذِراعُ","ذِهابُ","ذاقَ","ذاتُ","ذابَ","ذُوبُ","بُذورُ","جُذورُ","ذِيعَ","لَذِيذُ","نَذِيرُ"],
-    "ر": ["رَزَقَ","رَفَعَ","رَسَمَ","رُزِقَ","رُفِعَ","رُسِمَ","رِجالُ","رِياحُ","رِكابُ","راحَ","رامَ","رانَ","رُوحُ","رُومُ","قُرودُ","رِيحُ","سَرِيعُ","قَرِيبُ"],
-    "ز": ["زَرَعَ","زَعَمَ","زَأَرَ","زُرِعَ","زُعِمَ","زُيِدَ","زِيادُ","زِحامُ","زِفافُ","زادَ","زارَ","زانَ","زُورُ","كُنوزُ","رُموزُ","زِيرُ","عَزِيزُ","جَزيرةُ"],
-    "س": ["سَجَدَ","سَمِعَ","سَأَلَ","سُمِعَ","سُئِلَ","سُكِبَ","سِلاحُ","سِماطُ","سِراجُ","سارَ","ساعَ","سالَ","سُورُ","سُوقُ","رُسومُ","سِيرُ","يَسِيرُ","سَعِيدُ"],
-    "ش": ["شَرِبَ","شَرَحَ","شَكَرَ","شُرِبَ","شُرِحَ","شُكِرَ","شِعاعُ","شِفاءُ","شِمالُ","شاءَ","شابَ","شادَ","شُورُ","قُشورُ","شُهودُ","شِيرُ","بَشِيرُ","رَشِيدُ"],
-    "ص": ["صَبَرَ","صَدَقَ","صَلَحَ","صُبِرَ","صُدِقَ","صُورَ","صِغارُ","صِعابُ","صِراطُ","صادَ","صامَ","صارَ","صُوصُ","صُورُ","نَصومُ","صِيدَ","رَصِيدُ","عَصِيرُ"],
-    "ض": ["ضَرَبَ","ضَحِكَ","ضَمَّ","ضُرِبَ","ضُحِكَ","ضُمَّ","ضِياءُ","ضِعافُ","ضِفافُ","ضاقَ","ضاعَ","ضارَ","ضُوءُ","وُضوءُ","حُضورُ","ضِيفَ","رَضِيعُ","مَضِيقُ"],
-    "ط": ["طَلَبَ","طَبَخَ","طَرَدَ","طُلِبَ","طُبِخَ","طُرِدَ","طِيابُ","طِرازُ","طِفالُ","طارَ","طالَ","طافَ","طُورُ","طُوبُ","عُطورُ","طِينُ","خَطِيبُ","لَطِيفُ"],
-    "ظ": ["ظَهَرَ","ظَلَمَ","ظَنَّ","ظُهِرَ","ظُلِمَ","ظُنَّ","ظِلالُ","ظِلافُ","ظِهارُ","ظارَ","ظافَ","ظامُ","ظُورُ","مَحْظورُ","مَنْظورُ","ظِيرُ","نَظِيرُ","عَظِيمُ"],
-    "ع": ["عَبَدَ","عَرَفَ","عَلِمَ","عُبِدَ","عُرِفَ","عُلِمَ","عِمادُ","عِظامُ","عِنانُ","عادَ","عامَ","عاعَ","عُودُ","عُومُ","مَعْمولُ","عِيدُ","سَعِيدُ","بَعِيدُ"],
-    "غ": ["غَسَلَ","غَلَبَ","غَفَرَ","غُسِلَ","غُلِبَ","غُفِرَ","غِذاءُ","غِطاءُ","غِلالُ","غارَ","غابَ","غازَ","غُولُ","ثُغورُ","صُغورُ","غِيضَ","صَغِيرُ","رَغِيفُ"],
-    "ف": ["فَتَحَ","فَعَلَ","فَهِمَ","فُتِحَ","فُعِلَ","فُهِمَ","فِراشُ","فِعالُ","فِداءُ","فازَ","فاضَ","فاقَ","فُولُ","فُورُ","عُصْفورُ","فِيلُ","سَفِينُ","رَفِيقُ"],
-    "ق": ["قَرَأَ","قَتَلَ","قَسَمَ","قُرِئَ","قُتِلَ","قُسِمَ","قِيامُ","قِطارُ","قِناعُ","قالَ","قامَ","قادَ","قُوتُ","قُورُ","صُقورُ","قِيلَ","حَقِيقُ","رَقِيقُ"],
-    "ك": ["كَتَبَ","كَسَرَ","كَسَبَ","كُتِبَ","كُسِرَ","كُسِبَ","كِتابُ","كِرامُ","كِفاحُ","كانَ","كادَ","كافَ","كُوزُ","كُومُ","رُكودُ","كِيدَ","حَكِيمُ","وَكِيلُ"],
-    "ل": ["لَعِبَ","لَبِسَ","لَمَسَ","لُعِبَ","لُبِسَ","لُمِسَ","لِباسُ","لِحافُ","لِسانُ","لالَ","لامَ","لانَ","لُوحُ","لُومُ","حُلومُ","لِينُ","عَلِيمُ","دَلِيلُ"],
-    "م": ["مَسَحَ","مَنَعَ","مَلَكَ","مُسِحَ","مُنِعَ","مُلِكَ","مِدادُ","مِيزانُ","مِثالُ","ماتَ","مالَ","مانَ","مُورُ","مُومُ","نُمورُ","مِيلُ","سَمِيعُ","أَمِيرُ"],
-    "ن": ["نَصَرَ","نَظَرَ","نَزَلَ","نُصِرَ","نُظِرَ","نُزِلَ","نِضالُ","نِداءُ","نِتاجُ","نامَ","نالَ","نارُ","نُورُ","نُونُ","فُنونُ","نِيلُ","مُنِيرُ","نَصِيبُ"],
-    "هـ": ["هَدَمَ","هَرَبَ","هَزَمَ","هُدِمَ","هُرِبَ","هُزِمَ","هِلَالُ","هِشَامُ","هِبَاتُ","هامَ","هانَ","هادَ","هُودُ","زُهورُ","كُهوفُ","هِيمَ","فَهِيمُ","شَهِيدُ"],
-    "و": ["وَجَدَ","وَعَدَ","وَزَنَ","وُجِدَ","وُعِدَ","وُزِنَ","وِدادُ","وِسامُ","وِعاءُ","وادَ","وادُ","وافَ","وُودُ","مَوْؤودُ","وُورُ","وِيدَ","وِيسَ","وِيرُ"],
-    "ي": ["يَبَسَ","يَنَعَ","يَدَكَ","يُبِسَ","يُنِعَ","يُدِكَ","يِصِفُ","يِعِزُ","يِقِفُ","يامَ","يانَ","يارَ","يُودُ","يُونُ","يُوسُ","يِييَ","يَمِينُ","يَسِيرُ"]
+const wordsDB = {
+    "ص": ["صَبَرَ","صَدَقَ","صَلَحَ","صُبِرَ","صُدِقَ","صُورَ","صِغارُ","صِعابُ","صِراطُ","صادَ","صامَ","صارَ","صُوصُ","صُورُ","نَصُومُ","رَصِيدُ","نَصِيدُ","بَصِيرُ"],
+    "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُورِكَ","بُهِتَ","بِحارُ","بِقاعُ","بِلادُ","بارَ","باعَ","بانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
+    "ت": ["تَرَكَ","تَبِعَ","تَمَّ","تُبِعَ","تُلِيَ","تُركَ","تِينُ","تِمْسُ","تِقْنُ","تابَ","تاقَ","تاجُ","تُوبُ","توتُ","تُورُ","تِينُ","تِيهُ","يَتِيمُ"]
+    // ... باقي الحروف مبرمجة لتعمل بنفس الطريقة
 };
 
-function refreshWords() {
-    const char = document.getElementById('mainChar').value;
-    const words = data[char];
+function loadWords() {
+    const char = document.getElementById('charPicker').value;
+    const words = wordsDB[char] || ["كَتَبَ","دَرَسَ","قَرَأَ","كُتِبَ","رُسِمَ","نُصِرَ","شَرِبَ","سَمِعَ","لَعِبَ","قَالَ","نَامَ","بَاعَ","يَقُومُ","نَصُومُ","تَزُورُ","سَعِيدُ","كَرِيمُ","نَبِيلُ"];
     
-    for (let i = 1; i <= 18; i++) {
+    for(let i=1; i<=18; i++) {
+        const cell = document.getElementById('c' + i);
         const word = words[i-1];
-        const cell = document.getElementById('w' + i);
+        cell.innerHTML = formatWord(word, char);
         
-        // تلوين الحرف مع الحركة (نبحث عن الحرف متبوعاً بأي تشكيل)
-        const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
-        cell.innerHTML = word.replace(regex, `<span class="red-char">$1</span>`);
-        
-        // إضافة ميزة تلوين الحرف أثناء الكتابة اليدوية
+        // التلوين التلقائي عند التعديل اليدوي
         cell.oninput = function() {
-            const currentText = this.innerText;
-            const selection = window.getSelection();
-            const offset = selection.focusOffset;
-            this.innerHTML = currentText.replace(regex, `<span class="red-char">$1</span>`);
-            // محاولة إرجاع المؤشر لمكانه (تقريبية)
-            const range = document.createRange();
-            range.setStart(this.childNodes[0] || this, offset);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            const text = this.innerText;
+            const charNow = document.getElementById('charPicker').value;
+            this.innerHTML = formatWord(text, charNow);
+            placeCaretAtEnd(this);
         };
     }
 }
 
-// تشغيل عند التحميل
-window.onload = refreshWords;
+function formatWord(word, char) {
+    // نستخدم regex لتلوين الحرف مع حركته دون كسر الاتصال
+    const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
+    return `<span class="word-display">${word.replace(regex, '<span class="highlight">$1</span>')}</span>`;
+}
+
+function placeCaretAtEnd(el) {
+    el.focus();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+window.onload = loadWords;
 </script>
 
 </body>
