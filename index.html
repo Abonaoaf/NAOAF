@@ -3,31 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعلم القراءة مع نواف</title>
+    <title>مدرب القراءة للبطل نواف</title>
     <style>
+        :root {
+            --primary-red: #e63946;
+            --bg-color: #f8f9fa;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
+            background-color: var(--bg-color);
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .container {
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        select {
+            font-size: 20px;
+            padding: 10px 30px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-red);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .main-card {
             width: 100%;
             max-width: 800px;
             background: white;
-            border: 4px solid #333;
-            border-radius: 10px;
+            border: 3px solid #333;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .header {
-            background-color: #f9f9f9;
-            text-align: center;
-            padding: 15px;
-            font-size: 24px;
-            font-weight: bold;
-            border-bottom: 2px solid #eee;
         }
         table {
             width: 100%;
@@ -35,101 +49,139 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 20px;
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        /* القائمة الجانبية */
-        .side-label {
-            width: 120px;
-            font-size: 18px;
-            color: #fff;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            padding: 10px;
-        }
-        /* ألوان الصفوف لتسهيل التمييز */
-        .row-fatha { background-color: #fff5f5; }
-        .side-fatha { background-color: #e53e3e; }
-        
-        .row-damma { background-color: #fffaf0; }
-        .side-damma { background-color: #dd6b20; }
-        
-        .row-kasra { background-color: #f0fff4; }
-        .side-kasra { background-color: #38a169; }
-        
-        .row-alif { background-color: #ebf8ff; }
-        .side-alif { background-color: #3182ce; }
-        
-        .row-waw { background-color: #faf5ff; }
-        .side-waw { background-color: #805ad5; }
-        
-        .row-yaa { background-color: #fff5f7; }
-        .side-yaa { background-color: #d53f8c; }
-
-        .footer {
-            text-align: center;
             padding: 15px;
-            background: #fff;
-            color: #e53e3e;
+            text-align: center;
+            font-size: 35px;
             font-weight: bold;
-            font-size: 20px;
         }
-        .highlight { color: #e53e3e; }
+        .side-label {
+            width: 100px;
+            font-size: 18px;
+            color: white;
+            background-color: #444;
+        }
+        /* تمييز الحرف والحركة باللون الأحمر */
+        .highlight {
+            color: var(--primary-red);
+        }
+        .editable-word {
+            outline: none;
+            cursor: edit;
+            display: inline-block;
+            min-width: 50px;
+        }
+        .editable-word:focus {
+            background-color: #ffffd0;
+            border-bottom: 2px dashed var(--primary-red);
+        }
+        .hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">نشاط قرائي للبطل <span class="highlight">نواف</span></div>
-    
+<div class="control-panel">
+    <h3>اختر حرفاً ليتعلم نواف:</h3>
+    <select id="charSelector" onchange="updateWords()">
+        <option value="ص">حرف الصاد (ص)</option>
+        <option value="ب">حرف الباء (ب)</option>
+        <option value="ت">حرف التاء (ت)</option>
+        <option value="ج">حرف الجيم (ج)</option>
+        <option value="د">حرف الدال (د)</option>
+        <option value="ر">حرف الراء (ر)</option>
+        <option value="س">حرف السين (س)</option>
+    </select>
+    <p class="hint">يمكنك الضغط على أي كلمة وتغييرها مباشرة!</p>
+</div>
+
+<div class="main-card">
     <table>
-        <tr class="row-fatha">
-            <td class="side-label side-fatha">بالفتحة</td>
-            <td>دَرَسَ</td>
-            <td>قَرَأَ</td>
-            <td>كَتَبَ</td>
+        <tr style="background: #fff5f5;">
+            <td class="side-label" style="background: #e53e3e;">بالفتحة</td>
+            <td><span contenteditable="true" class="editable-word" id="f1">صَبَرَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="f2">رَصَدَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="f3">نَصَرَ</span></td>
         </tr>
-        
-        <tr class="row-damma">
-            <td class="side-label side-damma">بالضمة</td>
-            <td>كُتِبَ</td>
-            <td>رُسِمَ</td>
-            <td>نُصِرَ</td>
+        <tr style="background: #fffaf0;">
+            <td class="side-label" style="background: #dd6b20;">بالضمة</td>
+            <td><span contenteditable="true" class="editable-word" id="d1">صُورَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="d2">نُصِرَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="d3">بُصِرَ</span></td>
         </tr>
-        
-        <tr class="row-kasra">
-            <td class="side-label side-kasra">بالكسرة</td>
-            <td>شَرِبَ</td>
-            <td>سَمِعَ</td>
-            <td>لَعِبَ</td>
+        <tr style="background: #f0fff4;">
+            <td class="side-label" style="background: #38a169;">بالكسرة</td>
+            <td><span contenteditable="true" class="editable-word" id="k1">صِغَرُ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="k2">رَصِفَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="k3">نَصِفُ</span></td>
         </tr>
-        
-        <tr class="row-alif">
-            <td class="side-label side-alif">مد الألف</td>
-            <td>صَادَ</td>
-            <td>نَامَ</td>
-            <td>قَامَ</td>
+        <tr style="background: #ebf8ff;">
+            <td class="side-label" style="background: #3182ce;">مد الألف</td>
+            <td><span contenteditable="true" class="editable-word" id="a1">صَادَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="a2">صَامَ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="a3">صَاحَ</span></td>
         </tr>
-        
-        <tr class="row-waw">
-            <td class="side-label side-waw">مد الواو</td>
-            <td>صُوصُ</td>
-            <td>نَصُومُ</td>
-            <td>يَقُومُ</td>
+        <tr style="background: #faf5ff;">
+            <td class="side-label" style="background: #805ad5;">مد الواو</td>
+            <td><span contenteditable="true" class="editable-word" id="w1">صُوصُ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="w2">نَصُومُ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="w3">يَصُونُ</span></td>
         </tr>
-        
-        <tr class="row-yaa">
-            <td class="side-label side-yaa">مد الياء</td>
-            <td>رَصِيدُ</td>
-            <td>نَصِيدُ</td>
-            <td>سَعِيدُ</td>
+        <tr style="background: #fff5f7;">
+            <td class="side-label" style="background: #d53f8c;">مد الياء</td>
+            <td><span contenteditable="true" class="editable-word" id="y1">رَصِيدُ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="y2">نَصِيدُ</span></td>
+            <td><span contenteditable="true" class="editable-word" id="y3">بَصِيرُ</span></td>
         </tr>
     </table>
-
-    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
+
+<script>
+    // قاعدة بيانات بسيطة للكلمات (يمكنك إضافة المزيد من الحروف هنا)
+    const data = {
+        "ص": {
+            f: ["صَبَرَ", "رَصَدَ", "نَصَرَ"], d: ["صُورَ", "نُصِرَ", "بُصِرَ"], k: ["صِغَرُ", "رَصِفَ", "نَصِفُ"],
+            a: ["صَادَ", "صَامَ", "صَارَ"], w: ["صُوصُ", "نَصُومُ", "يَصُونُ"], y: ["رَصِيدُ", "نَصِيدُ", "عَصِيرُ"]
+        },
+        "ب": {
+            f: ["بَحَثَ", "عَبَرَ", "كَتَبَ"], d: ["بُورِكَ", "خُبِزَ", "طُبِخَ"], k: ["بِصِيرُ", "رَبِحَ", "شَرِبَ"],
+            a: ["بَاعَ", "بَانَ", "بَابُ"], w: ["حُبُوبُ", "تَبُوحُ", "يَبُورُ"], y: ["طَبِيبُ", "حَبِيبُ", "نَبِيلُ"]
+        }
+        // يمكنك إضافة باقي الحروف بنفس الطريقة
+    };
+
+    function updateWords() {
+        const char = document.getElementById('charSelector').value;
+        const words = data[char];
+        
+        if(words) {
+            for(let i=1; i<=3; i++) {
+                document.getElementById('f'+i).innerText = words.f[i-1];
+                document.getElementById('d'+i).innerText = words.d[i-1];
+                document.getElementById('k'+i).innerText = words.k[i-1];
+                document.getElementById('a'+i).innerText = words.a[i-1];
+                document.getElementById('w'+i).innerText = words.w[i-1];
+                document.getElementById('y'+i).innerText = words.y[i-1];
+            }
+            applyHighlight(char);
+        }
+    }
+
+    function applyHighlight(char) {
+        const elements = document.querySelectorAll('.editable-word');
+        elements.forEach(el => {
+            let text = el.innerText;
+            // تلوين الحرف مع أي حركة تتبعه (فتحة، ضمة، كسرة، سكون)
+            const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
+            el.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
+        });
+    }
+
+    // تشغيل التلوين عند البدء
+    window.onload = () => applyHighlight('ص');
+</script>
 
 </body>
 </html>
