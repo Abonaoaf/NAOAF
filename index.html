@@ -2,51 +2,60 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب نواف الذكي - مع شريط الحركات</title>
-    
+    <title>منصة نواف التعليمية - لوحة التنوين</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <style>
-        :root { --main-red: #e63946; --dark-blue: #2c3e50; }
-        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
-        .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 15px; overflow: hidden; }
-        .header { background: var(--main-red); color: white; padding: 10px; font-size: 24px; font-weight: bold; }
+        :root { --main-red: #ff0000; --dark-blue: #1a2a3a; }
+        body { font-family: 'Arial', sans-serif; background: #f4f4f9; padding: 10px; text-align: center; }
+        .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
         
-        .controls { padding: 10px; background: #eee; border-bottom: 2px solid #ddd; display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .harakat-bar { background: #fff; padding: 10px; border-bottom: 2px solid #ddd; display: flex; justify-content: center; gap: 15px; }
+        .header { background: var(--main-red); color: white; padding: 10px; font-size: 26px; font-weight: bold; }
         
-        .h-btn { background: #f8f9fa; border: 2px solid var(--dark-blue); border-radius: 8px; padding: 5px 15px; font-size: 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .controls { padding: 10px; background: #eee; display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
+        
+        /* لوحة الحركات الكبيرة */
+        .harakat-bar { 
+            background: #fff; padding: 15px; display: flex; justify-content: center; 
+            gap: 8px; border-bottom: 3px solid #ddd; flex-wrap: wrap; 
+        }
+        .h-btn { 
+            background: #fff; border: 3px solid var(--main-red); border-radius: 10px; 
+            width: 65px; height: 65px; font-size: 40px; font-weight: bold; color: var(--main-red);
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+        }
         .h-btn:hover { background: var(--main-red); color: white; }
-        
-        select { font-size: 20px; padding: 5px; border-radius: 5px; border: 2px solid var(--main-red); }
-        .btn { padding: 8px 15px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; color: white; font-weight: bold; }
-        .btn-save { background: #27ae60; }
-        .btn-color { background: var(--dark-blue); }
+
+        .btn-save { background: #27ae60; color: white; padding: 10px 20px; font-size: 18px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
 
         table { width: 100%; border-collapse: collapse; }
-        td { border: 1px solid #ccc; height: 90px; position: relative; width: 28%; }
+        td { border: 1px solid #ccc; height: 100px; position: relative; }
         
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 55px; font-weight: bold;
+            text-align: center; font-size: 60px; font-weight: bold;
             background: transparent; display: block; position: relative; z-index: 2;
         }
         
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; display: none; font-size: 55px; font-weight: bold; line-height: 90px; z-index: 1;
+            pointer-events: none; display: none; font-size: 60px; font-weight: bold; line-height: 100px; z-index: 1;
         }
 
-        .hl { color: var(--main-red); }
+        /* تلوين الحرف والحركة بالأحمر الصريح */
+        .hl { color: var(--main-red) !important; text-shadow: 1px 1px 0px #fff; }
+        
         .side { background: var(--dark-blue); color: white; font-size: 18px; width: 110px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">بطل القراءة نـواف - لوحة التحريك الذكية ⌨️</div>
-    
+    <div class="header">لوحة نـواف الذكية للحركات والتنوين 🎨</div>
+
     <div class="controls">
-        <label>الحرف الأساسي: </label>
-        <select id="mainChar" onchange="resetAll()">
+        <select id="mainChar" style="font-size: 20px; padding: 5px;" onchange="loadFromCloud()">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -58,11 +67,19 @@
             <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
             <option value="ي">ي</option>
         </select>
-        <button class="btn btn-color" onclick="applyColoring()">تلوين الحروف 🖌️</button>
+        <button class="btn-save" onclick="saveToCloud()">حفظ في السحابة 💾</button>
     </div>
 
     <div class="harakat-bar">
-        <button class="h-btn" onclick="addHarakah('َ')"> َ </button> <button class="h-btn" onclick="addHarakah('ُ')"> ُ </button> <button class="h-btn" onclick="addHarakah('ِ')"> ِ </button> <button class="h-btn" onclick="addHarakah('ْ')"> ْ </button> <button class="h-btn" onclick="addHarakah('ً')"> ً </button> </div>
+        <button class="h-btn" onclick="addHarakah('َ')" title="فتحة"> َ </button>
+        <button class="h-btn" onclick="addHarakah('ُ')" title="ضمة"> ُ </button>
+        <button class="h-btn" onclick="addHarakah('ِ')" title="كسرة"> ِ </button>
+        <button class="h-btn" onclick="addHarakah('ْ')" title="سكون"> ْ </button>
+        <button class="h-btn" onclick="addHarakah('ّ')" title="شدة"> ّ </button>
+        <button class="h-btn" onclick="addHarakah('ً')" title="تنوين فتح"> ً </button>
+        <button class="h-btn" onclick="addHarakah('ٌ')" title="تنوين ضم"> ٌ </button>
+        <button class="h-btn" onclick="addHarakah('ٍ')" title="تنوين كسر"> ٍ </button>
+    </div>
 
     <table>
         <tbody id="tableBody"></tbody>
@@ -70,6 +87,20 @@
 </div>
 
 <script>
+    // إعدادات Firebase
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+        projectId: "YOUR_PROJECT",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    let database;
+    try { firebase.initializeApp(firebaseConfig); database = firebase.database(); } catch(e){}
+
     const rows = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
     let lastFocusedInput = null;
 
@@ -87,29 +118,24 @@
             rowHtml += `</tr>`;
             body.innerHTML += rowHtml;
         }
+        loadFromCloud();
     }
 
     function handleFocus(input) {
         lastFocusedInput = input;
         input.style.opacity = "1";
         input.nextElementSibling.style.display = "none";
-        input.style.color = "black";
     }
 
     function addHarakah(h) {
         if (lastFocusedInput) {
-            const val = lastFocusedInput.value;
             const start = lastFocusedInput.selectionStart;
-            const end = lastFocusedInput.selectionEnd;
-            
-            // إضافة الحركة في مكان المؤشر
-            lastFocusedInput.value = val.slice(0, start) + h + val.slice(end);
-            
-            // إعادة المؤشر لمكانه بعد الحركة
+            const val = lastFocusedInput.value;
+            // إضافة الحركة
+            lastFocusedInput.value = val.slice(0, start) + h + val.slice(start);
             lastFocusedInput.focus();
             lastFocusedInput.setSelectionRange(start + 1, start + 1);
-        } else {
-            alert("يرجى الضغط داخل أحد المربعات أولاً");
+            showDisplay(lastFocusedInput);
         }
     }
 
@@ -118,25 +144,35 @@
         const display = input.nextElementSibling;
         const char = document.getElementById('mainChar').value;
         
-        let pattern = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
-        // Regex يلون الحرف وأي حركة تتبعه (فتحة، ضمة، إلخ)
-        const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
+        let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
+        //Regex محسن يمسك الحرف مع (الشدة + أي حركة أو تنوين)
+        const regex = new RegExp(`(${p}[\u064B-\u0652\u0651]*)`, 'g');
 
         display.innerHTML = input.value.replace(regex, `<span class="hl">$1</span>`);
         input.style.opacity = "0";
         display.style.display = "block";
     }
 
-    function applyColoring() {
-        document.querySelectorAll('.word-input').forEach(showDisplay);
+    function saveToCloud() {
+        const char = document.getElementById('mainChar').value;
+        const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
+        if(database) {
+            database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ بنجاح! ✅"));
+        }
     }
 
-    function resetAll() {
-        document.querySelectorAll('.word-input').forEach(input => {
-            input.value = "";
-            input.style.opacity = "1";
-            input.nextElementSibling.style.display = "none";
-        });
+    function loadFromCloud() {
+        const char = document.getElementById('mainChar').value;
+        if(database) {
+            database.ref('nawaf_educational_data/' + char).once('value').then(snap => {
+                const words = snap.val() || Array(18).fill("");
+                const inputs = document.querySelectorAll('.word-input');
+                inputs.forEach((input, index) => {
+                    input.value = words[index] || "";
+                    showDisplay(input);
+                });
+            });
+        }
     }
 
     init();
