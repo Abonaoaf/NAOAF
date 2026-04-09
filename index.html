@@ -3,45 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نشاط القراءة - عبد العزيز</title>
+    <title>نشاط القراءة - عبدالعزيز</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
         
-        body { font-family: 'Cairo', sans-serif; background: #eee; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Cairo', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 600px; }
+        .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 700px; }
         
-        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #007bff; margin: 5px; cursor: pointer; }
-        button { background: #007bff; color: white; border: none; }
+        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #27ae60; margin: 5px; cursor: pointer; }
+        button { background: #27ae60; color: white; border: none; }
 
         .paper { 
             background: white; width: 210mm; min-height: 280mm; padding: 10mm; 
             border: 2px solid #000; box-sizing: border-box; display: flex; flex-direction: column;
         }
 
-        .title-box { border: 3px solid #000; padding: 10px; text-align: center; margin-bottom: 15px; font-size: 2rem; font-weight: 900; }
+        .title-box { border: 3px solid #000; padding: 10px; text-align: center; margin-bottom: 15px; font-size: 2.2rem; font-weight: 900; background: #fdfdfd; }
 
         .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; }
-        .main-table td { border: 2px solid #000; height: 110px; text-align: center; vertical-align: middle; font-size: 3rem; font-weight: 900; overflow: hidden; }
+        .main-table td { border: 2px solid #000; height: 115px; text-align: center; vertical-align: middle; position: relative; }
 
-        /* تعديل عمود المستويات ليظهر النص بشكل صحيح */
+        /* الكلمات وحرف التلوين */
+        .word-container { font-size: 3.5rem; font-weight: 900; direction: rtl; line-height: 1; white-space: nowrap; }
+        .highlight { color: #d32f2f; }
+
+        /* زر التعديل الصغير */
+        .edit-btn { 
+            position: absolute; top: 5px; right: 5px; font-size: 0.8rem; 
+            cursor: pointer; background: rgba(0,0,0,0.05); border-radius: 50%; padding: 2px;
+            display: inline-block;
+        }
+        .edit-btn:hover { background: #eee; }
+
+        /* عمود المستويات في اليمين */
         .level-cell { 
-            width: 60px; font-size: 1.2rem; font-weight: bold; background: #f8f9fa;
+            width: 55px; font-size: 1.3rem; font-weight: bold; background: #f8f9fa;
             text-align: center; vertical-align: middle; border: 2px solid #000;
         }
         .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
-
-        .highlight { color: #d32f2f; }
 
         /* ألوان المستويات */
         .bg-1 { background-color: #fff9c4; } .bg-2 { background-color: #e3f2fd; }
         .bg-3 { background-color: #f1f8e9; } .bg-4 { background-color: #fce4ec; }
         .bg-5 { background-color: #ede7f6; } .bg-6 { background-color: #e0f2f1; }
 
-        .footer { text-align: center; margin-top: auto; padding: 20px; color: #d32f2f; font-weight: 900; font-size: 1.5rem; text-decoration: underline; }
+        .footer { text-align: center; margin-top: auto; padding: 20px; color: #d32f2f; font-weight: 900; font-size: 1.6rem; text-decoration: underline; }
 
         @media print {
-            .no-print { display: none; }
+            .no-print, .edit-btn { display: none !important; }
             body { background: white; padding: 0; }
             .paper { box-shadow: none; border: 2px solid #000; width: 100%; margin: 0; }
         }
@@ -50,9 +60,9 @@
 <body>
 
 <div class="no-print">
-    <strong>🎓 اختر الحرف لتوليد النشاط:</strong><br>
-    <select id="letterPicker" onchange="render()"></select>
-    <button onclick="window.print()">🖨️ طباعة</button>
+    <strong>🎓 لوحة تحكم النشاط القرائي</strong><br>
+    <select id="letterPicker" onchange="resetAndRender()"></select>
+    <button onclick="window.print()">🖨️ طباعة النشاط</button>
 </div>
 
 <div class="paper">
@@ -69,7 +79,10 @@
         { t: "مد بالواو", c: "bg-5" }, { t: "مد بالياء", c: "bg-6" }
     ];
 
-    function getWords(h) {
+    // قاعدة بيانات الكلمات القابلة للتعديل
+    let customWords = {};
+
+    function getDefaultWords(h) {
         return {
             "كلمات مفتوحة": [`${h}َـرَدَ`, `رَ${h}َـدَ`, `نَـصَـ${h}َ`],
             "كلمات مضمومة": [`${h}ُـصِرَ`, `بَـصَـ${h}ُ`, `نُـ${h}ِـبَ`],
@@ -86,33 +99,54 @@
         sel.appendChild(o);
     });
 
+    function resetAndRender() {
+        customWords = {}; // تصقير الكلمات المخصصة عند تغيير الحرف
+        render();
+    }
+
+    function editWord(levelTitle, index) {
+        const char = sel.value;
+        const currentWords = customWords[levelTitle] || getDefaultWords(char)[levelTitle];
+        const newWord = prompt("أدخل الكلمة الجديدة:", currentWords[index]);
+        if (newWord) {
+            if (!customWords[levelTitle]) customWords[levelTitle] = [...currentWords];
+            customWords[levelTitle][index] = newWord;
+            render();
+        }
+    }
+
     function render() {
         const h = sel.value;
         document.getElementById('charH').innerText = h;
         const table = document.getElementById('table');
         table.innerHTML = "";
-        const data = getWords(h);
+        const defaultData = getDefaultWords(h);
 
         levels.forEach(lvl => {
             const row = document.createElement('tr');
             
-            // إضافة الكلمات أولاً (3 خانات)
-            data[lvl.t].forEach(word => {
-                const td = document.createElement('td');
-                // الإصلاح هنا: استخدام replace مع HTML صحيح
-                td.innerHTML = word.split(h).join(`<span class="highlight">${h}</span>`);
-                row.appendChild(td);
-            });
-
-            // إضافة اسم المستوى في الجهة اليسرى (أو اليمنى حسب الترتيب)
+            // 1. إضافة اسم المستوى في الجهة اليمنى (أول عمود)
             const lTd = document.createElement('td');
             lTd.className = `level-cell ${lvl.c}`;
             lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
             row.appendChild(lTd);
 
+            // 2. إضافة الكلمات (3 خانات)
+            const currentWords = customWords[lvl.t] || defaultData[lvl.t];
+            currentWords.forEach((word, idx) => {
+                const td = document.createElement('td');
+                const highlighted = word.split(h).join(`<span class="highlight">${h}</span>`);
+                td.innerHTML = `
+                    <span class="edit-btn no-print" onclick="editWord('${lvl.t}', ${idx})">✏️</span>
+                    <div class="word-container">${highlighted}</div>
+                `;
+                row.appendChild(td);
+            });
+
             table.appendChild(row);
         });
     }
+
     render();
 </script>
 </body>
