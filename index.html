@@ -2,147 +2,129 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب نواف الذكي - الإصدار الأخير</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
+    <title>مدرب نواف - بسيط وذكي</title>
+    
     <style>
-        :root { --main-red: #e63946; --dark-blue: #2c3e50; }
-        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; }
-        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
-        .header { background: var(--main-red); color: white; padding: 15px; font-size: 30px; font-weight: bold; text-align: center; }
-        .controls { padding: 15px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; }
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
+        .container { background: white; max-width: 900px; margin: auto; border: 5px solid #2c3e50; border-radius: 15px; overflow: hidden; }
+        .header { background: #e63946; color: white; padding: 15px; font-size: 25px; font-weight: bold; }
+        .controls { padding: 15px; background: #eee; border-bottom: 2px solid #ddd; }
         
-        select { font-size: 24px; padding: 5px 20px; border-radius: 10px; border: 3px solid var(--main-red); }
-        .btn { border: none; padding: 10px 20px; font-size: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px; color: white; }
+        select { font-size: 20px; padding: 10px; border-radius: 5px; border: 2px solid #e63946; }
+        .btn { padding: 10px 20px; font-size: 18px; cursor: pointer; border-radius: 8px; border: none; color: white; font-weight: bold; margin: 5px; }
         .btn-save { background: #27ae60; }
-        .btn-refresh { background: var(--dark-blue); }
+        .btn-color { background: #2c3e50; }
 
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ccc; height: 110px; font-size: 70px; font-weight: bold; text-align: center; position: relative; }
+        table { width: 100%; border-collapse: collapse; }
+        td { border: 1px solid #ccc; height: 100px; position: relative; width: 25%; }
         
-        /* المربع الذي تكتب فيه - جعلته شفافاً فوق التلوين */
-        .input-box {
+        /* المربع الذي تكتب فيه */
+        .word-input {
             width: 100%; height: 100%;
-            border: none; background: transparent;
-            text-align: center; font-size: 70px; font-family: inherit; font-weight: bold;
-            outline: none; position: absolute; top: 0; left: 0; z-index: 2;
-        }
-        /* المربع الذي يظهر فيه التلوين - خلف مربع الكتابة */
-        .display-box {
-            width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0; z-index: 1;
-            line-height: 110px; pointer-events: none;
+            border: none; outline: none;
+            text-align: center; font-size: 60px; font-weight: bold;
+            background: transparent; display: block;
         }
         
-        .hl { color: var(--main-red); }
-        .side { width: 120px; font-size: 18px; background: var(--dark-blue); color: white; z-index: 3; }
-        .r1 { background: #fff5f5; } .r2 { background: #fffaf0; } .r3 { background: #f0fff4; }
-        .r4 { background: #ebf8ff; } .r5 { background: #faf5ff; } .r6 { background: #fff5f7; }
+        /* طبقة التلوين */
+        .word-display {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; /* تجعل الضغط يمر للمربع اللي تحته */
+            display: none; /* تختفي وقت الكتابة */
+            font-size: 60px; font-weight: bold; line-height: 100px;
+        }
+
+        .hl { color: #e63946; } /* لون الحرف أحمر */
+        .side { background: #2c3e50; color: white; font-size: 18px; width: 100px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">بطل القراءة نواف 🚀</div>
+    <div class="header">مدرسة البطل نـواف 🌟</div>
     <div class="controls">
-        <select id="charSelector" onchange="loadData()">
-            </select>
-        <button class="btn btn-refresh" onclick="applyColorToAll()">تحديث التلوين 🖌️</button>
-        <button class="btn btn-save" onclick="saveData()">حفظ في السحابة 💾</button>
+        <label>اختر الحرف: </label>
+        <select id="mainChar" onchange="clearAndRefresh()">
+            <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
+            <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
+            <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
+            <option value="ر">ر</option><option value="ز">ز</option><option value="س">س</option>
+            <option value="ش">ش</option><option value="ص" selected>ص</option><option value="ض">ض</option>
+            <option value="ط">ط</option><option value="ظ">ظ</option><option value="ع">ع</option>
+            <option value="غ">غ</option><option value="ف">ف</option><option value="ق">ق</option>
+            <option value="ك">ك</option><option value="ل">ل</option><option value="م">م</option>
+            <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
+            <option value="ي">ي</option>
+        </select>
+        <button class="btn btn-color" onclick="applyColoring()">تلوين الحروف 🖌️</button>
     </div>
 
     <table>
-        <tr class="r1"><td class="side">الفتحة</td><td id="td1"></td><td id="td2"></td><td id="td3"></td></tr>
-        <tr class="r2"><td class="side">الضمة</td><td id="td4"></td><td id="td5"></td><td id="td6"></td></tr>
-        <tr class="r3"><td class="side">الكسرة</td><td id="td7"></td><td id="td8"></td><td id="td9"></td></tr>
-        <tr class="r4"><td class="side">مد الألف</td><td id="td10"></td><td id="td11"></td><td id="td12"></td></tr>
-        <tr class="r5"><td class="side">مد الواو</td><td id="td13"></td><td id="td14"></td><td id="td15"></td></tr>
-        <tr class="r6"><td class="side">مد الياء</td><td id="td16"></td><td id="td17"></td><td id="td18"></td></tr>
+        <tbody id="tableBody">
+            </tbody>
     </table>
 </div>
 
 <script>
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_ID",
-    appId: "YOUR_APP_ID"
-};
-
-try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-const db = firebase.database();
-
-const allChars = "أبتثجحخدذرزمسشصضطظعغفقكلمنهـوي";
-
-// الكلمات الصحيحة لبعض الحروف
-const masterDB = {
-    "ل": ["لَبَنَ","لَحِقَ","لَمَسَ","لُجَّ","لُقِيَ","لُبِثَ","لِبَاسُ","لِسَانُ","لِحَاظُ","لَادَ","لَامَ","لَابَ","لُوطُ","لُومُ","قُلُوبُ","لِينُ","حَلِيمُ","وَلِيدُ"],
-    "م": ["مَسَحَ","مَنَعَ","مَلَكَ","مُسِحَ","مُنِعَ","مُلِكَ","مِدَادُ","مِثَالُ","مِقْدَارُ","مَاتَ","مَالَ","مَانَ","مُورُ","مُومُ","نُمُورُ","مِيلُ","سَمِيعُ","أَمِيرُ"],
-    "هـ": ["هَدَمَ","هَرَبَ","هَزَمَ","هُدِمَ","هُرِبَ","هُزِمَ","هِلَالُ","هِشَامُ","هِبَاتُ","هَامَ","هَانَ","هَادَ","هُودُ","زُهُورُ","كُهُوفُ","هِيمَ","فَهِيمُ","شَهِيدُ"]
-};
-
-window.onload = function() {
-    const sel = document.getElementById('charSelector');
-    for (let c of allChars) {
-        let opt = document.createElement('option');
-        opt.value = c; opt.text = c;
-        if(c === "ص") opt.selected = true;
-        sel.add(opt);
+    const rows = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
+    
+    function init() {
+        const body = document.getElementById('tableBody');
+        body.innerHTML = "";
+        for (let r of rows) {
+            let rowHtml = `<tr><td class="side">${r}</td>`;
+            for (let i = 0; i < 3; i++) {
+                rowHtml += `<td>
+                    <input type="text" class="word-input" onfocus="showInput(this)" onblur="showDisplay(this)">
+                    <div class="word-display"></div>
+                </td>`;
+            }
+            rowHtml += `</tr>`;
+            body.innerHTML += rowHtml;
+        }
     }
-    loadData();
-};
 
-function loadData() {
-    const char = document.getElementById('charSelector').value;
-    db.ref('nawaf_educational_data/' + char).once('value').then(snap => {
-        let words = snap.val() || masterDB[char] || Array(18).fill("");
-        render(words);
-    });
-}
-
-function render(words) {
-    for (let i = 1; i <= 18; i++) {
-        const td = document.getElementById('td' + i);
-        // مربع كتابة (input) ومربع عرض (div)
-        td.innerHTML = `
-            <input type="text" class="input-box" value="${words[i-1] || ''}" oninput="applyColor(this)" onblur="applyColor(this)">
-            <div class="display-box"></div>
-        `;
-        applyColor(td.querySelector('.input-box'));
+    // عندما تضغط على المربع لتكتب
+    function showInput(input) {
+        input.style.opacity = "1";
+        input.nextElementSibling.style.display = "none";
     }
-}
 
-function applyColor(inputEl) {
-    const displayBox = inputEl.nextElementSibling;
-    const char = document.getElementById('charSelector').value;
-    let text = inputEl.value;
-    
-    let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
-    const regex = new RegExp(`(${p}[\u064B-\u0652]?)`, 'g');
-    
-    // وضع النص الملون في صندوق العرض بالخلف
-    displayBox.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
-    
-    // جعل نص الـ input شفافاً لكي يظهر التلوين من خلفه
-    inputEl.style.color = "transparent";
-    inputEl.style.caretColor = "black"; // إبقاء المؤشر مرئياً
-}
+    // عندما تخرج من المربع (ينتهي التعديل)
+    function showDisplay(input) {
+        if (input.value.trim() === "") return;
+        
+        const display = input.nextElementSibling;
+        const char = document.getElementById('mainChar').value;
+        
+        // تجهيز شكل الحرف للبحث (مثل الألف والهاء)
+        let pattern = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
+        const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
 
-function applyColorToAll() {
-    document.querySelectorAll('.input-box').forEach(applyColor);
-}
+        // تطبيق التلوين
+        display.innerHTML = input.value.replace(regex, `<span class="hl">$1</span>`);
+        
+        // إخفاء المربع وإظهار النسخة الملونة
+        input.style.opacity = "0";
+        display.style.display = "block";
+    }
 
-function saveData() {
-    const char = document.getElementById('charSelector').value;
-    const words = Array.from(document.querySelectorAll('.input-box')).map(i => i.value);
-    db.ref('nawaf_educational_data/' + char).set(words).then(() => {
-        alert("تم الحفظ بنجاح! ✅");
-    });
-}
+    function applyColoring() {
+        const inputs = document.querySelectorAll('.word-input');
+        inputs.forEach(input => showDisplay(input));
+    }
+
+    function clearAndRefresh() {
+        const inputs = document.querySelectorAll('.word-input');
+        inputs.forEach(input => {
+            input.value = "";
+            input.style.opacity = "1";
+            input.nextElementSibling.style.display = "none";
+        });
+    }
+
+    init();
 </script>
+
 </body>
 </html>
