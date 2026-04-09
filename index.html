@@ -2,25 +2,24 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة السحابي - نواف</title>
-    
+    <title>منصة نواف - الكلمات الذكية</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --main-red: #e63946; --dark-blue: #2c3e50; }
         body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; }
-        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
+        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; text-align: center; }
         .status-bar { background: #34495e; color: #fff; padding: 8px; font-size: 14px; text-align: center; }
         .controls { padding: 15px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; }
         select { font-size: 22px; padding: 5px 20px; border-radius: 8px; border: 2px solid var(--main-red); font-weight: bold; }
         .btn-save { background: #27ae60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-right: 10px; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ccc; height: 110px; font-size: 75px; font-weight: bold; text-align: center; }
+        td { border: 1px solid #ccc; height: 115px; font-size: 75px; font-weight: bold; text-align: center; }
         .hl { color: var(--main-red); display: inline; }
-        .side { width: 110px; font-size: 18px; background: var(--dark-blue); color: white; }
-        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 110px; }
+        .side { width: 120px; font-size: 18px; background: var(--dark-blue); color: white; }
+        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 115px; white-space: nowrap; }
         .r1 { background: #fff5f5; } .r2 { background: #fffaf0; } .r3 { background: #f0fff4; }
         .r4 { background: #ebf8ff; } .r5 { background: #faf5ff; } .r6 { background: #fff5f7; }
     </style>
@@ -28,13 +27,14 @@
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نواف - النسخة السحابية ☁️</div>
-    <div id="status" class="status-bar">جاري الاتصال...</div>
+    <div class="header">مدرسة نواف - كلمات آلية وسحابية 🌟</div>
+    <div id="status" class="status-bar">جاري الاتصال بالسحابة...</div>
     
     <div class="controls">
-        <select id="charSelector" onchange="fetchData()">
+        <label style="font-size: 18px; font-weight: bold;">اختر الحرف: </label>
+        <select id="charSelector" onchange="loadData()">
             </select>
-        <button class="btn-save" onclick="uploadData()">حفظ التعديلات ✅</button>
+        <button class="btn-save" onclick="uploadData()">حفظ تعديلاتي في السحابة 💾</button>
     </div>
 
     <table>
@@ -48,7 +48,7 @@
 </div>
 
 <script>
-// ضع بيانات Firebase الخاصة بك هنا
+// --- إعدادات Firebase (يجب وضع بياناتك هنا) ---
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -62,37 +62,49 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// --- مكتبة الكلمات الآلية التي أنشأتها لك ---
+const autoWordsDB = {
+    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِرَمِ","آدَمُ","آكَلَ","آخَرُ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيَادُ","إِيهِ"],
+    "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُهِتَ","بُورِكَ","بِحَارُ","بِقَاعُ","بِلادُ","بَارَ","بَاعَ","بَانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
+    "ت": ["تَرَكَ","تَبِعَ","تَمَّ","تُبِعَ","تُلِيَ","تُركَ","تِينِ","تِمْسِ","تِقْنِ","تَابَ","تَاقَ","تَاجُ","تُوبُ","تُوتُ","تُورُ","تِينُ","تِيهُ","يَتِيمُ"],
+    "ص": ["صَبَرَ","رَصَدَ","صَدَرَ","نَصَرَ","بَصَلُ","بَصَرُ","نُصِرَ","نُصِبَ","صَادَ","صَامَ","صُوصُ","صَالَ","صَبْرُ","مِصْرُ","نَصْرُ","رَصَدُ","رَصِيدُ","مُصَابُ"],
+    // التطبيق سيعمل مع كل الحروف، وإذا لم يجد حرفاً سيضع كلمات عامة
+};
+
 const allChars = "أبتثجحخدذرزمسشصضطظعغفقكلمنهـوي";
 
-// كلمات افتراضية لكي لا يظهر الجدول فارغاً أبداً
-const defaultWords = ["صَبَرَ","رَصَدَ","صَدَرَ","نَصَرَ","بَصَلُ","بَصَرُ","نُصِرَ","نُصِبَ","صَادَ","صَامَ","صُوصُ","صَالَ","صَبْرُ","مِصْرُ","نَصْرُ","رَصَدُ","رَصِيدُ","مُصَابُ"];
-
 window.onload = function() {
-    const sel = document.getElementById('charSelector');
+    const sel = document.getElemByI('charSelector'); // تصحيح بسيط في التسمية
+    const charSelect = document.getElementById('charSelector');
     for (let c of allChars) {
         let opt = document.createElement('option');
         opt.value = c; opt.text = c;
         if(c === "ص") opt.selected = true;
-        sel.add(opt);
+        charSelect.add(opt);
     }
-    fetchData();
+    loadData();
 };
 
-function fetchData() {
+function loadData() {
     const char = document.getElementById('charSelector').value;
     const status = document.getElementById('status');
-    status.innerText = "⏳ جاري البحث عن كلمات حرف (" + char + ")...";
+    status.innerText = "⏳ جاري فحص السحابة لحرف (" + char + ")...";
     
     database.ref('nawaf_educational_data/' + char).once('value').then((snapshot) => {
-        // إذا المسار فارغ في Firebase، استخدم الكلمات الافتراضية
-        const words = snapshot.val() || defaultWords;
+        let words;
+        if (snapshot.exists()) {
+            words = snapshot.val(); // إذا وجدت تعديلاتك في السحابة، استخدمها
+            status.innerText = "✅ تم تحميل تعديلاتك الخاصة من السحابة";
+        } else {
+            words = autoWordsDB[char] || ["كَتَبَ","دَرَسَ","قَرَأَ","كُتِبَ","رُسِمَ","نُصِرَ","شَرِبَ","سَمِعَ","لَعِبَ","قَالَ","نَامَ","بَاعَ","يَقُومُ","نَصُومُ","تَزُورُ","سَعِيدُ","كَرِيمُ","نَبِيلُ"];
+            status.innerText = "🤖 تم تعبئة الكلمات آلياً (لا توجد تعديلات سحابية بعد)";
+        }
         
         for (let i = 1; i <= 18; i++) {
             const cell = document.getElementById('td' + i);
             cell.innerHTML = `<div contenteditable="true" class="editable" oninput="applyColor(this)">${words[i-1] || ''}</div>`;
             applyColor(cell.firstChild);
         }
-        status.innerText = snapshot.val() ? "✅ تم التحميل من السحابة" : "⚠️ تم استخدام الكلمات الافتراضية (لم يتم الحفظ بعد)";
     });
 }
 
@@ -103,10 +115,10 @@ function uploadData() {
         words.push(document.getElementById('td' + i).innerText);
     }
     
-    document.getElementById('status').innerText = "📤 جاري الحفظ...";
+    document.getElementById('status').innerText = "📤 جاري حفظ تعديلاتك في السحابة...";
     database.ref('nawaf_educational_data/' + char).set(words).then(() => {
-        document.getElementById('status').innerText = "🚀 تم الحفظ بنجاح!";
-        alert("تم الحفظ في السحابة!");
+        document.getElementById('status').innerText = "🚀 تم الحفظ! ستظهر هذه الكلمات دائماً لهذا الحرف.";
+        alert("تم الحفظ بنجاح!");
     });
 }
 
@@ -116,10 +128,9 @@ function applyColor(el) {
     let pattern = (activeChar === "أ") ? "[أإآا]" : (activeChar === "هـ") ? "[هـه]" : activeChar;
     const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
     
-    // تلوين بدون فقدان التركيز
     el.innerHTML = content.replace(regex, `<span class="hl">$1</span>`);
     
-    // تثبيت المؤشر في النهاية
+    // ضبط المؤشر في النهاية
     const range = document.createRange();
     const sel = window.getSelection();
     range.selectNodeContents(el);
