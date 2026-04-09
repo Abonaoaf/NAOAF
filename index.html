@@ -2,49 +2,51 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب نواف - بسيط وذكي</title>
+    <title>مدرب نواف الذكي - مع شريط الحركات</title>
     
     <style>
-        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
-        .container { background: white; max-width: 900px; margin: auto; border: 5px solid #2c3e50; border-radius: 15px; overflow: hidden; }
-        .header { background: #e63946; color: white; padding: 15px; font-size: 25px; font-weight: bold; }
-        .controls { padding: 15px; background: #eee; border-bottom: 2px solid #ddd; }
+        :root { --main-red: #e63946; --dark-blue: #2c3e50; }
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
+        .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 15px; overflow: hidden; }
+        .header { background: var(--main-red); color: white; padding: 10px; font-size: 24px; font-weight: bold; }
         
-        select { font-size: 20px; padding: 10px; border-radius: 5px; border: 2px solid #e63946; }
-        .btn { padding: 10px 20px; font-size: 18px; cursor: pointer; border-radius: 8px; border: none; color: white; font-weight: bold; margin: 5px; }
+        .controls { padding: 10px; background: #eee; border-bottom: 2px solid #ddd; display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .harakat-bar { background: #fff; padding: 10px; border-bottom: 2px solid #ddd; display: flex; justify-content: center; gap: 15px; }
+        
+        .h-btn { background: #f8f9fa; border: 2px solid var(--dark-blue); border-radius: 8px; padding: 5px 15px; font-size: 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .h-btn:hover { background: var(--main-red); color: white; }
+        
+        select { font-size: 20px; padding: 5px; border-radius: 5px; border: 2px solid var(--main-red); }
+        .btn { padding: 8px 15px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; color: white; font-weight: bold; }
         .btn-save { background: #27ae60; }
-        .btn-color { background: #2c3e50; }
+        .btn-color { background: var(--dark-blue); }
 
         table { width: 100%; border-collapse: collapse; }
-        td { border: 1px solid #ccc; height: 100px; position: relative; width: 25%; }
+        td { border: 1px solid #ccc; height: 90px; position: relative; width: 28%; }
         
-        /* المربع الذي تكتب فيه */
         .word-input {
-            width: 100%; height: 100%;
-            border: none; outline: none;
-            text-align: center; font-size: 60px; font-weight: bold;
-            background: transparent; display: block;
+            width: 100%; height: 100%; border: none; outline: none;
+            text-align: center; font-size: 55px; font-weight: bold;
+            background: transparent; display: block; position: relative; z-index: 2;
         }
         
-        /* طبقة التلوين */
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* تجعل الضغط يمر للمربع اللي تحته */
-            display: none; /* تختفي وقت الكتابة */
-            font-size: 60px; font-weight: bold; line-height: 100px;
+            pointer-events: none; display: none; font-size: 55px; font-weight: bold; line-height: 90px; z-index: 1;
         }
 
-        .hl { color: #e63946; } /* لون الحرف أحمر */
-        .side { background: #2c3e50; color: white; font-size: 18px; width: 100px; }
+        .hl { color: var(--main-red); }
+        .side { background: var(--dark-blue); color: white; font-size: 18px; width: 110px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة البطل نـواف 🌟</div>
+    <div class="header">بطل القراءة نـواف - لوحة التحريك الذكية ⌨️</div>
+    
     <div class="controls">
-        <label>اختر الحرف: </label>
-        <select id="mainChar" onchange="clearAndRefresh()">
+        <label>الحرف الأساسي: </label>
+        <select id="mainChar" onchange="resetAll()">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -59,15 +61,18 @@
         <button class="btn btn-color" onclick="applyColoring()">تلوين الحروف 🖌️</button>
     </div>
 
+    <div class="harakat-bar">
+        <button class="h-btn" onclick="addHarakah('َ')"> َ </button> <button class="h-btn" onclick="addHarakah('ُ')"> ُ </button> <button class="h-btn" onclick="addHarakah('ِ')"> ِ </button> <button class="h-btn" onclick="addHarakah('ْ')"> ْ </button> <button class="h-btn" onclick="addHarakah('ً')"> ً </button> </div>
+
     <table>
-        <tbody id="tableBody">
-            </tbody>
+        <tbody id="tableBody"></tbody>
     </table>
 </div>
 
 <script>
     const rows = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
-    
+    let lastFocusedInput = null;
+
     function init() {
         const body = document.getElementById('tableBody');
         body.innerHTML = "";
@@ -75,7 +80,7 @@
             let rowHtml = `<tr><td class="side">${r}</td>`;
             for (let i = 0; i < 3; i++) {
                 rowHtml += `<td>
-                    <input type="text" class="word-input" onfocus="showInput(this)" onblur="showDisplay(this)">
+                    <input type="text" class="word-input" onfocus="handleFocus(this)" onblur="showDisplay(this)">
                     <div class="word-display"></div>
                 </td>`;
             }
@@ -84,39 +89,50 @@
         }
     }
 
-    // عندما تضغط على المربع لتكتب
-    function showInput(input) {
+    function handleFocus(input) {
+        lastFocusedInput = input;
         input.style.opacity = "1";
         input.nextElementSibling.style.display = "none";
+        input.style.color = "black";
     }
 
-    // عندما تخرج من المربع (ينتهي التعديل)
+    function addHarakah(h) {
+        if (lastFocusedInput) {
+            const val = lastFocusedInput.value;
+            const start = lastFocusedInput.selectionStart;
+            const end = lastFocusedInput.selectionEnd;
+            
+            // إضافة الحركة في مكان المؤشر
+            lastFocusedInput.value = val.slice(0, start) + h + val.slice(end);
+            
+            // إعادة المؤشر لمكانه بعد الحركة
+            lastFocusedInput.focus();
+            lastFocusedInput.setSelectionRange(start + 1, start + 1);
+        } else {
+            alert("يرجى الضغط داخل أحد المربعات أولاً");
+        }
+    }
+
     function showDisplay(input) {
         if (input.value.trim() === "") return;
-        
         const display = input.nextElementSibling;
         const char = document.getElementById('mainChar').value;
         
-        // تجهيز شكل الحرف للبحث (مثل الألف والهاء)
         let pattern = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
+        // Regex يلون الحرف وأي حركة تتبعه (فتحة، ضمة، إلخ)
         const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
 
-        // تطبيق التلوين
         display.innerHTML = input.value.replace(regex, `<span class="hl">$1</span>`);
-        
-        // إخفاء المربع وإظهار النسخة الملونة
         input.style.opacity = "0";
         display.style.display = "block";
     }
 
     function applyColoring() {
-        const inputs = document.querySelectorAll('.word-input');
-        inputs.forEach(input => showDisplay(input));
+        document.querySelectorAll('.word-input').forEach(showDisplay);
     }
 
-    function clearAndRefresh() {
-        const inputs = document.querySelectorAll('.word-input');
-        inputs.forEach(input => {
+    function resetAll() {
+        document.querySelectorAll('.word-input').forEach(input => {
             input.value = "";
             input.style.opacity = "1";
             input.nextElementSibling.style.display = "none";
@@ -125,6 +141,5 @@
 
     init();
 </script>
-
 </body>
 </html>
