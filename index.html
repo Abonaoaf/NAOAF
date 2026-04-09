@@ -3,207 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُولّد الأنشطة القرائية - عبدالعزيز</title>
+    <title>نشاط القراءة - عبد العزيز</title>
     <style>
-        /* استيراد خطوط عربية قوية وواضحة */
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Amiri:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
         
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background: #f0f0f0; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px;
+        body { font-family: 'Cairo', sans-serif; background: #eee; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 600px; }
+        
+        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #007bff; margin: 5px; cursor: pointer; }
+        button { background: #007bff; color: white; border: none; }
+
+        .paper { 
+            background: white; width: 210mm; min-height: 280mm; padding: 10mm; 
+            border: 2px solid #000; box-sizing: border-box; display: flex; flex-direction: column;
         }
 
-        /* لوحة التحكم */
-        .no-print {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
+        .title-box { border: 3px solid #000; padding: 10px; text-align: center; margin-bottom: 15px; font-size: 2rem; font-weight: 900; }
+
+        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; }
+        .main-table td { border: 2px solid #000; height: 110px; text-align: center; vertical-align: middle; font-size: 3rem; font-weight: 900; overflow: hidden; }
+
+        /* تعديل عمود المستويات ليظهر النص بشكل صحيح */
+        .level-cell { 
+            width: 60px; font-size: 1.2rem; font-weight: bold; background: #f8f9fa;
+            text-align: center; vertical-align: middle; border: 2px solid #000;
         }
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
 
-        select, button {
-            font-family: 'Cairo';
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            border: 2px solid #0984e3;
-            cursor: pointer;
-            margin: 5px;
-        }
+        .highlight { color: #d32f2f; }
 
-        button { background: #0984e3; color: white; border: none; }
+        /* ألوان المستويات */
+        .bg-1 { background-color: #fff9c4; } .bg-2 { background-color: #e3f2fd; }
+        .bg-3 { background-color: #f1f8e9; } .bg-4 { background-color: #fce4ec; }
+        .bg-5 { background-color: #ede7f6; } .bg-6 { background-color: #e0f2f1; }
 
-        /* ورقة النشاط */
-        .a4-paper {
-            background: white;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 15mm;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            border: 3px solid #000;
-            box-sizing: border-box;
-        }
-
-        .header-box {
-            border: 4px double #000;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header-box h1 { margin: 0; font-size: 2.5rem; color: #000; }
-
-        /* الجدول */
-        .content-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed; /* لتساوي عرض المربعات */
-        }
-
-        .content-table td {
-            border: 2px solid #000;
-            height: 120px;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 3.2rem; /* حجم كبير وواضح للطفل */
-            font-weight: 900;
-            direction: rtl;
-            white-space: nowrap;
-        }
-
-        /* عمود المستويات في اليمين */
-        .level-header {
-            width: 50px;
-            font-size: 1.1rem;
-            background: #f9f9f9;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            padding: 10px 0;
-            color: #333;
-        }
-
-        /* تلوين الحرف المستهدف */
-        .target-char { color: #e74c3c; }
-
-        /* ألوان الأقسام الجانبية */
-        .color-1 { background-color: #fff9c4 !important; }
-        .color-2 { background-color: #e3f2fd !important; }
-        .color-3 { background-color: #f1f8e9 !important; }
-        .color-4 { background-color: #fce4ec !important; }
-        .color-5 { background-color: #ede7f6 !important; }
-        .color-6 { background-color: #e0f2f1 !important; }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 1.6rem;
-            color: #d32f2f;
-            font-weight: bold;
-            text-decoration: underline;
-        }
+        .footer { text-align: center; margin-top: auto; padding: 20px; color: #d32f2f; font-weight: 900; font-size: 1.5rem; text-decoration: underline; }
 
         @media print {
             .no-print { display: none; }
             body { background: white; padding: 0; }
-            .a4-paper { border: none; box-shadow: none; width: 100%; margin: 0; }
+            .paper { box-shadow: none; border: 2px solid #000; width: 100%; margin: 0; }
         }
     </style>
 </head>
 <body>
 
 <div class="no-print">
-    <h3>🎓 مولد بطاقات القراءة الذكي</h3>
-    <label>اختر الحرف لإنشاء النشاط:</label>
-    <select id="letterDropdown" onchange="generateActivity()">
-        </select>
-    <button onclick="window.print()">🖨️ طباعة النشاط</button>
+    <strong>🎓 اختر الحرف لتوليد النشاط:</strong><br>
+    <select id="letterPicker" onchange="render()"></select>
+    <button onclick="window.print()">🖨️ طباعة</button>
 </div>
 
-<div class="a4-paper">
-    <div class="header-box">
-        <h1>نشاط قرائي (( حرف / <span id="charTitle">ب</span> ))</h1>
-    </div>
-
-    <table class="content-table" id="activityTable">
-        </table>
-
+<div class="paper">
+    <div class="title-box">نشاط قرائي (( حرف / <span id="charH">ب</span> ))</div>
+    <table class="main-table" id="table"></table>
     <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
 
 <script>
-    const letters = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    const categories = [
-        { name: "كلمات مفتوحة", color: "color-1" },
-        { name: "كلمات مضمومة", color: "color-2" },
-        { name: "كلمات مكسورة", color: "color-3" },
-        { name: "مد بالألف", color: "color-4" },
-        { name: "مد بالواو", color: "color-5" },
-        { name: "مد بالياء", color: "color-6" }
+    const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
+    const levels = [
+        { t: "كلمات مفتوحة", c: "bg-1" }, { t: "كلمات مضمومة", c: "bg-2" },
+        { t: "كلمات مكسورة", c: "bg-3" }, { t: "مد بالألف", c: "bg-4" },
+        { t: "مد بالواو", c: "bg-5" }, { t: "مد بالياء", c: "bg-6" }
     ];
 
-    // دالة لتوليد كلمات تلقائية (يمكنك تعديلها لاحقاً بقائمة حقيقية)
-    function getWords(c) {
+    function getWords(h) {
         return {
-            "كلمات مفتوحة": [`${c}َـرَدَ`, `رَ${c}َـدَ`, `نَـصَـ${c}َ`],
-            "كلمات مضمومة": [`${c}ُـصِرَ`, `بَـصَـ${c}ُ`, `نُـ${c}ِـبَ`],
-            "كلمات مكسورة": [`${c}ِـرَام`, `لَـ${c}ِـسَ`, `بِـ${c}ِـر`],
-            "مد بالألف": [`${c}َـادَ`, `صَـ${c}ِـر`, `${charTitle}َـامَ`],
-            "مد بالواو": [`${c}ُـوص`, `نَـصُـ${c}ُ`, `صُـ${c}ُـوف`],
-            "مد بالياء": [`رَ${c}ِـيد`, `نَـصِـ${c}ُ`, `فَـصِـ${c}ـيل`]
+            "كلمات مفتوحة": [`${h}َـرَدَ`, `رَ${h}َـدَ`, `نَـصَـ${h}َ`],
+            "كلمات مضمومة": [`${h}ُـصِرَ`, `بَـصَـ${h}ُ`, `نُـ${h}ِـبَ`],
+            "كلمات مكسورة": [`${h}ِـرَام`, `لَـ${h}ِـسَ`, `بِـ${h}ِـر`],
+            "مد بالألف": [`${h}َـادَ`, `صَـ${h}ِـر`, `${h}َـامَ`],
+            "مد بالواو": [`${h}ُـوص`, `نَـصُـ${h}ُ`, `صُـ${h}ُـوف`],
+            "مد بالياء": [`رَ${h}ِـيد`, `نَـصِـ${h}ُ`, `فَـصِـ${h}ـيل`]
         };
     }
 
-    // تعبئة القائمة
-    const select = document.getElementById('letterDropdown');
-    letters.split('').forEach(l => {
-        let op = document.createElement('option');
-        op.value = l; op.text = "حرف " + l;
-        select.appendChild(op);
+    const sel = document.getElementById('letterPicker');
+    alphabet.split('').forEach(l => {
+        let o = document.createElement('option'); o.value = l; o.text = "حرف " + l;
+        sel.appendChild(o);
     });
 
-    function generateActivity() {
-        const char = select.value;
-        document.getElementById('charTitle').innerText = char;
-        const table = document.getElementById('activityTable');
+    function render() {
+        const h = sel.value;
+        document.getElementById('charH').innerText = h;
+        const table = document.getElementById('table');
         table.innerHTML = "";
+        const data = getWords(h);
 
-        const wordsMap = getWords(char);
-
-        categories.forEach(cat => {
+        levels.forEach(lvl => {
             const row = document.createElement('tr');
             
-            // 1. عمود المستوى (الآن في اليمين)
-            const sideCell = document.createElement('td');
-            sideCell.className = `level-header ${cat.color}`;
-            sideCell.innerText = cat.name;
-            row.appendChild(sideCell);
-
-            // 2. الكلمات الثلاث
-            const words = wordsMap[cat.name];
-            words.reverse().forEach(word => { // reverse لجعل الترتيب من اليمين لليسار برمجياً
+            // إضافة الكلمات أولاً (3 خانات)
+            data[lvl.t].forEach(word => {
                 const td = document.createElement('td');
-                // تلوين الحرف مع الحفاظ على الاتصال
-                const colored = word.replace(new RegExp(char, 'g'), `<span class="target-char">${char}</span>`);
-                td.innerHTML = colored;
+                // الإصلاح هنا: استخدام replace مع HTML صحيح
+                td.innerHTML = word.split(h).join(`<span class="highlight">${h}</span>`);
                 row.appendChild(td);
             });
+
+            // إضافة اسم المستوى في الجهة اليسرى (أو اليمنى حسب الترتيب)
+            const lTd = document.createElement('td');
+            lTd.className = `level-cell ${lvl.c}`;
+            lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
+            row.appendChild(lTd);
 
             table.appendChild(row);
         });
     }
-
-    // التشغيل الافتراضي
-    generateActivity();
+    render();
 </script>
-
 </body>
 </html>
