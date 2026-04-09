@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - الإصدار النهائي المستقر</title>
+    <title>منصة نواف - التلوين الفوري</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -12,44 +12,47 @@
         .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
         .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
         
-        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; }
+        /* شريط الحركات */
+        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 10px; border-bottom: 3px solid #DDD; }
         .h-btn { 
             background: #FFF; border: 3px solid var(--main-red); border-radius: 12px; 
-            width: 60px; height: 60px; font-size: 40px; font-weight: bold; color: var(--main-red);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            width: 65px; height: 65px; font-size: 45px; font-weight: bold; color: var(--main-red);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s;
         }
+        .h-btn:active { background: #ffebeb; transform: scale(0.9); }
 
         .controls { padding: 15px; background: #EEE; display: flex; justify-content: center; gap: 15px; align-items: center; }
-        select { font-size: 20px; padding: 5px; font-weight: bold; }
-
-        table { width: 100%; border-collapse: collapse; }
-        td { border: 2px solid #CCC; height: 100px; position: relative; width: 28%; background: white; }
         
+        table { width: 100%; border-collapse: collapse; }
+        td { border: 2px solid #CCC; height: 110px; position: relative; width: 28%; background: white; }
+        
+        /* مربع الكتابة الشفاف ليظهر التلوين من تحته */
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 55px; font-weight: bold;
+            text-align: center; font-size: 65px; font-weight: bold;
             background: transparent; position: relative; z-index: 2;
+            color: transparent; caret-color: black; /* إخفاء النص الأصلي وإظهار المؤشر فقط */
         }
         
+        /* طبقة العرض الملونة - تظهر النص بالأسود والحرف المختار بالأحمر */
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; font-size: 55px; font-weight: bold; 
-            line-height: 100px; color: transparent;
+            pointer-events: none; z-index: 1; font-size: 65px; font-weight: bold; 
+            line-height: 110px; color: black; display: block;
         }
 
-        .hl { color: var(--main-red) !important; }
+        .hl { color: var(--main-red) !important; } /* لون الحرف مع حركته */
         .side { background: var(--dark-blue); color: white; font-size: 20px; width: 130px; font-weight: bold; }
-        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف - لوحة القراءة الذكية 🚀</div>
+    <div class="header">مدرسة نـواف - لوحة الحركات الذكية 🎨</div>
 
     <div class="controls">
-        <label>الحرف:</label>
-        <select id="mainChar" onchange="loadFromCloud()">
+        <select id="mainChar" onchange="loadFromCloud()" style="font-size: 20px; padding: 5px;">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -61,7 +64,7 @@
             <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
             <option value="ي">ي</option>
         </select>
-        <button class="btn-save" onclick="saveToCloud()">حفظ في السحابة 💾</button>
+        <button class="btn-save" onclick="saveToCloud()">حفظ السحابة 💾</button>
     </div>
 
     <div class="harakat-bar">
@@ -86,6 +89,7 @@
 </div>
 
 <script>
+    // تكوين Firebase
     const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
     try { firebase.initializeApp(firebaseConfig); } catch(e){}
     const database = firebase.database();
@@ -97,8 +101,9 @@
         let val = lastFocusedInput.value;
         let pos = lastFocusedInput.selectionStart;
 
-        // مسح الحركة القديمة لو وجدت قبل إضافة الجديدة
-        if (/[\u064B-\u0652]/.test(val.charAt(pos - 1))) {
+        // استبدال الحركة السابقة فوراً لتجنب التكرار
+        let prevChar = val.charAt(pos - 1);
+        if (/[\u064B-\u0652]/.test(prevChar)) {
             val = val.slice(0, pos - 1) + val.slice(pos);
             pos--;
         }
@@ -106,6 +111,8 @@
         lastFocusedInput.value = val.slice(0, pos) + h + val.slice(pos);
         lastFocusedInput.focus();
         lastFocusedInput.setSelectionRange(pos + 1, pos + 1);
+        
+        // تحديث العرض فوراً ليظهر الحرف مع حركته بالأحمر
         showDisplay(lastFocusedInput);
     }
 
@@ -114,21 +121,20 @@
         const char = document.getElementById('mainChar').value;
         const text = input.value;
         
-        if (!text.trim()) { input.style.color = "black"; display.innerHTML = ""; return; }
+        if (!text.trim()) { display.innerHTML = ""; return; }
 
+        // البحث عن الحرف المختار وأي حركات ملتصقة به (بما فيها الشدة والتنوين)
         let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
         const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
 
+        // تطبيق التلوين الأحمر الصريح
         display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
-        input.style.color = "transparent";
-        input.style.caretColor = "black";
-        display.style.color = "black";
     }
 
     function saveToCloud() {
         const char = document.getElementById('mainChar').value;
         const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
-        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ بنجاح ✅"));
+        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ ✅"));
     }
 
     function loadFromCloud() {
