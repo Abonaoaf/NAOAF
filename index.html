@@ -2,77 +2,111 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة الصغير</title>
+    <title>نشاط قرائي تفاعلي</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; text-align: center; padding: 20px; }
-        .container { background: white; max-width: 800px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        select { font-size: 1.2rem; padding: 10px; border-radius: 8px; border: 2px solid #007bff; margin-bottom: 20px; width: 200px; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-        .card { border: 2px solid #e0e0e0; border-radius: 10px; padding: 10px; background: #fff; }
-        .card h3 { color: #007bff; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .word-list { list-style: none; padding: 0; }
-        .word-item { font-size: 1.8rem; margin: 10px 0; cursor: pointer; border-bottom: 1px dashed #ccc; padding: 5px; }
-        .char { color: black; }
-        .mark { color: red; font-weight: bold; }
-        .instruction { font-size: 0.9rem; color: #666; margin-top: 10px; }
+        :root {
+            --bg-color: #f9f9f9;
+            --border-color: #333;
+        }
+        body { font-family: 'Arial', sans-serif; background-color: #eee; display: flex; justify-content: center; padding: 20px; }
+        .page-container { background: white; width: 90%; max-width: 900px; border: 4px double var(--border-color); padding: 10px; position: relative; }
+        
+        .header { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { border: 1px solid var(--border-color); height: 100px; text-align: center; vertical-align: middle; position: relative; }
+        
+        /* العمود الجانبي (المستويات) */
+        .side-label { width: 60px; font-size: 16px; font-weight: bold; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
+        
+        /* تلوين الصفوف حسب الصورة */
+        .row-fatha { background-color: #fffde7; } /* أصفر فاتح */
+        .row-damma { background-color: #e3f2fd; } /* أزرق فاتح */
+        .row-kasra { background-color: #fce4ec; } /* وردي فاتح */
+        .row-alf { background-color: #e8f5e9; }   /* أخضر فاتح */
+        .row-waw { background-color: #f3e5f5; }   /* بنفسجي فاتح */
+        .row-yaa { background-color: #fff3e0; }   /* برتقالي فاتح */
+
+        .word-box { font-size: 45px; font-weight: bold; color: black; outline: none; cursor: edit; }
+        .mark { color: red; } /* لون الحركة */
+
+        .controls { margin-bottom: 20px; text-align: center; background: #fff; padding: 15px; border-radius: 10px; }
+        select { font-size: 18px; padding: 5px 20px; border-radius: 5px; cursor: pointer; }
+
+        @media print { .controls { display: none; } body { background: white; } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>مرحباً بطل القراءة الصغير 🌟</h1>
-    <p>اختر الحرف لتبدأ التدريب:</p>
-    
-    <select id="letterSelect" onchange="updateWords()">
-        <option value="">-- اختر حرفاً --</option>
-        <option value="ب">حرف الباء (ب)</option>
-        <option value="ت">حرف التاء (ت)</option>
-        <option value="ث">حرف الثاء (ث)</option>
-        <option value="ج">حرف الجيم (ج)</option>
+<div class="main-wrapper">
+    <div class="controls">
+        <label>اختر الحرف للتدريب: </label>
+        <select id="letterPicker" onchange="renderTable()">
+            <option value="ص">حرف الصاد (ص)</option>
+            <option value="ب">حرف الباء (ب)</option>
+            <option value="ت">حرف التاء (ت)</option>
+            <option value="ر">حرف الراء (ر)</option>
+            <option value="د">حرف الدال (د)</option>
         </select>
+        <p><small>إرشادات: اضغط على أي كلمة لتعديلها يدوياً. يمكن طباعة الصفحة كنشاط ورقي.</small></p>
+    </div>
 
-    <div id="displayArea" class="grid-container" style="display:none;">
+    <div class="page-container">
+        <div class="header">نشاط قرائي (( حرف <span id="currentLetter">ص</span> ))</div>
+        
+        <table>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px; color: red; font-weight: bold; text-decoration: underline;">
+            نقرأ كثيراً حتى نقرأ سريعاً بإذن الله
         </div>
-
-    <p class="instruction">* يمكنك الضغط على أي كلمة لتعديلها يدوياً.</p>
+    </div>
 </div>
 
 <script>
-    const types = [
-        { title: "بالفتحة ◌َ", suffix: "َ", words: ["ـَـ", "ـَـ", "ـَـ"] },
-        { title: "بالضمة ◌ُ", suffix: "ُ", words: ["ـُـ", "ـُـ", "ـُـ"] },
-        { title: "بالكسرة ◌ِ", suffix: "ِ", words: ["ـِـ", "ـِـ", "ـِـ"] },
-        { title: "مد بالألف ا", suffix: "ا", words: ["ـاـ", "ـاـ", "ـاـ"] },
-        { title: "مد بالواو و", suffix: "و", words: ["ـوـ", "ـوـ", "ـوـ"] },
-        { title: "مد بالياء ي", suffix: "ي", words: ["ـيـ", "ـيـ", "ـيـ"] }
+    const levels = [
+        { id: 'fatha', title: 'بالفتحة', mark: 'َ', class: 'row-fatha' },
+        { id: 'damma', title: 'بالضمة', mark: 'ُ', class: 'row-damma' },
+        { id: 'kasra', title: 'بالكسرة', mark: 'ِ', class: 'row-kasra' },
+        { id: 'alf', title: 'بالمد بالألف', mark: 'ا', class: 'row-alf' },
+        { id: 'waw', title: 'بالمد بالواو', mark: 'و', class: 'row-waw' },
+        { id: 'yaa', title: 'بالمد بالياء', mark: 'ي', class: 'row-yaa' }
     ];
 
-    function updateWords() {
-        const char = document.getElementById('letterSelect').value;
-        const area = document.getElementById('displayArea');
-        
-        if (!char) { area.style.display = 'none'; return; }
-        
-        area.innerHTML = '';
-        area.style.display = 'grid';
+    function renderTable() {
+        const letter = document.getElementById('letterPicker').value;
+        document.getElementById('currentLetter').innerText = letter;
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
 
-        types.forEach(type => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            let wordsHTML = `<ul class="word-list">`;
-            type.words.forEach(w => {
-                // هنا نقوم بوضع الحرف المختار مع الحركة المطلوبة
-                wordsHTML += `<li class="word-item" contenteditable="true">
-                                <span class="char">${char}</span><span class="mark">${type.suffix}</span><span class="char">...</span>
-                              </li>`;
-            });
-            wordsHTML += `</ul>`;
+        levels.forEach(level => {
+            const tr = document.createElement('tr');
+            tr.className = level.class;
 
-            card.innerHTML = `<h3>${type.title}</h3>${wordsHTML}`;
-            area.appendChild(card);
+            // 4 خلايا للكلمات
+            for (let i = 0; i < 4; i++) {
+                const td = document.createElement('td');
+                // بناء الكلمة: حرف بلون أسود + حركة بلون أحمر + حرفين (نقاط للتكملة)
+                td.innerHTML = `<div class="word-box" contenteditable="true">
+                                   <span>${letter}</span><span class="mark">${level.mark}</span><span>..</span>
+                                </div>`;
+                tr.appendChild(td);
+            }
+
+            // خلية العنوان الجانبي
+            const sideTd = document.createElement('td');
+            sideTd.className = 'side-label';
+            sideTd.innerText = level.title;
+            tr.appendChild(sideTd);
+
+            tbody.appendChild(tr);
         });
     }
+
+    // التشغيل الأول
+    renderTable();
 </script>
 
 </body>
