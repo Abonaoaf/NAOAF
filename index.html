@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نشاط القراءة - عبدالعزيز</title>
+    <title>نشاط القراءة الاحترافي</title>
     <style>
-        /* استخدام خطوط عربية رصينة تمنع التباعد */
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@900&display=swap');
+        /* استيراد خطوط عربية كلاسيكية عريضة */
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@900&family=Tajawal:wght@800&display=swap');
         
-        body { font-family: 'Cairo', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Tajawal', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
         .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 700px; }
         
-        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #27ae60; margin: 5px; cursor: pointer; }
+        select, button { font-family: 'Tajawal'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #27ae60; margin: 5px; cursor: pointer; font-weight: bold; }
         button { background: #27ae60; color: white; border: none; }
 
         .paper { 
@@ -20,44 +20,47 @@
             border: 2px solid #000; box-sizing: border-box; display: flex; flex-direction: column;
         }
 
-        .title-box { border: 2px solid #000; padding: 10px; text-align: center; margin-bottom: 15px; font-size: 2.2rem; font-weight: 900; }
+        .title-box { border: 2px solid #000; padding: 10px; text-align: center; margin-bottom: 15px; font-size: 2.5rem; font-weight: 900; }
 
         .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; }
         .main-table td { border: 2px solid #000; height: 110px; text-align: center; vertical-align: middle; position: relative; }
 
-        /* الكلمات مع معالجة المسافات */
+        /* سر الحل: منع المسافات تماماً باستخدام flex وتصفير التباعد */
         .word-container { 
-            font-family: 'Amiri', serif; /* خط الأميري ممتاز في تلاحم الحروف */
-            font-size: 3.8rem; 
+            font-family: 'Amiri', serif; 
+            font-size: 4.2rem; 
             font-weight: 700; 
             direction: rtl; 
-            line-height: 1.1; 
-            white-space: nowrap;
-            letter-spacing: -1px; /* تقريب الحروف من بعضها لإلغاء الفراغ */
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
         
-        .highlight { color: #d32f2f; display: inline-block; }
+        /* تلوين الحرف مع الحفاظ على الاتصال */
+        .highlight { color: #d32f2f; display: inline; }
 
         .edit-btn { 
-            position: absolute; top: 2px; right: 2px; font-size: 0.7rem; 
-            cursor: pointer; opacity: 0.3; padding: 5px;
+            position: absolute; top: 2px; right: 2px; font-size: 0.8rem; 
+            cursor: pointer; opacity: 0.2; padding: 5px; filter: grayscale(1);
         }
-        .edit-btn:hover { opacity: 1; }
+        .edit-btn:hover { opacity: 1; filter: none; }
 
         /* عمود اليمين */
         .level-cell { 
-            width: 50px; font-size: 1.1rem; font-weight: bold; background: #f9f9f9;
+            width: 50px; font-size: 1.2rem; font-weight: 900; background: #f9f9f9;
             text-align: center; vertical-align: middle; border: 2px solid #000;
         }
         .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
 
-        /* الألوان الجانبية */
-        .bg-1 { background-color: #fff9c4; } .bg-2 { background-color: #e3f2fd; }
-        .bg-3 { background-color: #f1f8e9; } .bg-4 { background-color: #fce4ec; }
-        .bg-5 { background-color: #ede7f6; } .bg-6 { background-color: #e0f2f1; }
+        /* ألوان الخلفيات مثل الصورة */
+        .bg-1 { background-color: #fffde7; } .bg-2 { background-color: #e3f2fd; }
+        .bg-3 { background-color: #fbe9e7; } .bg-4 { background-color: #f1f8e9; }
+        .bg-5 { background-color: #f3e5f5; } .bg-6 { background-color: #e0f2f1; }
 
-        .footer { text-align: center; margin-top: auto; padding: 10px; color: #d32f2f; font-weight: 900; font-size: 1.4rem; }
+        .footer { text-align: center; margin-top: auto; padding: 10px; color: #d32f2f; font-weight: 900; font-size: 1.6rem; border-top: 1px solid #eee; }
 
         @media print {
             .no-print, .edit-btn { display: none !important; }
@@ -69,13 +72,13 @@
 <body>
 
 <div class="no-print">
-    <strong>لوحة التحكم</strong><br>
+    <strong>لوحة التحكم الذكية</strong><br>
     <select id="letterPicker" onchange="resetAndRender()"></select>
-    <button onclick="window.print()">طباعة النشاط</button>
+    <button onclick="window.print()">🖨️ طباعة النشاط</button>
 </div>
 
 <div class="paper">
-    <div class="title-box">نشاط قرائي (( حرف / <span id="charH">أ</span> ))</div>
+    <div class="title-box">نشاط قرائي (( حرف / <span id="charH">ب</span> ))</div>
     <table class="main-table" id="table"></table>
     <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
@@ -83,36 +86,22 @@
 <script>
     const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
     const levels = [
-        { t: "كلمات مفتوحة", c: "bg-1" }, { t: "كلمات مضمومة", c: "bg-2" },
-        { t: "كلمات مكسورة", c: "bg-3" }, { t: "مد بالألف", c: "bg-4" },
-        { t: "مد بالواو", c: "bg-5" }, { t: "مد بالياء", c: "bg-6" }
+        { t: "المستوى الأول", c: "bg-1" }, { t: "المستوى الثاني", c: "bg-2" },
+        { t: "المستوى الثالث", c: "bg-3" }, { t: "المستوى الرابع", c: "bg-4" },
+        { t: "المستوى الخامس", c: "bg-5" }, { t: "المستوى السادس", c: "bg-6" }
     ];
 
     let customWords = {};
 
     function getDefaultWords(h) {
-        // كلمات مطورة تناسب طلبك وتدعم الحروف المتصلة
-        const base = {
-            'أ': {
-                "كلمات مفتوحة": ["أَكَلَ", "سَأَلَ", "قَرَأَ"],
-                "كلمات مضمومة": ["أُكِلَ", "سُئِلَ", "يقرأُ"],
-                "كلمات مكسورة": ["إِبلٌ", "رِئَة", "فِئَة"],
-                "مد بالألف": ["آدَم", "قُرْآن", "مرآة"],
-                "مد بالواو": ["أُولى", "شُؤُون", "رُؤُوس"],
-                "مد بالياء": ["أَيِـيم", "زَئِير", "رَئِيس"]
-            }
-        };
-        
-        if (base[h]) return base[h];
-        
-        // توليد افتراضي لباقي الحروف
+        // كلمات تحاكي الصورة الأولى تماماً
         return {
-            "كلمات مفتوحة": [`${h}َـرَدَ`, `رَ${h}َـدَ`, `دَرَسَ`],
-            "كلمات مضمومة": [`${h}ُـذِرَ`, `بُـ${h}ِـرَ`, `كُتُبُ`],
-            "كلمات مكسورة": [`${h}ِـرَام`, `بِـ${h}ـنت`, `لِبَاس`],
-            "مد بالألف": [`${h}َـادَ`, `بَـ${h}ـاب`, `صَادَ`],
-            "مد بالواو": [`${h}ُـوف`, `تُـ${h}ـوت`, `بُور`],
-            "مد بالياء": [`رَ${h}ِـيد`, `تِـ${h}ـين`, `فِيل`]
+            "المستوى الأول": [`صَ${h}َـرَ`, `رَ${h}َـدَ`, `نَـصَـ${h}َ`],
+            "المستوى الثاني": [`${h}َـصَـلُ`, `بَـ${h}َـرُ`, `نُـ${h}ِـبَ`],
+            "المستوى الثالث": [`صَـ${h}ـادَ`, `صَـ${h}ـامَ`, `صُـوص`],
+            "المستوى الرابع": [`صَـ${h}ـرُ`, `مِـ${h}ـرُ`, `رَصْـد`],
+            "المستوى الخامس": [`رَصِـيد`, `نَـصِـيب`, `نَصُـوم`],
+            "المستوى السادس": [`مُـصَـاب`, `مِـصْحَف`, `تَخْصِيص`]
         };
     }
 
@@ -124,13 +113,13 @@
 
     function resetAndRender() { customWords = {}; render(); }
 
-    function editWord(levelTitle, index) {
+    function editWord(lvlT, idx) {
         const char = sel.value;
-        const currentWords = customWords[levelTitle] || getDefaultWords(char)[levelTitle];
-        const newWord = prompt("تعديل الكلمة:", currentWords[index]);
+        const currentWords = customWords[lvlT] || getDefaultWords(char)[lvlT];
+        const newWord = prompt("تعديل الكلمة:", currentWords[idx]);
         if (newWord) {
-            if (!customWords[levelTitle]) customWords[levelTitle] = [...currentWords];
-            customWords[levelTitle][index] = newWord;
+            if (!customWords[lvlT]) customWords[lvlT] = [...currentWords];
+            customWords[lvlT][idx] = newWord;
             render();
         }
     }
@@ -145,17 +134,17 @@
         levels.forEach(lvl => {
             const row = document.createElement('tr');
             
-            // عمود اليمين
+            // عمود اليمين (المستوى)
             const lTd = document.createElement('td');
             lTd.className = `level-cell ${lvl.c}`;
             lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
             row.appendChild(lTd);
 
-            // الكلمات
-            const currentWords = customWords[lvl.t] || defaultData[lvl.t];
-            currentWords.forEach((word, idx) => {
+            // الكلمات الثلاث
+            const words = customWords[lvl.t] || defaultData[lvl.t];
+            words.forEach((word, idx) => {
                 const td = document.createElement('td');
-                // معالجة تلوين الحرف بدون ترك مسافة
+                // تلوين الحرف مع منع التفكك
                 const highlighted = word.split(h).join(`<span class="highlight">${h}</span>`);
                 td.innerHTML = `
                     <span class="edit-btn no-print" onclick="editWord('${lvl.t}', ${idx})">✏️</span>
