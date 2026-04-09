@@ -3,152 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد الحروف الهجائية الذكي</title>
+    <title>نشاط قرائي احترافي</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
         
-        :root {
-            --bg: #f0f2f5;
-            --text-color: #2d3436;
+        body { font-family: 'Cairo', sans-serif; background: #555; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* لوحة التحكم */
+        .controls { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; width: 100%; max-width: 800px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        select, button, input { font-family: 'Cairo'; padding: 8px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; margin: 5px; }
+        button { background: #27ae60; color: white; cursor: pointer; border: none; }
+
+        /* حاوية الورقة - محاكاة للصورة */
+        .paper { 
+            background: white; 
+            width: 210mm; 
+            min-height: 297mm; 
+            padding: 10mm; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column;
         }
 
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text-color); }
-        
-        .no-print { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; max-width: 900px; margin-inline: auto; }
-        
-        select, button, input { font-family: 'Cairo'; padding: 10px 20px; font-size: 1.1rem; border-radius: 8px; border: 2px solid #ddd; margin: 5px; cursor: pointer; }
-        button { background: #0984e3; color: white; border: none; transition: 0.3s; }
-        button:hover { background: #74b9ff; }
+        .title-box { 
+            text-align: center; 
+            border: 2px solid #000; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
 
-        /* تصميم ورقة العمل */
-        .worksheet { background: white; max-width: 900px; margin: 0 auto; padding: 40px; border: 8px double #2d3436; border-radius: 10px; min-height: 1000px; }
-        
-        .header { text-align: center; border-bottom: 4px solid #d32f2f; margin-bottom: 30px; }
-        .header h1 { font-size: 3rem; color: #d32f2f; margin: 10px 0; }
-        
-        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        /* الجدول الرئيسي */
+        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .main-table td { border: 1px solid #000; height: 100px; text-align: center; vertical-align: middle; position: relative; }
 
-        .section-box { border: 3px solid #333; border-radius: 15px; overflow: hidden; background: #fff; }
-        .section-title { padding: 10px; font-size: 1.5rem; font-weight: 900; text-align: center; color: white; border-bottom: 3px solid #333; }
-        
-        .words-list { padding: 20px; font-size: 2.8rem; font-weight: 900; text-align: center; line-height: 1.6; }
-        
-        /* ألوان الأقسام */
-        .bg-open { background: #fff9c4; } .title-open { background: #fbc02d; }
-        .bg-close { background: #e3f2fd; } .title-close { background: #2196f3; }
-        .bg-break { background: #f1f8e9; } .title-break { background: #8bc34a; }
-        .bg-alif { background: #fce4ec; } .title-alif { background: #e91e63; }
-        .bg-waw { background: #ede7f6; } .title-waw { background: #673ab7; }
-        .bg-ya { background: #e0f2f1; } .title-ya { background: #009688; }
+        /* عمود المستويات الجانبي */
+        .level-cell { width: 40px; font-size: 0.9rem; font-weight: bold; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; }
 
-        .footer { text-align: center; margin-top: 40px; font-size: 1.8rem; color: #d32f2f; font-weight: 900; }
+        /* الكلمات */
+        .word-text { font-size: 3rem; font-weight: 900; letter-spacing: 2px; }
+        .highlight { color: #d32f2f; } /* تلوين الحرف باللون الأحمر */
 
-        .editor-section { margin-top: 40px; border-top: 2px dashed #ccc; padding-top: 20px; }
+        /* ألوان الأقسام الجانبية (مثل الصورة) */
+        .bg-1 { background-color: #f8f9fa; } 
+        .bg-2 { background-color: #e9ecef; }
+        .bg-3 { background-color: #fde2e2; }
+        .bg-4 { background-color: #e2f0d9; }
+        .bg-5 { background-color: #e2efff; }
+        .bg-6 { background-color: #f3e5f5; }
+
+        .footer-text { text-align: center; margin-top: auto; padding-top: 20px; color: #d32f2f; font-weight: 900; font-size: 1.4rem; text-decoration: underline; }
 
         @media print {
-            .no-print, .editor-section { display: none; }
-            body { padding: 0; background: white; }
-            .worksheet { border: 5px solid black; width: 100%; margin: 0; }
+            .controls { display: none; }
+            body { background: white; padding: 0; }
+            .paper { box-shadow: none; border: none; width: 100%; height: auto; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="no-print">
-    <h2>لوحة تحكم النشاط القرائي</h2>
-    <label>اختر الحرف:</label>
-    <select id="letterSelect" onchange="loadWords()">
+<div class="controls">
+    <strong>لوحة التحكم:</strong>
+    <select id="letterPicker" onchange="renderWorksheet()">
         </select>
     <button onclick="window.print()">🖨️ طباعة النشاط</button>
-
-    <div class="editor-section">
-        <h3>تعديل كلمات حرف (<span id="editingLetter">ب</span>)</h3>
-        <p>ادخل 3 كلمات لكل خانة (افصل بينها بمسافة):</p>
-        <div id="inputsContainer">
-            </div>
-        <button onclick="saveNewWords()" style="background: #27ae60;">💾 حفظ الكلمات وتحديث الجدول</button>
-    </div>
+    <div style="margin-top:10px; font-size: 0.8rem; color: #666;">* يمكنك تعديل الكلمات في كود الجافاسكريبت بالأسفل بكل سهولة.</div>
 </div>
 
-<div class="worksheet" id="printArea">
-    <div class="header">
-        <h1>نشاط قرائي (( حرف / <span id="displayLetter">ب</span> ))</h1>
+<div class="paper">
+    <div class="title-box">
+        نشاط قرائي (( حرف / <span id="headerLetter">ب</span> ))
     </div>
 
-    <div class="grid-container" id="gridDisplay">
-        </div>
+    <table class="main-table" id="contentTable">
+        </table>
 
-    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
+    <div class="footer-text">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
 
 <script>
     const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    let database = {
-        'ب': {
-            'مفتوحة': ['بَـرَدَ', 'بَـعَثَ', 'ذَهَـبَ'],
-            'مضمومة': ['بُـذِرَ', 'بُـعِثَ', 'كُتُـبُ'],
-            'مكسورة': ['بِـلادُ', 'لَـبِـسَ', 'بِـنْتُ'],
-            'مد بالألف': ['بَـابٌ', 'بَـاسِم', 'صَـابِر'],
-            'مد بالواو': ['بُـومَة', 'حُـبُوب', 'طُـبُول'],
-            'مد بالياء': ['عَـبِير', 'طَـبِيب', 'بِـير']
-        }
-    };
+    
+    // الأقسام الستة
+    const sections = [
+        { title: "كلمات مفتوحة", colorClass: "bg-1" },
+        { title: "كلمات مضمومة", colorClass: "bg-2" },
+        { title: "كلمات مكسورة", colorClass: "bg-3" },
+        { title: "مد بالألف", colorClass: "bg-4" },
+        { title: "مد بالواو", colorClass: "bg-5" },
+        { title: "مد بالياء", colorClass: "bg-6" }
+    ];
 
-    const categories = ['مفتوحة', 'مضمومة', 'مكسورة', 'مد بالألف', 'مد بالواو', 'مد بالياء'];
-    const colors = ['open', 'close', 'break', 'alif', 'waw', 'ya'];
+    // قاعدة بيانات تجريبية (يمكنك التوسع فيها)
+    function getWordsFor(char) {
+        return {
+            "كلمات مفتوحة": [`${char}َـرَدَ`, `${char}َـعَثَ`, `ذَهَـ${char}َ`],
+            "كلمات مضمومة": [`${char}ُـذِرَ`, `${char}ُـعِثَ`, `كُتُـ${char}ُ`],
+            "كلمات مكسورة": [`${char}ِـلادُ`, `لَـ${char}ِـسَ`, `${char}ِـنْتُ`],
+            "مد بالألف": [`${char}َـابٌ`, `${char}َـاسِم`, `صَـ${char}ِـر`],
+            "مد بالواو": [`${char}ُـومَة`, `حُـ${char}ُـوب`, `طُـ${char}ُـول`],
+            "مد بالياء": [`عَـ${char}ِـير`, `طَـ${char}ِـيب`, `${char}ِـير`]
+        };
+    }
 
-    // تهيئة الحروف في القائمة
-    const select = document.getElementById('letterSelect');
-    alphabet.split('').forEach(char => {
-        let opt = document.createElement('option');
-        opt.value = char;
-        opt.innerHTML = char;
-        select.appendChild(opt);
-        if (!database[char]) {
-            database[char] = {};
-            categories.forEach(cat => database[char][cat] = [`${char}ـ الكلمة 1`, `${char}ـ الكلمة 2`, `${char}ـ الكلمة 3`]);
-        }
+    // تهيئة القائمة المنسدلة
+    const picker = document.getElementById('letterPicker');
+    alphabet.split('').forEach(l => {
+        let op = document.createElement('option');
+        op.value = l; op.text = "حرف " + l;
+        picker.appendChild(op);
     });
 
-    function loadWords() {
-        const char = select.value;
-        document.getElementById('displayLetter').innerText = char;
-        document.getElementById('editingLetter').innerText = char;
+    function renderWorksheet() {
+        const char = picker.value;
+        document.getElementById('headerLetter').innerText = char;
+        const table = document.getElementById('contentTable');
+        table.innerHTML = "";
         
-        const grid = document.getElementById('gridDisplay');
-        const inputs = document.getElementById('inputsContainer');
-        grid.innerHTML = '';
-        inputs.innerHTML = '';
+        const wordsData = getWordsFor(char);
 
-        categories.forEach((cat, index) => {
-            // تحديث العرض في الجدول
-            let section = document.createElement('div');
-            section.className = `section-box bg-${colors[index]}`;
-            section.innerHTML = `
-                <div class="section-title title-${colors[index]}">${cat}</div>
-                <div class="words-list">${database[char][cat].join('<br>')}</div>
-            `;
-            grid.appendChild(section);
+        sections.forEach(sec => {
+            const row = document.createElement('tr');
+            
+            // خلية الكلمات الثلاث
+            const words = wordsData[sec.title];
+            words.forEach(w => {
+                const td = document.createElement('td');
+                // تلوين الحرف المستهدف بالأحمر (إذا كان يبدأ بالكلمة أو يحتوي عليها)
+                const highlightedWord = w.replace(new RegExp(char, 'g'), `<span class="highlight">${char}</span>`);
+                td.innerHTML = `<div class="word-text">${highlightedWord}</div>`;
+                row.appendChild(td);
+            });
 
-            // تحديث حقول الإدخال للمحرر
-            let div = document.createElement('div');
-            div.innerHTML = `<label>${cat}: </label><input type="text" id="input-${index}" value="${database[char][cat].join(' ')}" style="width: 70%">`;
-            inputs.appendChild(div);
+            // خلية العنوان الجانبي (مثل الصورة)
+            const sideCell = document.createElement('td');
+            sideCell.className = `level-cell ${sec.colorClass}`;
+            sideCell.innerText = sec.title;
+            row.appendChild(sideCell);
+
+            table.appendChild(row);
         });
     }
 
-    function saveNewWords() {
-        const char = select.value;
-        categories.forEach((cat, index) => {
-            const val = document.getElementById(`input-${index}`).value;
-            database[char][cat] = val.split(' ');
-        });
-        loadWords();
-        alert('تم حفظ الكلمات بنجاح!');
-    }
-
-    // التشغيل الأول
-    loadWords();
+    // التشغيل عند الفتح
+    renderWorksheet();
 </script>
 
 </body>
