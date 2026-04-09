@@ -8,170 +8,125 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --main-red: #e63946; --dark-blue: #2c3e50; --light-bg: #f8f9fa; }
-        body { font-family: 'Arial', 'Tahoma', sans-serif; background-color: var(--light-bg); margin: 0; padding: 20px; }
-        
-        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: var(--main-red); color: white; padding: 20px; font-size: 32px; font-weight: bold; text-align: center; border-bottom: 5px solid #b91c1c; }
-        
-        .status-bar { background: #34495e; color: #ecf0f1; padding: 8px; font-size: 16px; text-align: center; font-weight: bold; }
-        
-        .controls { padding: 20px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; display: flex; justify-content: center; gap: 15px; align-items: center; }
-        select { font-size: 24px; padding: 8px 25px; border-radius: 10px; border: 3px solid var(--main-red); font-weight: bold; cursor: pointer; }
-        
-        .btn-save { background: #27ae60; color: white; border: none; padding: 12px 30px; font-size: 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-save:hover { background: #219150; transform: scale(1.05); }
-
+        :root { --main-red: #e63946; --dark-blue: #2c3e50; }
+        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; }
+        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
+        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; text-align: center; }
+        .status-bar { background: #34495e; color: #fff; padding: 8px; font-size: 14px; text-align: center; }
+        .controls { padding: 15px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; }
+        select { font-size: 22px; padding: 5px 20px; border-radius: 8px; border: 2px solid var(--main-red); font-weight: bold; }
+        .btn-save { background: #27ae60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-right: 10px; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ccc; height: 130px; font-size: 85px; font-weight: bold; text-align: center; direction: rtl; }
-        
-        /* الحفاظ على اتصال الحروف العربية */
-        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 130px; white-space: nowrap; unicode-bidi: isolate; }
-        .hl { color: var(--main-red); display: inline; } /* لون الحرف المختار */
-
-        .side { width: 130px; font-size: 22px; background: var(--dark-blue); color: white; border: none; }
-        
-        /* تلوين الصفوف لتمييز المستويات */
-        .r-fatha { background: #fff5f5; } .r-damma { background: #fffaf0; } .r-kasra { background: #f0fff4; }
-        .r-alif { background: #ebf8ff; } .r-waw { background: #faf5ff; } .r-yaa { background: #fff5f7; }
-
-        .footer { padding: 15px; font-size: 24px; color: var(--main-red); font-weight: bold; text-align: center; }
+        td { border: 1px solid #ccc; height: 110px; font-size: 75px; font-weight: bold; text-align: center; }
+        .hl { color: var(--main-red); display: inline; }
+        .side { width: 110px; font-size: 18px; background: var(--dark-blue); color: white; }
+        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 110px; }
+        .r1 { background: #fff5f5; } .r2 { background: #fffaf0; } .r3 { background: #f0fff4; }
+        .r4 { background: #ebf8ff; } .r5 { background: #faf5ff; } .r6 { background: #fff5f7; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة البطل نـواف - التخزين السحابي ☁️</div>
-    <div id="status" class="status-bar">جاري الاتصال بقاعدة البيانات...</div>
+    <div class="header">مدرسة نواف - النسخة السحابية ☁️</div>
+    <div id="status" class="status-bar">جاري الاتصال...</div>
     
     <div class="controls">
-        <label style="font-size: 20px; font-weight: bold;">اختر الحرف:</label>
         <select id="charSelector" onchange="fetchData()">
             </select>
-        <button class="btn-save" onclick="uploadData()">حفظ التعديلات في السحابة 💾</button>
+        <button class="btn-save" onclick="uploadData()">حفظ التعديلات ✅</button>
     </div>
 
     <table>
-        <tr class="r-fatha"><td class="side">الفتحة</td><td id="td1"></td><td id="td2"></td><td id="td3"></td></tr>
-        <tr class="r-damma"><td class="side">الضمة</td><td id="td4"></td><td id="td5"></td><td id="td6"></td></tr>
-        <tr class="r-kasra"><td class="side">الكسرة</td><td id="td7"></td><td id="td8"></td><td id="td9"></td></tr>
-        <tr class="r-alif"><td class="side">مد الألف</td><td id="td10"></td><td id="td11"></td><td id="td12"></td></tr>
-        <tr class="r-waw"><td class="side">مد الواو</td><td id="td13"></td><td id="td14"></td><td id="td15"></td></tr>
-        <tr class="r-yaa"><td class="side">مد الياء</td><td id="td16"></td><td id="td17"></td><td id="td18"></td></tr>
+        <tr class="r1"><td class="side">الفتحة</td><td id="td1"></td><td id="td2"></td><td id="td3"></td></tr>
+        <tr class="r2"><td class="side">الضمة</td><td id="td4"></td><td id="td5"></td><td id="td6"></td></tr>
+        <tr class="r3"><td class="side">الكسرة</td><td id="td7"></td><td id="td8"></td><td id="td9"></td></tr>
+        <tr class="r4"><td class="side">مد الألف</td><td id="td10"></td><td id="td11"></td><td id="td12"></td></tr>
+        <tr class="r5"><td class="side">مد الواو</td><td id="td13"></td><td id="td14"></td><td id="td15"></td></tr>
+        <tr class="r6"><td class="side">مد الياء</td><td id="td16"></td><td id="td17"></td><td id="td18"></td></tr>
     </table>
-    
-    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
 
 <script>
-// 1. إعدادات Firebase - استبدل البيانات التالية ببيانات مشروعك
+// ضع بيانات Firebase الخاصة بك هنا
 const firebaseConfig = {
-    apiKey: "ضع_هنا_API_KEY",
-    authDomain: "ضع_هنا_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://ضع_هنا_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "ضع_هنا_PROJECT_ID",
-    storageBucket: "ضع_هنا_PROJECT_ID.appspot.com",
-    messagingSenderId: "ضع_هنا_SENDER_ID",
-    appId: "ضع_هنا_APP_ID"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
-// تشغيل Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 const allChars = "أبتثجحخدذرزمسشصضطظعغفقكلمنهـوي";
 
-// 2. تشغيل التطبيق عند التحميل
+// كلمات افتراضية لكي لا يظهر الجدول فارغاً أبداً
+const defaultWords = ["صَبَرَ","رَصَدَ","صَدَرَ","نَصَرَ","بَصَلُ","بَصَرُ","نُصِرَ","نُصِبَ","صَادَ","صَامَ","صُوصُ","صَالَ","صَبْرُ","مِصْرُ","نَصْرُ","رَصَدُ","رَصِيدُ","مُصَابُ"];
+
 window.onload = function() {
     const sel = document.getElementById('charSelector');
     for (let c of allChars) {
         let opt = document.createElement('option');
         opt.value = c; opt.text = c;
-        if(c === "ص") opt.selected = true; // الافتراضي ص كما طلبت
+        if(c === "ص") opt.selected = true;
         sel.add(opt);
     }
     fetchData();
 };
 
-// 3. جلب البيانات من السحابة
 function fetchData() {
     const char = document.getElementById('charSelector').value;
     const status = document.getElementById('status');
-    status.innerText = "⏳ جاري تحميل كلمات حرف (" + char + ")...";
+    status.innerText = "⏳ جاري البحث عن كلمات حرف (" + char + ")...";
     
-    // المسار nawaf_educational_data يضمن عدم التعارض مع بياناتك الأخرى
     database.ref('nawaf_educational_data/' + char).once('value').then((snapshot) => {
-        const words = snapshot.val() || getDefaults(char);
+        // إذا المسار فارغ في Firebase، استخدم الكلمات الافتراضية
+        const words = snapshot.val() || defaultWords;
+        
         for (let i = 1; i <= 18; i++) {
             const cell = document.getElementById('td' + i);
             cell.innerHTML = `<div contenteditable="true" class="editable" oninput="applyColor(this)">${words[i-1] || ''}</div>`;
             applyColor(cell.firstChild);
         }
-        status.innerText = "✅ تم تحديث البيانات من السحابة";
-    }).catch(err => {
-        status.innerText = "❌ خطأ في الاتصال: " + err.message;
+        status.innerText = snapshot.val() ? "✅ تم التحميل من السحابة" : "⚠️ تم استخدام الكلمات الافتراضية (لم يتم الحفظ بعد)";
     });
 }
 
-// 4. رفع البيانات للسحابة
 function uploadData() {
     const char = document.getElementById('charSelector').value;
-    const status = document.getElementById('status');
     const words = [];
-    
     for (let i = 1; i <= 18; i++) {
         words.push(document.getElementById('td' + i).innerText);
     }
     
-    status.innerText = "📤 جاري الحفظ في السحابة...";
-    database.ref('nawaf_educational_data/' + char).set(words)
-    .then(() => {
-        status.innerText = "🚀 تم الحفظ بنجاح في Firebase!";
-        alert("تم حفظ كلمات حرف " + char + " بنجاح.");
-    })
-    .catch(err => {
-        alert("حدث خطأ أثناء الحفظ: " + err.message);
+    document.getElementById('status').innerText = "📤 جاري الحفظ...";
+    database.ref('nawaf_educational_data/' + char).set(words).then(() => {
+        document.getElementById('status').innerText = "🚀 تم الحفظ بنجاح!";
+        alert("تم الحفظ في السحابة!");
     });
 }
 
-// 5. محرك التلوين الذكي (يمنع تقطع الحروف العربية)
 function applyColor(el) {
     let content = el.innerText;
     const activeChar = document.getElementById('charSelector').value;
-    
-    // معالجة الحروف المتشابهة في البحث (أ، إ، آ) و (هـ، ه)
-    let pattern = activeChar;
-    if (activeChar === "أ") pattern = "[أإآا]";
-    if (activeChar === "هـ") pattern = "[هـه]";
-    
+    let pattern = (activeChar === "أ") ? "[أإآا]" : (activeChar === "هـ") ? "[هـه]" : activeChar;
     const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
     
-    // حفظ موضع المؤشر لكي لا يقفز أثناء الكتابة
-    const selection = window.getSelection();
-    let offset = 0;
-    if (selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        offset = range.startOffset;
-    }
-
+    // تلوين بدون فقدان التركيز
     el.innerHTML = content.replace(regex, `<span class="hl">$1</span>`);
-
-    // استرجاع موضع المؤشر (بشكل تقريبي يدعم الكتابة المستمرة)
-    if (content.length > 0) {
-        const newRange = document.createRange();
-        newRange.selectNodeContents(el);
-        newRange.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(newRange);
-    }
-}
-
-// كلمات افتراضية في حال كانت السحابة فارغة
-function getDefaults(c) {
-    // مصفوفة بسيطة كمثال، يمكنك تعديلها يدوياً من التطبيق وحفظها
-    return ["صَبَرَ","رَصَدَ","صَدَرَ","نَصَرَ","بَصَلُ","بَصَرُ","نُصِرَ","نُصِبَ","صَادَ","صَامَ","صُوصُ","صَالَ","صَبْرُ","مِصْرُ","نَصْرُ","رَصَدُ","رَصِيدُ","مُصَابُ"];
+    
+    // تثبيت المؤشر في النهاية
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 </script>
-
 </body>
 </html>
