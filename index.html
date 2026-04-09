@@ -2,138 +2,107 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة المطور</title>
+    <title>مدرب القراءة الذكي</title>
     <style>
-        :root { --border-color: #000; }
-        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; }
-        .main-wrapper { max-width: 1000px; margin: auto; background: white; padding: 20px; border: 2px solid #ccc; border-radius: 15px; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; text-align: center; }
+        .main-wrapper { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        .header { text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 25px; border-bottom: 4px double #333; padding-bottom: 10px; }
+        .header { font-size: 28px; font-weight: bold; margin-bottom: 20px; border-bottom: 3px solid #333; padding-bottom: 10px; }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { border: 2px solid var(--border-color); height: 130px; text-align: center; vertical-align: middle; }
+        td { border: 2px solid #000; height: 120px; vertical-align: middle; position: relative; }
         
-        .side-label { width: 110px; font-size: 22px; font-weight: bold; background-color: #eeeeee; }
-        
-        /* ألوان الصفوف لتمييز الحركات */
-        .row-fatha { background-color: #fffde7; } 
-        .row-damma { background-color: #e3f2fd; } 
-        .row-kasra { background-color: #fce4ec; } 
-        .row-alf { background-color: #f1f8e9; }   
-        .row-waw { background-color: #f3e5f5; }   
-        .row-yaa { background-color: #fff3e0; }   
+        .side-label { width: 120px; font-size: 20px; font-weight: bold; background-color: #f0f0f0; }
 
-        /* تنسيق الكلمة: الحرف أسود والحركة حمراء ومنفصلة */
-        .word-box { 
-            font-size: 70px; 
-            font-weight: bold; 
-            color: black; 
-            outline: none; 
-            display: flex; 
-            justify-content: center; 
+        /* تنسيق المربع الذي تكتب فيه */
+        .input-box {
+            font-size: 60px;
+            font-weight: bold;
+            color: black;
+            outline: none;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 5px; /* مسافة بين الحروف */
+            word-spacing: 10px;
         }
 
-        /* تنسيق الحركة المرتفعة والمنفصلة */
-        .mark { 
-            color: red; 
-            font-size: 80px; 
-            display: inline-block;
-            margin-right: 5px; /* مسافة أفقية لتبتعد عن الحرف */
-            margin-left: 5px;  /* مسافة من الجهة الأخرى */
-            position: relative;
-            top: -20px; /* رفعها للأعلى لتبتعد عن جسم الحرف */
-            line-height: 0;
-            user-select: none;
+        /* هذا الجزء هو سحر التلوين التلقائي */
+        .vowel {
+            color: red;
+            font-size: 1.2em; /* تكبير الحركة قليلاً */
         }
 
-        /* استثناء للمد بالألف والواو والياء ليكونوا على السطر */
-        .row-alf .mark, .row-waw .mark, .row-yaa .mark {
-            top: 0;
-            font-size: 70px;
-        }
+        .row-fatha { background-color: #fffde7; }
+        .row-damma { background-color: #e3f2fd; }
+        .row-kasra { background-color: #fce4ec; }
+        .row-mad { background-color: #f1f8e9; }
 
-        .controls { margin-bottom: 25px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        select { font-size: 22px; padding: 10px 25px; border-radius: 10px; border: 2px solid #007bff; }
-
-        @media print { .controls { display: none; } }
+        .instruction { color: #666; margin-bottom: 10px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-    <div class="controls">
-        <label style="font-size: 22px; font-weight: bold;">اختر الحرف: </label>
-        <select id="letterPicker" onchange="renderTable()">
-            </select>
-    </div>
-
-    <div class="header">لوحة القراءة للكلمات الثلاثية (( حرف <span id="currentLetter" style="color: red;">أ</span> ))</div>
+    <div class="header">لوحة التدريب على القراءة التفاعلية</div>
+    <p class="instruction">اكتب الكلمة مع حركاتها في المربعات أدناه (ستتحول الحركات للأحمر تلقائياً)</p>
     
     <table>
-        <tbody id="tableBody">
-            </tbody>
+        <tr class="row-fatha">
+            <td class="side-label">بالفتحة</td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        </tr>
+        <tr class="row-damma">
+            <td class="side-label">بالضمة</td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        </tr>
+        <tr class="row-kasra">
+            <td class="side-label">بالكسرة</td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        </tr>
+        <tr class="row-mad">
+            <td class="side-label">بالمدود</td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+            <td><div class="input-box" contenteditable="true" oninput="colorize(this)"></div></td>
+        </tr>
     </table>
 
-    <div style="text-align: center; margin-top: 30px; color: red; font-size: 26px; font-weight: bold;">
-        نقرأ كثيراً حتى نقرأ سريعاً بإذن الله 🌟
-    </div>
+    <div style="margin-top: 20px; color: red; font-weight: bold;">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله 🌟</div>
 </div>
 
 <script>
-    const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    
-    const levels = [
-        { title: 'بالفتحة', mark: 'َ', class: 'row-fatha', samples: ["كل", "مر", "خذ"] },
-        { title: 'بالضمة', mark: 'ُ', class: 'row-damma', samples: ["كل", "خب", "رز"] },
-        { title: 'بالكسرة', mark: 'ِ', class: 'row-kasra', samples: ["رب", "هم", "مد"] },
-        { title: 'مد بالألف', mark: 'ا', class: 'row-alf', samples: ["كل", "م ", "د "] },
-        { title: 'مد بالواو', mark: 'و', class: 'row-waw', samples: ["ل ", "ف ", "ر "] },
-        { title: 'مد بالياء', mark: 'ي', class: 'row-yaa', samples: ["د ", "ل ", "ر "] }
-    ];
+    function colorize(element) {
+        // حفظ مكان المؤشر (Cursor)
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const offset = range.startOffset;
 
-    const picker = document.getElementById('letterPicker');
-    alphabet.split('').forEach(l => {
-        let opt = document.createElement('option');
-        opt.value = l;
-        opt.innerText = `حرف ${l}`;
-        picker.appendChild(opt);
-    });
+        let text = element.innerText;
+        
+        // قائمة الحركات والمدود التي نريد تلوينها
+        // تشمل: الفتحة، الضمة، الكسرة، السكون، التنوين، وحروف المد
+        const vowels = /([ًٌٍَُِّْاوي])/g;
 
-    function renderTable() {
-        const letter = picker.value;
-        document.getElementById('currentLetter').innerText = letter;
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+        // استبدال الحركات بـ وسام (span) أحمر
+        let coloredHTML = text.replace(vowels, '<span class="vowel">$1</span>');
+        
+        element.innerHTML = coloredHTML;
 
-        levels.forEach(level => {
-            const tr = document.createElement('tr');
-            tr.className = level.class;
-
-            // 1. العنوان في اليمين
-            const sideTd = document.createElement('td');
-            sideTd.className = 'side-label';
-            sideTd.innerText = level.title;
-            tr.appendChild(sideTd);
-
-            // 2. الكلمات الثلاثية
-            level.samples.forEach(sample => {
-                const td = document.createElement('td');
-                td.innerHTML = `
-                    <div class="word-box" contenteditable="true">
-                        <span>${letter}</span>
-                        <span class="mark">${level.mark}</span>
-                        <span>${sample}</span>
-                    </div>`;
-                tr.appendChild(td);
-            });
-
-            tbody.appendChild(tr);
-        });
+        // إعادة المؤشر لمكانه الصحيح
+        const newRange = document.createRange();
+        newRange.setStart(element, element.childNodes.length);
+        newRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
     }
-
-    renderTable();
 </script>
 
 </body>
