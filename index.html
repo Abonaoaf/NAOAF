@@ -2,118 +2,134 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرب القراءة الاحترافي - الحل النهائي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعلم القراءة مع نواف</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; }
-        .main-wrapper { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        .header { text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 20px; border-bottom: 3px solid #333; padding-bottom: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 2px solid #000; height: 150px; text-align: center; vertical-align: middle; position: relative; }
-        
-        .side-label { width: 120px; font-size: 20px; font-weight: bold; background-color: #f0f0f0; }
-
-        /* منطقة الكتابة */
-        .input-area {
-            font-size: 90px;
-            font-weight: bold;
-            outline: none;
-            width: 100%;
-            height: 100%;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
             display: flex;
             justify-content: center;
-            align-items: center;
-            white-space: nowrap;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border: 4px solid #333;
+            border-radius: 10px;
             overflow: hidden;
-            
-            /* السحر هنا: تلوين الحركات بالأحمر والحروف بالأسود */
-            color: transparent;
-            text-shadow: 
-                0 0 0 black, /* الحروف بالأسود */
-                0 0 0 red;   /* الحركات سنعالجها بالسكريبت */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-
-        /* تنسيق خاص للحركات الملونة */
-        .vowel-red {
-            color: red;
-            text-shadow: none; /* إلغاء ظل الحروف للحركة */
+        .header {
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 2px solid #eee;
         }
-
-        .black-char {
-            color: black;
-            text-shadow: none;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        /* القائمة الجانبية */
+        .side-label {
+            width: 120px;
+            font-size: 18px;
+            color: #fff;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            padding: 10px;
+        }
+        /* ألوان الصفوف لتسهيل التمييز */
+        .row-fatha { background-color: #fff5f5; }
+        .side-fatha { background-color: #e53e3e; }
+        
+        .row-damma { background-color: #fffaf0; }
+        .side-damma { background-color: #dd6b20; }
+        
+        .row-kasra { background-color: #f0fff4; }
+        .side-kasra { background-color: #38a169; }
+        
+        .row-alif { background-color: #ebf8ff; }
+        .side-alif { background-color: #3182ce; }
+        
+        .row-waw { background-color: #faf5ff; }
+        .side-waw { background-color: #805ad5; }
+        
+        .row-yaa { background-color: #fff5f7; }
+        .side-yaa { background-color: #d53f8c; }
 
-        .row-fatha { background-color: #fffde7; }
-        .row-damma { background-color: #e3f2fd; }
-        .row-kasra { background-color: #fce4ec; }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            color: #e53e3e;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .highlight { color: #e53e3e; }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-    <div class="header">لوحة التدريب: الحروف المتصلة والحركات فوق الحرف</div>
-    <p style="text-align: center; color: #666;">اكتب الكلمة مع حركاتها بشكل عادي (مثال: كَتَبَ)</p>
+<div class="container">
+    <div class="header">نشاط قرائي للبطل <span class="highlight">نواف</span></div>
     
     <table>
         <tr class="row-fatha">
-            <td class="side-label">تدريب 1</td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
+            <td class="side-label side-fatha">بالفتحة</td>
+            <td>دَرَسَ</td>
+            <td>قَرَأَ</td>
+            <td>كَتَبَ</td>
         </tr>
+        
         <tr class="row-damma">
-            <td class="side-label">تدريب 2</td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
+            <td class="side-label side-damma">بالضمة</td>
+            <td>كُتِبَ</td>
+            <td>رُسِمَ</td>
+            <td>نُصِرَ</td>
         </tr>
+        
         <tr class="row-kasra">
-            <td class="side-label">تدريب 3</td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
-            <td><div class="input-area" contenteditable="true" oninput="processText(this)"></div></td>
+            <td class="side-label side-kasra">بالكسرة</td>
+            <td>شَرِبَ</td>
+            <td>سَمِعَ</td>
+            <td>لَعِبَ</td>
+        </tr>
+        
+        <tr class="row-alif">
+            <td class="side-label side-alif">مد الألف</td>
+            <td>صَادَ</td>
+            <td>نَامَ</td>
+            <td>قَامَ</td>
+        </tr>
+        
+        <tr class="row-waw">
+            <td class="side-label side-waw">مد الواو</td>
+            <td>صُوصُ</td>
+            <td>نَصُومُ</td>
+            <td>يَقُومُ</td>
+        </tr>
+        
+        <tr class="row-yaa">
+            <td class="side-label side-yaa">مد الياء</td>
+            <td>رَصِيدُ</td>
+            <td>نَصِيدُ</td>
+            <td>سَعِيدُ</td>
         </tr>
     </table>
+
+    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
-
-<script>
-    function processText(el) {
-        // نستخدم خاصية التلوين المتقدمة عبر CSS لتجنب فصل الحروف
-        // الطريقة الأكثر استقراراً هي ترك النص كما هو وتلوينه عبر الـ Shadow
-        // لكن بما أنك تريد الحركات فقط حمراء، سنقوم بضبط الـ CSS بشكل ذكي
-        
-        let text = el.innerText;
-        
-        // مصفوفة الحركات العربية
-        const marks = /[ًٌٍَُِّْ]/g;
-
-        // نقوم بلف الحركات بـ span أحمر مع الحفاظ على الاتصال
-        // ملاحظة: لإبقاء الحروف متصلة في المتصفحات الحديثة نستخدم الفواصل الصفرية
-        let html = "";
-        for (let char of text) {
-            if (marks.test(char)) {
-                html += `<span class="vowel-red">${char}</span>`;
-            } else {
-                html += `<span class="black-char">${char}</span>`;
-            }
-        }
-
-        // حفظ مكان المؤشر
-        const sel = window.getSelection();
-        if (sel.rangeCount > 0) {
-            const range = sel.getRangeAt(0);
-            const offset = range.startOffset;
-            
-            el.innerHTML = html;
-
-            // إعادة تعيين المؤشر للنهاية (حل عملي لمشاكل الكتابة بالعربي)
-            const newRange = document.createRange();
-            newRange.selectNodeContents(el);
-            newRange.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-        }
-    }
-</script>
 
 </body>
 </html>
