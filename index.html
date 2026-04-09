@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نشاط القراءة - عبدالعزيز</title>
     <style>
+        /* استخدام خط النسخ العربي الأساسي لضمان أقصى درجات التلاحم */
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@900&display=swap');
         
-        body { font-family: 'Cairo', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Cairo', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
         .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 700px; }
         
-        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #d32f2f; margin: 5px; cursor: pointer; }
-        button { background: #d32f2f; color: white; border: none; }
+        select, button { font-family: 'Cairo'; padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #333; margin: 5px; cursor: pointer; }
+        button { background: #333; color: white; border: none; }
 
         .paper { 
             background: white; width: 210mm; min-height: 280mm; padding: 10mm; 
@@ -24,29 +25,32 @@
         .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; }
         .main-table td { border: 2px solid #000; height: 110px; text-align: center; vertical-align: middle; position: relative; }
 
-        /* الكلمة باللون الأحمر بالكامل لضمان التلاحم والحركات واضحة */
+        /* الكلمة باللون الأسود والحركات ملونة بالأحمر */
         .word-text { 
             font-family: 'Amiri', serif; 
-            font-size: 4.5rem; 
+            font-size: 4.8rem; 
             font-weight: 700; 
-            color: #d32f2f; 
+            color: #000; /* الكلمة سوداء */
             direction: rtl; 
             white-space: nowrap;
             letter-spacing: 0;
             display: inline-block;
         }
 
+        /* تلوين الحركات فقط */
+        .haraka { color: #d32f2f; }
+
         .edit-btn { position: absolute; top: 2px; right: 2px; cursor: pointer; opacity: 0.2; font-size: 0.8rem; }
         .edit-btn:hover { opacity: 1; }
 
         /* عمود اليمين */
         .level-cell { 
-            width: 60px; font-size: 1.2rem; font-weight: 900; background: #f9f9f9;
+            width: 65px; font-size: 1.2rem; font-weight: 900; background: #f9f9f9;
             text-align: center; vertical-align: middle; border: 2px solid #000;
         }
         .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
 
-        /* الألوان الستة المتفق عليها */
+        /* الخلفيات الملونة للأقسام الستة */
         .bg-1 { background-color: #fffde7; } .bg-2 { background-color: #e3f2fd; }
         .bg-3 { background-color: #fbe9e7; } .bg-4 { background-color: #f1f8e9; }
         .bg-5 { background-color: #f3e5f5; } .bg-6 { background-color: #e0f2f1; }
@@ -76,7 +80,6 @@
 
 <script>
     const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    // الأقسام الستة المطلوبة
     const levels = [
         { t: "بالفتحة", c: "bg-1" }, { t: "بالضمة", c: "bg-2" },
         { t: "بالكسرة", c: "bg-3" }, { t: "بالمد بالألف", c: "bg-4" },
@@ -85,12 +88,17 @@
 
     let customWords = {};
 
+    // دالة لتلوين الحركات فقط باللون الأحمر
+    function colorizeHaraka(word) {
+        const harakat = /([ًٌٍَُِّْ])/g;
+        return word.replace(harakat, '<span class="haraka">$1</span>');
+    }
+
     function getDefaultWords(h) {
-        // كلمات ثلاثية بسيطة جداً لكل حرف
         return {
             "بالفتحة": [`${h}َـرَدَ`, `دَرَ${h}َ`, `رَ${h}َـدَ`],
             "بالضمة": [`${h}ُـصِرَ`, `بُـ${h}ِـرَ`, `نُـ${h}ِـبَ`],
-            "بالكسرة": [`${h}ِـرَام`, `بِـ${h}ِـر`, `لِـ${h}َـام`],
+            "بالكسرة": [`${h}ِـرَام`, `بِـ${h}ِـر`, `لِـ${h}ِـي`],
             "بالمد بالألف": [`${h}َـادَ`, `صَـ${h}ـا`, `بَـ${h}ـا`],
             "بالمد بالواو": [`${h}ُـور`, `سُـ${h}ـور`, `نُـ${h}ـور`],
             "بالمد بالياء": [`رَ${h}ِـيد`, `فِـ${h}ـيل`, `تِـ${h}ـين`]
@@ -106,7 +114,7 @@
     function editWord(lvlT, idx) {
         const char = sel.value;
         const currentWords = customWords[lvlT] || getDefaultWords(char)[lvlT];
-        const newWord = prompt("أدخل كلمة ثلاثية بسيطة:", currentWords[idx]);
+        const newWord = prompt("أدخل الكلمة مع الحركات:", currentWords[idx]);
         if (newWord) {
             if (!customWords[lvlT]) customWords[lvlT] = [...currentWords];
             customWords[lvlT][idx] = newWord;
@@ -124,19 +132,19 @@
         levels.forEach(lvl => {
             const row = document.createElement('tr');
             
-            // عمود اليمين (اسم القسم)
+            // عمود اليمين
             const lTd = document.createElement('td');
             lTd.className = `level-cell ${lvl.c}`;
             lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
             row.appendChild(lTd);
 
-            // الكلمات الثلاث
+            // الكلمات (سوداء بحركات حمراء)
             const words = customWords[lvl.t] || defaultData[lvl.t];
             words.forEach((word, idx) => {
                 const td = document.createElement('td');
                 td.innerHTML = `
                     <span class="edit-btn no-print" onclick="editWord('${lvl.t}', ${idx})">✏️</span>
-                    <div class="word-text">${word}</div>
+                    <div class="word-text">${colorizeHaraka(word)}</div>
                 `;
                 row.appendChild(td);
             });
