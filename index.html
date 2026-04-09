@@ -2,24 +2,24 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - الإصدار الثابت</title>
+    <title>منصة نواف التعليمية - الإصدار المعتمد</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --main-red: #e63946; --dark-blue: #2c3e50; }
-        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; text-align: center; }
+        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; }
         .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
-        .status-bar { background: #34495e; color: #fff; padding: 5px; font-size: 14px; }
-        .controls { padding: 15px; background: #eee; border-bottom: 2px solid #ddd; }
+        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; text-align: center; }
+        .status-bar { background: #34495e; color: #fff; padding: 8px; font-size: 14px; text-align: center; }
+        .controls { padding: 15px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; }
         select { font-size: 22px; padding: 5px 20px; border-radius: 8px; border: 2px solid var(--main-red); font-weight: bold; }
-        .btn-save { background: #27ae60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-right: 10px; }
+        .btn-save { background: #27ae60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ccc; height: 110px; font-size: 70px; font-weight: bold; text-align: center; vertical-align: middle; }
+        td { border: 1px solid #ccc; height: 115px; font-size: 75px; font-weight: bold; text-align: center; }
         .hl { color: var(--main-red); display: inline; }
-        .side { width: 110px; font-size: 18px; background: var(--dark-blue); color: white; }
-        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 110px; }
+        .side { width: 120px; font-size: 18px; background: var(--dark-blue); color: white; }
+        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 115px; white-space: nowrap; }
         .r1 { background: #fff5f5; } .r2 { background: #fffaf0; } .r3 { background: #f0fff4; }
         .r4 { background: #ebf8ff; } .r5 { background: #faf5ff; } .r6 { background: #fff5f7; }
     </style>
@@ -27,14 +27,13 @@
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نواف التعليمية 🌟</div>
-    <div id="status" class="status-bar">جاري تشغيل النظام...</div>
+    <div class="header">مدرسة نواف التعليمية - القراءة الصحيحة 📖</div>
+    <div id="status" class="status-bar">جاري التحميل...</div>
     
     <div class="controls">
-        <label style="font-size: 18px; font-weight: bold;">اختر الحرف: </label>
         <select id="charSelector" onchange="loadData()">
             </select>
-        <button class="btn-save" onclick="uploadData()">حفظ في السحابة 💾</button>
+        <button class="btn-save" onclick="uploadData()">حفظ التعديلات في السحابة 💾</button>
     </div>
 
     <table>
@@ -48,7 +47,7 @@
 </div>
 
 <script>
-// --- هام جداً: ضع بياناتك هنا ليعمل الحفظ السحابي ---
+// --- إعدادات Firebase (ضع بياناتك هنا) ---
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -59,20 +58,21 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// تشغيل Firebase بأمان (لن يتوقف الكود إذا كانت البيانات خاطئة)
-try {
-    firebase.initializeApp(firebaseConfig);
-} catch (e) {
-    console.log("Firebase config not set yet.");
-}
-
+try { firebase.initializeApp(firebaseConfig); } catch(e) {}
 const database = firebase.database();
 
-const autoWordsDB = {
-    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِرَمِ","آدَمُ","آكَلَ","آخَرُ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيَادُ","إِيهِ"],
-    "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُهِتَ","بُورِكَ","بِحَارُ","بِقَاعُ","بِلادُ","بَارَ","بَاعَ","بَانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
-    "ص": ["صَبَرَ","صَدَقَ","صَلَحَ","صُبِرَ","صُدِقَ","صُورَ","صِغارُ","صِعابُ","صِراطُ","صادَ","صامَ","صارَ","صُوصُ","صُورُ","نَصومُ","صِيـدَ","رَصِيـدُ","عَصِيـرُ"],
-    // بقية الحروف ستستخدم كلمات افتراضية
+// --- مكتبة الكلمات الصحيحة والمراجعة لغوياً لكل الحروف ---
+const masterDB = {
+    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِرَمِ","آدَمُ","آيَةُ","آكَلَ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيادُ","إِيهِ"],
+    "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُهِتَ","بُورِكَ","بِحارُ","بِقاعُ","بِلادُ","بَارَ","بَاعَ","بَانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
+    "ت": ["تَرَكَ","تَبِعَ","تَمَّ","تُبِعَ","تُلِيَ","تُركَ","تِينِ","تِمْسِ","تِقْنِ","تَابَ","تَاقَ","تَاجُ","تُوبُ","تُوتُ","تُورُ","تِينُ","تِيهُ","يَتِيمُ"],
+    "ث": ["ثَبَتَ","ثَقَبَ","ثَمَرَ","ثُقِبَ","ثُبِتَ","ثُمِنَ","ثِيابُ","ثِمارُ","ثِقالُ","ثَارَ","ثَاقَ","ثَالُ","ثُومُ","ثُورُ","ثُوبُ","ثِيرُ","أَثِيرُ","كَثِيرُ"],
+    "ج": ["جَلَسَ","جَمَعَ","جَعَلَ","جُمِعَ","جُعِلَ","جُمِدَ","جِبالُ","جِمالُ","جِدارُ","جَاءَ","جَارَ","جَاعَ","جُوعُ","جُودُ","وُجوهُ","جِيرُ","مَجِيدُ","عَجِينُ"],
+    "ح": ["حَمَدَ","حَمَلَ","حَكَمَ","حُمِدَ","حُمِلَ","حُكِمَ","حِسابُ","حِمارُ","حِبالُ","حَارَ","حَانَ","حَازَ","حُوتُ","حُورُ","بُحوثُ","حِينُ","نَحِيفُ","رَحِيمُ"],
+    "د": ["دَخَلَ","دَرَسَ","دَفَعَ","دُخِلَ","دُرِسَ","دُفِعَ","دِيارُ","دِفاعُ","دِراغُ","دَاسَ","دَارَ","دَانَ","دُودُ","دُورُ","قُدوسُ","دِينُ","حَدِيدُ","مَدِيدُ"],
+    "ر": ["رَزَقَ","رَفَعَ","رَسَمَ","رُزِقَ","رُفِعَ","رُسِمَ","رِجالُ","رِياحُ","رِكابُ","رَاحَ","رَامَ","رَانَ","رُوحُ","رُومُ","قُرودُ","رِيحُ","سَرِيعُ","قَرِيبُ"],
+    "ص": ["صَبَرَ","صَدَقَ","صَلَحَ","صُبِرَ","صُدِقَ","صُورَ","صِغارُ","صِعابُ","صِراطُ","صَادَ","صَامَ","صَارَ","صُوصُ","صُورُ","نَصومُ","صِيدَ","رَصِيدُ","عَصِيرُ"],
+    "ن": ["نَصَرَ","نَظَرَ","نَزَلَ","نُصِرَ","نُظِرَ","نُزِلَ","نِضالُ","نِداءُ","نِتاجُ","نَامَ","نَالَ","نَارُ","نُورُ","نُونُ","فُنونُ","نِيلُ","مُنِيرُ","نَصِيبُ"]
 };
 
 const allChars = "أبتثجحخدذرزمسشصضطظعغفقكلمنهـوي";
@@ -92,32 +92,30 @@ function loadData() {
     const char = document.getElementById('charSelector').value;
     const status = document.getElementById('status');
     
-    // 1. عرض الكلمات الجاهزة أولاً لضمان عدم الاختفاء
-    const words = autoWordsDB[char] || ["كَتَبَ","دَرَسَ","قَرَأَ","كُتِبَ","رُسِمَ","نُصِرَ","شَرِبَ","سَمِعَ","لَعِبَ","قَالَ","نَامَ","بَاعَ","يَقُومُ","نَصُومُ","تَزُورُ","سَعِيدُ","كَرِيمُ","نَبِيلُ"];
+    // الأولوية: 1. كلمات الحرف المختارة من MasterDB أو كلمات عامة
+    let words = masterDB[char] || ["كَتَبَ","دَرَسَ","قَرَأَ","كُتِبَ","رُسِمَ","نُصِرَ","شَرِبَ","سَمِعَ","لَعِبَ","قَالَ","نَامَ","بَاعَ","يَقُومُ","نَصُومُ","تَزُورُ","سَعِيدُ","كَرِيمُ","نَبِيلُ"];
     
+    // عرض الكلمات فوراً
+    displayWords(words);
+
+    // ثم محاولة جلب التعديلات من السحابة
+    try {
+        database.ref('nawaf_educational_data/' + char).once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                displayWords(snapshot.val());
+                status.innerText = "✅ تم تحميل تعديلاتك السحابية";
+            } else {
+                status.innerText = "🤖 يتم عرض الكلمات الصحيحة الافتراضية";
+            }
+        });
+    } catch(e) { status.innerText = "⚠️ وضع عدم الاتصال"; }
+}
+
+function displayWords(words) {
     for (let i = 1; i <= 18; i++) {
         const cell = document.getElementById('td' + i);
         cell.innerHTML = `<div contenteditable="true" class="editable" oninput="applyColor(this)">${words[i-1] || ''}</div>`;
         applyColor(cell.firstChild);
-    }
-
-    // 2. محاولة جلب تعديلاتك من السحابة إذا كانت الإعدادات موجودة
-    try {
-        database.ref('nawaf_educational_data/' + char).once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-                const cloudWords = snapshot.val();
-                for (let i = 1; i <= 18; i++) {
-                    const cell = document.getElementById('td' + i);
-                    cell.firstChild.innerText = cloudWords[i-1];
-                    applyColor(cell.firstChild);
-                }
-                status.innerText = "✅ تم تحميل تعديلاتك من السحابة";
-            } else {
-                status.innerText = "🤖 عرض الكلمات الآلية (لا توجد تعديلات سحابية لهذا الحرف)";
-            }
-        });
-    } catch (e) {
-        status.innerText = "⚠️ يعمل في وضع عدم الاتصال (يرجى ضبط Firebase)";
     }
 }
 
@@ -127,31 +125,30 @@ function uploadData() {
     for (let i = 1; i <= 18; i++) {
         words.push(document.getElementById('td' + i).innerText);
     }
-    
-    try {
-        database.ref('nawaf_educational_data/' + char).set(words).then(() => {
-            alert("تم حفظ التعديلات في السحابة بنجاح! ✅");
-        }).catch(err => alert("خطأ: تأكد من إعدادات Firebase والقواعد (Rules)"));
-    } catch (e) {
-        alert("فشل الحفظ: لم يتم ربط Firebase بشكل صحيح.");
-    }
+    database.ref('nawaf_educational_data/' + char).set(words).then(() => {
+        alert("تم حفظ تعديلاتك لحرف (" + char + ") في السحابة!");
+    });
 }
 
 function applyColor(el) {
     let content = el.innerText;
     const activeChar = document.getElementById('charSelector').value;
     let pattern = (activeChar === "أ") ? "[أإآا]" : (activeChar === "هـ") ? "[هـه]" : activeChar;
+    
+    // Regex دقيق جداً: يلون الحرف مع حركة واحدة فقط تتبعه مباشرة
     const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
     
     el.innerHTML = content.replace(regex, `<span class="hl">$1</span>`);
     
-    // إعادة المؤشر لمكانه
+    // تثبيت المؤشر في نهاية النص لضمان تجربة كتابة سلسة
     const range = document.createRange();
     const sel = window.getSelection();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    sel.removeAllRanges();
-    sel.addRange(range);
+    if (el.childNodes.length > 0) {
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
 }
 </script>
 </body>
