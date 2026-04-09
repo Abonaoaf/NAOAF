@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - التلوين الذكي للحرف</title>
+    <title>منصة نواف - الإصدار السلس</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -12,49 +12,40 @@
         .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
         .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
         
-        /* شريط الحركات الكبير */
-        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; flex-wrap: wrap; }
+        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; }
         .h-btn { 
             background: #FFF; border: 3px solid var(--main-red); border-radius: 12px; 
             width: 65px; height: 65px; font-size: 45px; font-weight: bold; color: var(--main-red);
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-        .h-btn:hover { background: #FFEEEE; transform: translateY(-3px); }
 
-        .controls { padding: 15px; background: #EEE; display: flex; justify-content: center; gap: 15px; align-items: center; }
-        select { font-size: 22px; padding: 5px 15px; border-radius: 8px; border: 2px solid var(--main-red); font-weight: bold; }
+        .controls { padding: 15px; background: #EEE; display: flex; justify-content: center; gap: 15px; }
         
         table { width: 100%; border-collapse: collapse; }
         td { border: 1px solid #CCC; height: 110px; position: relative; width: 28%; }
         
-        /* مربع الكتابة */
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
             text-align: center; font-size: 65px; font-weight: bold;
             background: transparent; display: block; position: relative; z-index: 2;
         }
         
-        /* طبقة العرض الملونة */
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; display: none; font-size: 65px; font-weight: bold; line-height: 110px; z-index: 1;
         }
 
-        /* اللون الأحمر الذكي */
         .hl { color: var(--main-red) !important; }
-        
         .side { background: var(--dark-blue); color: white; font-size: 20px; width: 120px; }
-        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف - التلوين الذكي للحرف والحركات 🖌️</div>
+    <div class="header">مدرسة نـواف - الكتابة السريعة ⚡</div>
 
     <div class="controls">
-        <label>الحرف المراد تلوينه:</label>
-        <select id="mainChar" onchange="loadFromCloud()">
+        <select id="mainChar" style="font-size: 20px;" onchange="loadFromCloud()">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -66,7 +57,7 @@
             <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
             <option value="ي">ي</option>
         </select>
-        <button class="btn-save" onclick="saveToCloud()">حفظ السحابة 💾</button>
+        <button style="background: #27AE60; color: white; border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold; cursor: pointer;" onclick="saveToCloud()">حفظ السحابة 💾</button>
     </div>
 
     <div class="harakat-bar">
@@ -86,19 +77,10 @@
 </div>
 
 <script>
-    // --- إعدادات Firebase ---
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_ID",
-        appId: "YOUR_APP_ID"
-    };
-
-    let database;
-    try { firebase.initializeApp(firebaseConfig); database = firebase.database(); } catch(e){}
+    // --- إعدادات Firebase (ضع بياناتك هنا) ---
+    const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+    try { firebase.initializeApp(firebaseConfig); } catch(e){}
+    const database = firebase.database();
 
     const rows = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
     let lastFocusedInput = null;
@@ -110,7 +92,7 @@
             let rowHtml = `<tr><td class="side">${r}</td>`;
             for (let i = 0; i < 3; i++) {
                 rowHtml += `<td>
-                    <input type="text" class="word-input" onfocus="handleFocus(this)" onblur="showDisplay(this)">
+                    <input type="text" class="word-input" onfocus="handleFocus(this)" onblur="showDisplay(this)" oninput="handleInput(this)">
                     <div class="word-display"></div>
                 </td>`;
             }
@@ -126,25 +108,40 @@
         input.nextElementSibling.style.display = "none";
     }
 
+    function handleInput(input) {
+        // تحديث العرض فورياً أثناء الكتابة العادية
+        showDisplay(input);
+    }
+
     function addHarakah(h) {
-        if (lastFocusedInput) {
-            const start = lastFocusedInput.selectionStart;
-            const val = lastFocusedInput.value;
-            lastFocusedInput.value = val.slice(0, start) + h + val.slice(start);
-            const newPos = start + 1;
-            lastFocusedInput.setSelectionRange(newPos, newPos);
-            lastFocusedInput.focus();
-            // تلوين فوري بعد إضافة الحركة
-            showDisplay(lastFocusedInput);
+        if (!lastFocusedInput) return;
+
+        let val = lastFocusedInput.value;
+        let pos = lastFocusedInput.selectionStart;
+
+        // منطق الاستبدال: إذا كان الحرف السابق حركة، قم بمسحها أولاً
+        let prevChar = val.charAt(pos - 1);
+        if (/[\u064B-\u0652]/.test(prevChar)) {
+            val = val.slice(0, pos - 1) + val.slice(pos);
+            pos--;
         }
+
+        // إضافة الحركة الجديدة
+        lastFocusedInput.value = val.slice(0, pos) + h + val.slice(pos);
+        
+        // إعادة التركيز والمؤشر
+        lastFocusedInput.focus();
+        let newPos = pos + 1;
+        lastFocusedInput.setSelectionRange(newPos, newPos);
+        
+        showDisplay(lastFocusedInput);
     }
 
     function showDisplay(input) {
-        if (input.value.trim() === "") return;
         const display = input.nextElementSibling;
         const char = document.getElementById('mainChar').value;
+        if (!input.value.trim()) { display.style.display="none"; return; }
         
-        // ذكاء التلوين: يمسك الحرف + (الشدة اختياري) + (الحركة أو التنوين اختياري)
         let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
         const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
 
@@ -156,23 +153,19 @@
     function saveToCloud() {
         const char = document.getElementById('mainChar').value;
         const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
-        if(database) {
-            database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ بنجاح! ✅"));
-        }
+        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ ✅"));
     }
 
     function loadFromCloud() {
         const char = document.getElementById('mainChar').value;
-        if(database) {
-            database.ref('nawaf_educational_data/' + char).once('value').then(snap => {
-                const words = snap.val() || Array(18).fill("");
-                const inputs = document.querySelectorAll('.word-input');
-                inputs.forEach((input, index) => {
-                    input.value = words[index] || "";
-                    showDisplay(input);
-                });
+        database.ref('nawaf_educational_data/' + char).once('value').then(snap => {
+            const words = snap.val() || Array(18).fill("");
+            const inputs = document.querySelectorAll('.word-input');
+            inputs.forEach((input, index) => {
+                input.value = words[index] || "";
+                showDisplay(input);
             });
-        }
+        });
     }
 
     init();
