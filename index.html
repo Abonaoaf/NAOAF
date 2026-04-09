@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - الإصدار السلس</title>
+    <title>منصة نواف - الإصدار الثابت</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -10,42 +10,47 @@
         :root { --main-red: #FF0000; --dark-blue: #1A2A3A; }
         body { font-family: 'Arial', sans-serif; background: #F4F4F9; padding: 10px; text-align: center; }
         .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
-        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
+        .header { background: var(--main-red); color: white; padding: 10px; font-size: 26px; font-weight: bold; }
         
+        /* شريط الحركات */
         .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; }
         .h-btn { 
             background: #FFF; border: 3px solid var(--main-red); border-radius: 12px; 
-            width: 65px; height: 65px; font-size: 45px; font-weight: bold; color: var(--main-red);
+            width: 60px; height: 60px; font-size: 40px; font-weight: bold; color: var(--main-red);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .controls { padding: 15px; background: #EEE; display: flex; justify-content: center; gap: 15px; }
+        .controls { padding: 10px; background: #EEE; display: flex; justify-content: center; gap: 15px; align-items: center; }
         
         table { width: 100%; border-collapse: collapse; }
-        td { border: 1px solid #CCC; height: 110px; position: relative; width: 28%; }
+        td { border: 2px solid #CCC; height: 100px; position: relative; width: 28%; background: white; }
         
+        /* المربع الأساسي - الآن هو ظاهر دائماً */
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 65px; font-weight: bold;
-            background: transparent; display: block; position: relative; z-index: 2;
+            text-align: center; font-size: 55px; font-weight: bold;
+            background: transparent; position: relative; z-index: 2;
+            color: black; /* النص سيظهر بالأسود أثناء الكتابة */
         }
         
+        /* طبقة التلوين خلف النص */
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; display: none; font-size: 65px; font-weight: bold; line-height: 110px; z-index: 1;
+            pointer-events: none; z-index: 1; font-size: 55px; font-weight: bold; 
+            line-height: 100px; display: block; color: transparent;
         }
 
-        .hl { color: var(--main-red) !important; }
-        .side { background: var(--dark-blue); color: white; font-size: 20px; width: 120px; }
+        .hl { color: var(--main-red) !important; } /* لون الحرف المختار أحمر */
+        .side { background: var(--dark-blue); color: white; font-size: 18px; width: 110px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف - الكتابة السريعة ⚡</div>
+    <div class="header">مدرسة نـواف - لوحة الكتابة الذكية 🚀</div>
 
     <div class="controls">
-        <select id="mainChar" style="font-size: 20px;" onchange="loadFromCloud()">
+        <select id="mainChar" onchange="loadFromCloud()" style="font-size: 20px; padding: 5px;">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -57,7 +62,7 @@
             <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
             <option value="ي">ي</option>
         </select>
-        <button style="background: #27AE60; color: white; border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold; cursor: pointer;" onclick="saveToCloud()">حفظ السحابة 💾</button>
+        <button style="background: #27AE60; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;" onclick="saveToCloud()">حفظ في السحابة 💾</button>
     </div>
 
     <div class="harakat-bar">
@@ -77,7 +82,7 @@
 </div>
 
 <script>
-    // --- إعدادات Firebase (ضع بياناتك هنا) ---
+    // تكوين Firebase
     const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
     try { firebase.initializeApp(firebaseConfig); } catch(e){}
     const database = firebase.database();
@@ -92,7 +97,7 @@
             let rowHtml = `<tr><td class="side">${r}</td>`;
             for (let i = 0; i < 3; i++) {
                 rowHtml += `<td>
-                    <input type="text" class="word-input" onfocus="handleFocus(this)" onblur="showDisplay(this)" oninput="handleInput(this)">
+                    <input type="text" class="word-input" onfocus="lastFocusedInput=this" oninput="showDisplay(this)" onblur="showDisplay(this)">
                     <div class="word-display"></div>
                 </td>`;
             }
@@ -102,52 +107,44 @@
         loadFromCloud();
     }
 
-    function handleFocus(input) {
-        lastFocusedInput = input;
-        input.style.opacity = "1";
-        input.nextElementSibling.style.display = "none";
-    }
-
-    function handleInput(input) {
-        // تحديث العرض فورياً أثناء الكتابة العادية
-        showDisplay(input);
-    }
-
     function addHarakah(h) {
         if (!lastFocusedInput) return;
-
         let val = lastFocusedInput.value;
         let pos = lastFocusedInput.selectionStart;
 
-        // منطق الاستبدال: إذا كان الحرف السابق حركة، قم بمسحها أولاً
-        let prevChar = val.charAt(pos - 1);
-        if (/[\u064B-\u0652]/.test(prevChar)) {
+        // استبدال الحركة إذا كانت موجودة
+        if (/[\u064B-\u0652]/.test(val.charAt(pos - 1))) {
             val = val.slice(0, pos - 1) + val.slice(pos);
             pos--;
         }
 
-        // إضافة الحركة الجديدة
         lastFocusedInput.value = val.slice(0, pos) + h + val.slice(pos);
-        
-        // إعادة التركيز والمؤشر
         lastFocusedInput.focus();
-        let newPos = pos + 1;
-        lastFocusedInput.setSelectionRange(newPos, newPos);
-        
+        lastFocusedInput.setSelectionRange(pos + 1, pos + 1);
         showDisplay(lastFocusedInput);
     }
 
     function showDisplay(input) {
         const display = input.nextElementSibling;
         const char = document.getElementById('mainChar').value;
-        if (!input.value.trim()) { display.style.display="none"; return; }
+        const text = input.value;
         
+        if (!text.trim()) {
+            input.style.color = "black";
+            display.innerHTML = "";
+            return;
+        }
+
         let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
         const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
 
-        display.innerHTML = input.value.replace(regex, `<span class="hl">$1</span>`);
-        input.style.opacity = "0";
-        display.style.display = "block";
+        // التلوين الذكي
+        display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
+        
+        // لجعل الحرف الملون يظهر فوق الأسود
+        input.style.color = "transparent";
+        input.style.caretColor = "black";
+        display.style.color = "black";
     }
 
     function saveToCloud() {
