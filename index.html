@@ -3,153 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نشاط قرائي احترافي</title>
+    <title>مُولّد الأنشطة القرائية - عبدالعزيز</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+        /* استيراد خطوط عربية قوية وواضحة */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Amiri:wght@700&display=swap');
         
-        body { font-family: 'Cairo', sans-serif; background: #555; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: #f0f0f0; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px;
+        }
+
         /* لوحة التحكم */
-        .controls { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; width: 100%; max-width: 800px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        select, button, input { font-family: 'Cairo'; padding: 8px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; margin: 5px; }
-        button { background: #27ae60; color: white; cursor: pointer; border: none; }
+        .no-print {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
 
-        /* حاوية الورقة - محاكاة للصورة */
-        .paper { 
-            background: white; 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 10mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        select, button {
+            font-family: 'Cairo';
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: 2px solid #0984e3;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button { background: #0984e3; color: white; border: none; }
+
+        /* ورقة النشاط */
+        .a4-paper {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            border: 3px solid #000;
+            box-sizing: border-box;
+        }
+
+        .header-box {
+            border: 4px double #000;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-box h1 { margin: 0; font-size: 2.5rem; color: #000; }
+
+        /* الجدول */
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* لتساوي عرض المربعات */
+        }
+
+        .content-table td {
             border: 2px solid #000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .title-box { 
-            text-align: center; 
-            border: 2px solid #000; 
-            padding: 10px; 
-            margin-bottom: 15px; 
-            font-size: 1.8rem;
+            height: 120px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 3.2rem; /* حجم كبير وواضح للطفل */
             font-weight: 900;
+            direction: rtl;
+            white-space: nowrap;
         }
 
-        /* الجدول الرئيسي */
-        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .main-table td { border: 1px solid #000; height: 100px; text-align: center; vertical-align: middle; position: relative; }
+        /* عمود المستويات في اليمين */
+        .level-header {
+            width: 50px;
+            font-size: 1.1rem;
+            background: #f9f9f9;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            padding: 10px 0;
+            color: #333;
+        }
 
-        /* عمود المستويات الجانبي */
-        .level-cell { width: 40px; font-size: 0.9rem; font-weight: bold; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; }
+        /* تلوين الحرف المستهدف */
+        .target-char { color: #e74c3c; }
 
-        /* الكلمات */
-        .word-text { font-size: 3rem; font-weight: 900; letter-spacing: 2px; }
-        .highlight { color: #d32f2f; } /* تلوين الحرف باللون الأحمر */
+        /* ألوان الأقسام الجانبية */
+        .color-1 { background-color: #fff9c4 !important; }
+        .color-2 { background-color: #e3f2fd !important; }
+        .color-3 { background-color: #f1f8e9 !important; }
+        .color-4 { background-color: #fce4ec !important; }
+        .color-5 { background-color: #ede7f6 !important; }
+        .color-6 { background-color: #e0f2f1 !important; }
 
-        /* ألوان الأقسام الجانبية (مثل الصورة) */
-        .bg-1 { background-color: #f8f9fa; } 
-        .bg-2 { background-color: #e9ecef; }
-        .bg-3 { background-color: #fde2e2; }
-        .bg-4 { background-color: #e2f0d9; }
-        .bg-5 { background-color: #e2efff; }
-        .bg-6 { background-color: #f3e5f5; }
-
-        .footer-text { text-align: center; margin-top: auto; padding-top: 20px; color: #d32f2f; font-weight: 900; font-size: 1.4rem; text-decoration: underline; }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.6rem;
+            color: #d32f2f;
+            font-weight: bold;
+            text-decoration: underline;
+        }
 
         @media print {
-            .controls { display: none; }
+            .no-print { display: none; }
             body { background: white; padding: 0; }
-            .paper { box-shadow: none; border: none; width: 100%; height: auto; margin: 0; }
+            .a4-paper { border: none; box-shadow: none; width: 100%; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="controls">
-    <strong>لوحة التحكم:</strong>
-    <select id="letterPicker" onchange="renderWorksheet()">
+<div class="no-print">
+    <h3>🎓 مولد بطاقات القراءة الذكي</h3>
+    <label>اختر الحرف لإنشاء النشاط:</label>
+    <select id="letterDropdown" onchange="generateActivity()">
         </select>
     <button onclick="window.print()">🖨️ طباعة النشاط</button>
-    <div style="margin-top:10px; font-size: 0.8rem; color: #666;">* يمكنك تعديل الكلمات في كود الجافاسكريبت بالأسفل بكل سهولة.</div>
 </div>
 
-<div class="paper">
-    <div class="title-box">
-        نشاط قرائي (( حرف / <span id="headerLetter">ب</span> ))
+<div class="a4-paper">
+    <div class="header-box">
+        <h1>نشاط قرائي (( حرف / <span id="charTitle">ب</span> ))</h1>
     </div>
 
-    <table class="main-table" id="contentTable">
+    <table class="content-table" id="activityTable">
         </table>
 
-    <div class="footer-text">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
+    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
 </div>
 
 <script>
-    const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    
-    // الأقسام الستة
-    const sections = [
-        { title: "كلمات مفتوحة", colorClass: "bg-1" },
-        { title: "كلمات مضمومة", colorClass: "bg-2" },
-        { title: "كلمات مكسورة", colorClass: "bg-3" },
-        { title: "مد بالألف", colorClass: "bg-4" },
-        { title: "مد بالواو", colorClass: "bg-5" },
-        { title: "مد بالياء", colorClass: "bg-6" }
+    const letters = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
+    const categories = [
+        { name: "كلمات مفتوحة", color: "color-1" },
+        { name: "كلمات مضمومة", color: "color-2" },
+        { name: "كلمات مكسورة", color: "color-3" },
+        { name: "مد بالألف", color: "color-4" },
+        { name: "مد بالواو", color: "color-5" },
+        { name: "مد بالياء", color: "color-6" }
     ];
 
-    // قاعدة بيانات تجريبية (يمكنك التوسع فيها)
-    function getWordsFor(char) {
+    // دالة لتوليد كلمات تلقائية (يمكنك تعديلها لاحقاً بقائمة حقيقية)
+    function getWords(c) {
         return {
-            "كلمات مفتوحة": [`${char}َـرَدَ`, `${char}َـعَثَ`, `ذَهَـ${char}َ`],
-            "كلمات مضمومة": [`${char}ُـذِرَ`, `${char}ُـعِثَ`, `كُتُـ${char}ُ`],
-            "كلمات مكسورة": [`${char}ِـلادُ`, `لَـ${char}ِـسَ`, `${char}ِـنْتُ`],
-            "مد بالألف": [`${char}َـابٌ`, `${char}َـاسِم`, `صَـ${char}ِـر`],
-            "مد بالواو": [`${char}ُـومَة`, `حُـ${char}ُـوب`, `طُـ${char}ُـول`],
-            "مد بالياء": [`عَـ${char}ِـير`, `طَـ${char}ِـيب`, `${char}ِـير`]
+            "كلمات مفتوحة": [`${c}َـرَدَ`, `رَ${c}َـدَ`, `نَـصَـ${c}َ`],
+            "كلمات مضمومة": [`${c}ُـصِرَ`, `بَـصَـ${c}ُ`, `نُـ${c}ِـبَ`],
+            "كلمات مكسورة": [`${c}ِـرَام`, `لَـ${c}ِـسَ`, `بِـ${c}ِـر`],
+            "مد بالألف": [`${c}َـادَ`, `صَـ${c}ِـر`, `${charTitle}َـامَ`],
+            "مد بالواو": [`${c}ُـوص`, `نَـصُـ${c}ُ`, `صُـ${c}ُـوف`],
+            "مد بالياء": [`رَ${c}ِـيد`, `نَـصِـ${c}ُ`, `فَـصِـ${c}ـيل`]
         };
     }
 
-    // تهيئة القائمة المنسدلة
-    const picker = document.getElementById('letterPicker');
-    alphabet.split('').forEach(l => {
+    // تعبئة القائمة
+    const select = document.getElementById('letterDropdown');
+    letters.split('').forEach(l => {
         let op = document.createElement('option');
         op.value = l; op.text = "حرف " + l;
-        picker.appendChild(op);
+        select.appendChild(op);
     });
 
-    function renderWorksheet() {
-        const char = picker.value;
-        document.getElementById('headerLetter').innerText = char;
-        const table = document.getElementById('contentTable');
+    function generateActivity() {
+        const char = select.value;
+        document.getElementById('charTitle').innerText = char;
+        const table = document.getElementById('activityTable');
         table.innerHTML = "";
-        
-        const wordsData = getWordsFor(char);
 
-        sections.forEach(sec => {
+        const wordsMap = getWords(char);
+
+        categories.forEach(cat => {
             const row = document.createElement('tr');
             
-            // خلية الكلمات الثلاث
-            const words = wordsData[sec.title];
-            words.forEach(w => {
+            // 1. عمود المستوى (الآن في اليمين)
+            const sideCell = document.createElement('td');
+            sideCell.className = `level-header ${cat.color}`;
+            sideCell.innerText = cat.name;
+            row.appendChild(sideCell);
+
+            // 2. الكلمات الثلاث
+            const words = wordsMap[cat.name];
+            words.reverse().forEach(word => { // reverse لجعل الترتيب من اليمين لليسار برمجياً
                 const td = document.createElement('td');
-                // تلوين الحرف المستهدف بالأحمر (إذا كان يبدأ بالكلمة أو يحتوي عليها)
-                const highlightedWord = w.replace(new RegExp(char, 'g'), `<span class="highlight">${char}</span>`);
-                td.innerHTML = `<div class="word-text">${highlightedWord}</div>`;
+                // تلوين الحرف مع الحفاظ على الاتصال
+                const colored = word.replace(new RegExp(char, 'g'), `<span class="target-char">${char}</span>`);
+                td.innerHTML = colored;
                 row.appendChild(td);
             });
-
-            // خلية العنوان الجانبي (مثل الصورة)
-            const sideCell = document.createElement('td');
-            sideCell.className = `level-cell ${sec.colorClass}`;
-            sideCell.innerText = sec.title;
-            row.appendChild(sideCell);
 
             table.appendChild(row);
         });
     }
 
-    // التشغيل عند الفتح
-    renderWorksheet();
+    // التشغيل الافتراضي
+    generateActivity();
 </script>
 
 </body>
