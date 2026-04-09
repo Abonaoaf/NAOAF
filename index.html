@@ -3,116 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد النشاط القرائي</title>
+    <title>مولد الحروف الهجائية الذكي</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+        
         :root {
-            --primary: #2c3e50;
-            --bg-color: #f4f7f6;
+            --bg: #f0f2f5;
+            --text-color: #2d3436;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); text-align: center; padding: 20px; }
-        .no-print { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; }
+
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text-color); }
         
-        /* تصميم الورقة */
-        .worksheet { background: white; width: 800px; margin: 0 auto; padding: 30px; border: 5px double #333; position: relative; }
-        h1 { color: #d32f2f; margin-bottom: 5px; }
-        .subtitle { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .no-print { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; max-width: 900px; margin-inline: auto; }
         
-        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .section-box { border: 2px solid #444; border-radius: 8px; overflow: hidden; }
-        .section-title { padding: 10px; font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid #444; }
-        .words { padding: 15px; font-size: 2rem; min-height: 120px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+        select, button, input { font-family: 'Cairo'; padding: 10px 20px; font-size: 1.1rem; border-radius: 8px; border: 2px solid #ddd; margin: 5px; cursor: pointer; }
+        button { background: #0984e3; color: white; border: none; transition: 0.3s; }
+        button:hover { background: #74b9ff; }
+
+        /* تصميم ورقة العمل */
+        .worksheet { background: white; max-width: 900px; margin: 0 auto; padding: 40px; border: 8px double #2d3436; border-radius: 10px; min-height: 1000px; }
+        
+        .header { text-align: center; border-bottom: 4px solid #d32f2f; margin-bottom: 30px; }
+        .header h1 { font-size: 3rem; color: #d32f2f; margin: 10px 0; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        .section-box { border: 3px solid #333; border-radius: 15px; overflow: hidden; background: #fff; }
+        .section-title { padding: 10px; font-size: 1.5rem; font-weight: 900; text-align: center; color: white; border-bottom: 3px solid #333; }
+        
+        .words-list { padding: 20px; font-size: 2.8rem; font-weight: 900; text-align: center; line-height: 1.6; }
         
         /* ألوان الأقسام */
-        .color-1 { background-color: #fff9c4; } .color-1 .section-title { background: #fbc02d; }
-        .color-2 { background-color: #e3f2fd; } .color-2 .section-title { background: #2196f3; color: white; }
-        .color-3 { background-color: #f1f8e9; } .color-3 .section-title { background: #8bc34a; }
-        .color-4 { background-color: #fce4ec; } .color-4 .section-title { background: #e91e63; color: white; }
-        .color-5 { background-color: #ede7f6; } .color-5 .section-title { background: #673ab7; color: white; }
-        .color-6 { background-color: #e0f2f1; } .color-6 .section-title { background: #009688; color: white; }
+        .bg-open { background: #fff9c4; } .title-open { background: #fbc02d; }
+        .bg-close { background: #e3f2fd; } .title-close { background: #2196f3; }
+        .bg-break { background: #f1f8e9; } .title-break { background: #8bc34a; }
+        .bg-alif { background: #fce4ec; } .title-alif { background: #e91e63; }
+        .bg-waw { background: #ede7f6; } .title-waw { background: #673ab7; }
+        .bg-ya { background: #e0f2f1; } .title-ya { background: #009688; }
 
-        .footer-note { margin-top: 30px; color: #d32f2f; font-weight: bold; font-size: 1.3rem; }
-        
-        .char-highlight { color: #d32f2f; }
+        .footer { text-align: center; margin-top: 40px; font-size: 1.8rem; color: #d32f2f; font-weight: 900; }
+
+        .editor-section { margin-top: 40px; border-top: 2px dashed #ccc; padding-top: 20px; }
 
         @media print {
-            .no-print { display: none; }
-            body { background: white; padding: 0; }
-            .worksheet { border: 3px solid #000; width: 100%; margin: 0; }
+            .no-print, .editor-section { display: none; }
+            body { padding: 0; background: white; }
+            .worksheet { border: 5px solid black; width: 100%; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="no-print">
-        <h3>أداة توليد أنشطة الحروف</h3>
-        <p>اختر الحرف لتحديث الكلمات:</p>
-        <button onclick="updateLetter('ب')">حرف ب</button>
-        <button onclick="updateLetter('ت')">حرف ت</button>
-        <button onclick="window.print()">طباعة النشاط</button>
+<div class="no-print">
+    <h2>لوحة تحكم النشاط القرائي</h2>
+    <label>اختر الحرف:</label>
+    <select id="letterSelect" onchange="loadWords()">
+        </select>
+    <button onclick="window.print()">🖨️ طباعة النشاط</button>
+
+    <div class="editor-section">
+        <h3>تعديل كلمات حرف (<span id="editingLetter">ب</span>)</h3>
+        <p>ادخل 3 كلمات لكل خانة (افصل بينها بمسافة):</p>
+        <div id="inputsContainer">
+            </div>
+        <button onclick="saveNewWords()" style="background: #27ae60;">💾 حفظ الكلمات وتحديث الجدول</button>
+    </div>
+</div>
+
+<div class="worksheet" id="printArea">
+    <div class="header">
+        <h1>نشاط قرائي (( حرف / <span id="displayLetter">ب</span> ))</h1>
     </div>
 
-    <div class="worksheet" id="worksheet">
-        <h1>نشاط قرائي (( حرف / <span id="main-char">ب</span> ))</h1>
-        <p class="subtitle">نقرأ كثيراً لنقرأ سريعاً بإذن الله</p>
-
-        <div class="grid-container">
-            <div class="section-box color-1">
-                <div class="section-title">كلمات مفتوحة</div>
-                <div class="words" id="open-vowel"></div>
-            </div>
-            <div class="section-box color-2">
-                <div class="section-title">كلمات مضمومة</div>
-                <div class="words" id="close-vowel"></div>
-            </div>
-            <div class="section-box color-3">
-                <div class="section-title">كلمات مكسورة</div>
-                <div class="words" id="break-vowel"></div>
-            </div>
-            <div class="section-box color-4">
-                <div class="section-title">مد بالألف</div>
-                <div class="words" id="mad-alif"></div>
-            </div>
-            <div class="section-box color-5">
-                <div class="section-title">مد بالواو</div>
-                <div class="words" id="mad-waw"></div>
-            </div>
-            <div class="section-box color-6">
-                <div class="section-title">مد بالياء</div>
-                <div class="words" id="mad-ya"></div>
-            </div>
+    <div class="grid-container" id="gridDisplay">
         </div>
 
-        <div class="footer-note">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
-    </div>
+    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
+</div>
 
-    <script>
-        const data = {
-            'ب': {
-                open: ['بَـرَدَ', 'بَـعَثَ', 'ذَهَـبَ'],
-                close: ['بُـذِرَ', 'بُـعِثَ', 'كُتُـبُ'],
-                break: ['بِـلادُ', 'لَـبِـسَ', 'بِـنْتُ'],
-                alif: ['بَـابٌ', 'بَـاسِم', 'صَـابِر'],
-                waw: ['بُـومَة', 'حُـبُوب', 'طُـبُول'],
-                ya: ['عَـبِير', 'طَـبِيب', 'بِـير']
-            }
-            // يمكنك إضافة المزيد من الحروف هنا بنفس التنسيق
-        };
-
-        function updateLetter(char) {
-            document.getElementById('main-char').innerText = char;
-            const letterData = data[char];
-            
-            document.getElementById('open-vowel').innerHTML = letterData.open.join('<br>');
-            document.getElementById('close-vowel').innerHTML = letterData.close.join('<br>');
-            document.getElementById('break-vowel').innerHTML = letterData.break.join('<br>');
-            document.getElementById('mad-alif').innerHTML = letterData.alif.join('<br>');
-            document.getElementById('mad-waw').innerHTML = letterData.waw.join('<br>');
-            document.getElementById('mad-ya').innerHTML = letterData.ya.join('<br>');
+<script>
+    const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
+    let database = {
+        'ب': {
+            'مفتوحة': ['بَـرَدَ', 'بَـعَثَ', 'ذَهَـبَ'],
+            'مضمومة': ['بُـذِرَ', 'بُـعِثَ', 'كُتُـبُ'],
+            'مكسورة': ['بِـلادُ', 'لَـبِـسَ', 'بِـنْتُ'],
+            'مد بالألف': ['بَـابٌ', 'بَـاسِم', 'صَـابِر'],
+            'مد بالواو': ['بُـومَة', 'حُـبُوب', 'طُـبُول'],
+            'مد بالياء': ['عَـبِير', 'طَـبِيب', 'بِـير']
         }
+    };
 
-        // تشغيل افتراضي لحرف الباء
-        updateLetter('ب');
-    </script>
+    const categories = ['مفتوحة', 'مضمومة', 'مكسورة', 'مد بالألف', 'مد بالواو', 'مد بالياء'];
+    const colors = ['open', 'close', 'break', 'alif', 'waw', 'ya'];
+
+    // تهيئة الحروف في القائمة
+    const select = document.getElementById('letterSelect');
+    alphabet.split('').forEach(char => {
+        let opt = document.createElement('option');
+        opt.value = char;
+        opt.innerHTML = char;
+        select.appendChild(opt);
+        if (!database[char]) {
+            database[char] = {};
+            categories.forEach(cat => database[char][cat] = [`${char}ـ الكلمة 1`, `${char}ـ الكلمة 2`, `${char}ـ الكلمة 3`]);
+        }
+    });
+
+    function loadWords() {
+        const char = select.value;
+        document.getElementById('displayLetter').innerText = char;
+        document.getElementById('editingLetter').innerText = char;
+        
+        const grid = document.getElementById('gridDisplay');
+        const inputs = document.getElementById('inputsContainer');
+        grid.innerHTML = '';
+        inputs.innerHTML = '';
+
+        categories.forEach((cat, index) => {
+            // تحديث العرض في الجدول
+            let section = document.createElement('div');
+            section.className = `section-box bg-${colors[index]}`;
+            section.innerHTML = `
+                <div class="section-title title-${colors[index]}">${cat}</div>
+                <div class="words-list">${database[char][cat].join('<br>')}</div>
+            `;
+            grid.appendChild(section);
+
+            // تحديث حقول الإدخال للمحرر
+            let div = document.createElement('div');
+            div.innerHTML = `<label>${cat}: </label><input type="text" id="input-${index}" value="${database[char][cat].join(' ')}" style="width: 70%">`;
+            inputs.appendChild(div);
+        });
+    }
+
+    function saveNewWords() {
+        const char = select.value;
+        categories.forEach((cat, index) => {
+            const val = document.getElementById(`input-${index}`).value;
+            database[char][cat] = val.split(' ');
+        });
+        loadWords();
+        alert('تم حفظ الكلمات بنجاح!');
+    }
+
+    // التشغيل الأول
+    loadWords();
+</script>
+
 </body>
 </html>
-
