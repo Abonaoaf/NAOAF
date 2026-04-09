@@ -2,122 +2,78 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نشاط القراءة - عبدالعزيز</title>
+    <title>مدرب القراءة الصغير</title>
     <style>
-        /* خط النسخ البسيط والواضح */
-        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
-        
-        body { font-family: 'Amiri', serif; background: #eee; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        .no-print { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; width: 100%; max-width: 600px; border: 1px solid #ccc; }
-        
-        select, button { padding: 10px; font-size: 1rem; border-radius: 5px; margin: 5px; cursor: pointer; font-family: sans-serif; }
-
-        .paper { 
-            background: white; width: 210mm; min-height: 280mm; padding: 15mm; 
-            border: 2px solid #000; box-sizing: border-box; display: flex; flex-direction: column;
-        }
-
-        .title-box { border: 2px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; font-size: 2.2rem; font-weight: bold; }
-
-        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .main-table td { border: 2px solid #000; height: 100px; text-align: center; vertical-align: middle; position: relative; font-size: 4.5rem; font-weight: bold; color: #000; }
-
-        /* تلوين الحركات فقط باللون الأحمر */
-        .h { color: #d32f2f; }
-
-        /* عمود اليمين بالألوان */
-        .level-cell { width: 60px; font-size: 1.2rem; font-weight: bold; text-align: center; vertical-align: middle; color: #333; }
-        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; white-space: nowrap; }
-
-        /* الألوان الجانبية الستة */
-        .bg-1 { background-color: #fff9c4; } .bg-2 { background-color: #e3f2fd; }
-        .bg-3 { background-color: #fce4ec; } .bg-4 { background-color: #f1f8e9; }
-        .bg-5 { background-color: #ede7f6; } .bg-6 { background-color: #e0f2f1; }
-
-        .footer { text-align: center; margin-top: auto; padding-top: 20px; color: #d32f2f; font-weight: bold; font-size: 1.5rem; }
-
-        @media print {
-            .no-print { display: none; }
-            body { background: white; padding: 0; }
-            .paper { border: 2px solid #000; width: 100%; margin: 0; }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; text-align: center; padding: 20px; }
+        .container { background: white; max-width: 800px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        select { font-size: 1.2rem; padding: 10px; border-radius: 8px; border: 2px solid #007bff; margin-bottom: 20px; width: 200px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { border: 2px solid #e0e0e0; border-radius: 10px; padding: 10px; background: #fff; }
+        .card h3 { color: #007bff; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .word-list { list-style: none; padding: 0; }
+        .word-item { font-size: 1.8rem; margin: 10px 0; cursor: pointer; border-bottom: 1px dashed #ccc; padding: 5px; }
+        .char { color: black; }
+        .mark { color: red; font-weight: bold; }
+        .instruction { font-size: 0.9rem; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="no-print">
-    <strong>اختر الحرف لإنشاء النشاط:</strong>
-    <select id="letterPicker" onchange="render()"></select>
-    <button onclick="window.print()">🖨️ طباعة</button>
-</div>
+<div class="container">
+    <h1>مرحباً بطل القراءة الصغير 🌟</h1>
+    <p>اختر الحرف لتبدأ التدريب:</p>
+    
+    <select id="letterSelect" onchange="updateWords()">
+        <option value="">-- اختر حرفاً --</option>
+        <option value="ب">حرف الباء (ب)</option>
+        <option value="ت">حرف التاء (ت)</option>
+        <option value="ث">حرف الثاء (ث)</option>
+        <option value="ج">حرف الجيم (ج)</option>
+        </select>
 
-<div class="paper">
-    <div class="title-box">نشاط قرائي (( حرف / <span id="charH">ب</span> ))</div>
-    <table class="main-table" id="table"></table>
-    <div class="footer">نقرأ كثيراً حتى نقرأ سريعاً بإذن الله</div>
+    <div id="displayArea" class="grid-container" style="display:none;">
+        </div>
+
+    <p class="instruction">* يمكنك الضغط على أي كلمة لتعديلها يدوياً.</p>
 </div>
 
 <script>
-    const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    const levels = [
-        { t: "بالفتحة", c: "bg-1" }, { t: "بالضمة", c: "bg-2" },
-        { t: "بالكسرة", c: "bg-3" }, { t: "بالمد بالألف", c: "bg-4" },
-        { t: "بالمد بالواو", c: "bg-5" }, { t: "بالمد بالياء", c: "bg-6" }
+    const types = [
+        { title: "بالفتحة ◌َ", suffix: "َ", words: ["ـَـ", "ـَـ", "ـَـ"] },
+        { title: "بالضمة ◌ُ", suffix: "ُ", words: ["ـُـ", "ـُـ", "ـُـ"] },
+        { title: "بالكسرة ◌ِ", suffix: "ِ", words: ["ـِـ", "ـِـ", "ـِـ"] },
+        { title: "مد بالألف ا", suffix: "ا", words: ["ـاـ", "ـاـ", "ـاـ"] },
+        { title: "مد بالواو و", suffix: "و", words: ["ـوـ", "ـوـ", "ـوـ"] },
+        { title: "مد بالياء ي", suffix: "ي", words: ["ـيـ", "ـيـ", "ـيـ"] }
     ];
 
-    // دالة لتلوين الحركات فقط بالأحمر
-    function colorize(word) {
-        return word.replace(/([ًٌٍَُِّْ])/g, '<span class="h">$1</span>');
-    }
+    function updateWords() {
+        const char = document.getElementById('letterSelect').value;
+        const area = document.getElementById('displayArea');
+        
+        if (!char) { area.style.display = 'none'; return; }
+        
+        area.innerHTML = '';
+        area.style.display = 'grid';
 
-    // كلمات ثلاثية سهلة جداً تناسب طفل 6 سنوات
-    function getWords(h) {
-        return {
-            "بالفتحة": [`${h}َـبَـرَ`, `سَـ${h}َـدَ`, `كَـتَـ${h}َ`],
-            "بالضمة": [`${h}ُـكِـمَ`, `رُ${h}ِـمَ`, `كُـتُـ${h}ُ`],
-            "بالكسرة": [`${h}ِـرَام`, `بِـ${h}ِـر`, `لِـ${h}ِـي`],
-            "بالمد بالألف": [`${h}َـادَ`, `بَـ${h}ـا`, `سَـ${h}ـا`],
-            "بالمد بالواو": [`${h}ُـور`, `دُ${h}ُـور`, `تُـ${h}ـوت`],
-            "بالمد بالياء": [`رَ${h}ِـيد`, `تِـ${h}ـين`, `فِـ${h}ـيل`]
-        };
-    }
-
-    const sel = document.getElementById('letterPicker');
-    alphabet.split('').forEach(l => {
-        let o = document.createElement('option'); o.value = l; o.text = "حرف " + l;
-        sel.appendChild(o);
-    });
-
-    function render() {
-        const h = sel.value;
-        document.getElementById('charH').innerText = h;
-        const table = document.getElementById('table');
-        table.innerHTML = "";
-        const data = getWords(h);
-
-        levels.forEach(lvl => {
-            const row = document.createElement('tr');
+        types.forEach(type => {
+            const card = document.createElement('div');
+            card.className = 'card';
             
-            // عمود اليمين الملون
-            const lTd = document.createElement('td');
-            lTd.className = `level-cell ${lvl.c}`;
-            lTd.innerHTML = `<span class="vertical-text">${lvl.t}</span>`;
-            row.appendChild(lTd);
-
-            // الكلمات الثلاث
-            data[lvl.t].forEach(word => {
-                const td = document.createElement('td');
-                td.innerHTML = colorize(word);
-                row.appendChild(td);
+            let wordsHTML = `<ul class="word-list">`;
+            type.words.forEach(w => {
+                // هنا نقوم بوضع الحرف المختار مع الحركة المطلوبة
+                wordsHTML += `<li class="word-item" contenteditable="true">
+                                <span class="char">${char}</span><span class="mark">${type.suffix}</span><span class="char">...</span>
+                              </li>`;
             });
+            wordsHTML += `</ul>`;
 
-            table.appendChild(row);
+            card.innerHTML = `<h3>${type.title}</h3>${wordsHTML}`;
+            area.appendChild(card);
         });
     }
-    render();
 </script>
+
 </body>
 </html>
-
