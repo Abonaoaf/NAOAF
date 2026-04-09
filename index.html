@@ -2,24 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف التعليمية - الإصدار المعتمد</title>
+    <title>منصة نواف التعليمية - النسخة المراجعة</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --main-red: #e63946; --dark-blue: #2c3e50; }
-        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding: 20px; }
-        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; text-align: center; }
-        .status-bar { background: #34495e; color: #fff; padding: 8px; font-size: 14px; text-align: center; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; padding: 20px; }
+        .container { background: white; max-width: 1000px; margin: auto; border: 4px solid var(--dark-blue); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { background: var(--main-red); color: white; padding: 15px; font-size: 30px; font-weight: bold; text-align: center; border-bottom: 5px solid #b91c1c; }
+        .status-bar { background: #34495e; color: #fff; padding: 6px; font-size: 14px; text-align: center; }
         .controls { padding: 15px; background: #eee; text-align: center; border-bottom: 2px solid #ddd; }
-        select { font-size: 22px; padding: 5px 20px; border-radius: 8px; border: 2px solid var(--main-red); font-weight: bold; }
-        .btn-save { background: #27ae60; color: white; border: none; padding: 10px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        select { font-size: 24px; padding: 5px 25px; border-radius: 10px; border: 3px solid var(--main-red); font-weight: bold; cursor: pointer; }
+        .btn-save { background: #27ae60; color: white; border: none; padding: 10px 30px; font-size: 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-save:hover { background: #219150; transform: scale(1.05); }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 1px solid #ccc; height: 115px; font-size: 75px; font-weight: bold; text-align: center; }
-        .hl { color: var(--main-red); display: inline; }
-        .side { width: 120px; font-size: 18px; background: var(--dark-blue); color: white; }
-        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 115px; white-space: nowrap; }
+        td { border: 1px solid #ccc; height: 120px; font-size: 80px; font-weight: bold; text-align: center; }
+        .hl { color: var(--main-red); }
+        .side { width: 130px; font-size: 20px; background: var(--dark-blue); color: white; font-weight: normal; }
+        .editable { outline: none; display: block; width: 100%; height: 100%; line-height: 120px; white-space: nowrap; }
         .r1 { background: #fff5f5; } .r2 { background: #fffaf0; } .r3 { background: #f0fff4; }
         .r4 { background: #ebf8ff; } .r5 { background: #faf5ff; } .r6 { background: #fff5f7; }
     </style>
@@ -27,13 +28,14 @@
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نواف التعليمية - القراءة الصحيحة 📖</div>
-    <div id="status" class="status-bar">جاري التحميل...</div>
+    <div class="header">مدرسة البطل نـواف - القراءة المتقنة 🚀</div>
+    <div id="status" class="status-bar">جاري فحص الاتصال...</div>
     
     <div class="controls">
+        <label style="font-size: 20px; font-weight: bold;">اختر الحرف: </label>
         <select id="charSelector" onchange="loadData()">
             </select>
-        <button class="btn-save" onclick="uploadData()">حفظ التعديلات في السحابة 💾</button>
+        <button class="btn-save" onclick="uploadData()">حفظ تعديلاتي للسحابة 💾</button>
     </div>
 
     <table>
@@ -61,18 +63,14 @@ const firebaseConfig = {
 try { firebase.initializeApp(firebaseConfig); } catch(e) {}
 const database = firebase.database();
 
-// --- مكتبة الكلمات الصحيحة والمراجعة لغوياً لكل الحروف ---
+// --- قاعدة بيانات كلمات نواف (مراجعة يدوياً) ---
 const masterDB = {
-    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِرَمِ","آدَمُ","آيَةُ","آكَلَ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيادُ","إِيهِ"],
+    "أ": ["أَكَلَ","أَمَرَ","أَخَذَ","أُكِلَ","أُمِرَ","أُخِذَ","إِبِلِ","إِذَنِ","إِرَمِ","آدَمُ","آيَةُ","آكَـلَ","أُوبُ","أُودُ","أُورُ","إِيمَ","إِيادُ","إِيهِ"],
     "ب": ["بَرَأَ","بَحَثَ","بَلَغَ","بُعِثَ","بُهِتَ","بُورِكَ","بِحارُ","بِقاعُ","بِلادُ","بَارَ","بَاعَ","بَانَ","بُومُ","بُورُ","بُوحُ","بِيرُ","بِيعَ","نَبِيلُ"],
-    "ت": ["تَرَكَ","تَبِعَ","تَمَّ","تُبِعَ","تُلِيَ","تُركَ","تِينِ","تِمْسِ","تِقْنِ","تَابَ","تَاقَ","تَاجُ","تُوبُ","تُوتُ","تُورُ","تِينُ","تِيهُ","يَتِيمُ"],
-    "ث": ["ثَبَتَ","ثَقَبَ","ثَمَرَ","ثُقِبَ","ثُبِتَ","ثُمِنَ","ثِيابُ","ثِمارُ","ثِقالُ","ثَارَ","ثَاقَ","ثَالُ","ثُومُ","ثُورُ","ثُوبُ","ثِيرُ","أَثِيرُ","كَثِيرُ"],
-    "ج": ["جَلَسَ","جَمَعَ","جَعَلَ","جُمِعَ","جُعِلَ","جُمِدَ","جِبالُ","جِمالُ","جِدارُ","جَاءَ","جَارَ","جَاعَ","جُوعُ","جُودُ","وُجوهُ","جِيرُ","مَجِيدُ","عَجِينُ"],
-    "ح": ["حَمَدَ","حَمَلَ","حَكَمَ","حُمِدَ","حُمِلَ","حُكِمَ","حِسابُ","حِمارُ","حِبالُ","حَارَ","حَانَ","حَازَ","حُوتُ","حُورُ","بُحوثُ","حِينُ","نَحِيفُ","رَحِيمُ"],
-    "د": ["دَخَلَ","دَرَسَ","دَفَعَ","دُخِلَ","دُرِسَ","دُفِعَ","دِيارُ","دِفاعُ","دِراغُ","دَاسَ","دَارَ","دَانَ","دُودُ","دُورُ","قُدوسُ","دِينُ","حَدِيدُ","مَدِيدُ"],
-    "ر": ["رَزَقَ","رَفَعَ","رَسَمَ","رُزِقَ","رُفِعَ","رُسِمَ","رِجالُ","رِياحُ","رِكابُ","رَاحَ","رَامَ","رَانَ","رُوحُ","رُومُ","قُرودُ","رِيحُ","سَرِيعُ","قَرِيبُ"],
+    "م": ["مَسَحَ","مَنَعَ","مَلَكَ","مُسِحَ","مُنِعَ","مُلِكَ","مِدادُ","مِثالُ","مِقْدارُ","مَاتَ","مَالَ","مَانَ","مُورُ","مُومُ","نُمورُ","مِيلُ","سَمِيعُ","أَمِيرُ"],
+    "هـ": ["هَدَمَ","هَرَبَ","هَزَمَ","هُدِمَ","هُرِبَ","هُزِمَ","هِلالُ","هِشامُ","هِباتُ","هَامَ","هَانَ","هَادَ","هُودُ","زُهورُ","كُهوفُ","هِيـمَ","فَهيمُ","شَهيدُ"],
     "ص": ["صَبَرَ","صَدَقَ","صَلَحَ","صُبِرَ","صُدِقَ","صُورَ","صِغارُ","صِعابُ","صِراطُ","صَادَ","صَامَ","صَارَ","صُوصُ","صُورُ","نَصومُ","صِيدَ","رَصِيدُ","عَصِيرُ"],
-    "ن": ["نَصَرَ","نَظَرَ","نَزَلَ","نُصِرَ","نُظِرَ","نُزِلَ","نِضالُ","نِداءُ","نِتاجُ","نَامَ","نَالَ","نَارُ","نُورُ","نُونُ","فُنونُ","نِيلُ","مُنِيرُ","نَصِيبُ"]
+    "ن": ["نَصَرَ","نَظَرَ","نَزَلَ","نُصِرَ","نُظِرَ","نُزِلَ","نِضالُ","نِداءُ","نِتاجُ","نَامَ","نَالَ","نَارُ","نُورُ","نُونُ","فُنونُ","نِيلُ","مُنيرُ","نَصيبُ"]
 };
 
 const allChars = "أبتثجحخدذرزمسشصضطظعغفقكلمنهـوي";
@@ -92,23 +90,21 @@ function loadData() {
     const char = document.getElementById('charSelector').value;
     const status = document.getElementById('status');
     
-    // الأولوية: 1. كلمات الحرف المختارة من MasterDB أو كلمات عامة
-    let words = masterDB[char] || ["كَتَبَ","دَرَسَ","قَرَأَ","كُتِبَ","رُسِمَ","نُصِرَ","شَرِبَ","سَمِعَ","لَعِبَ","قَالَ","نَامَ","بَاعَ","يَقُومُ","نَصُومُ","تَزُورُ","سَعِيدُ","كَرِيمُ","نَبِيلُ"];
+    // سحب الكلمات من MasterDB أو توليد افتراضي إذا لم يوجد الحرف في القائمة اليدوية بعد
+    let words = masterDB[char] || generateGeneric(char);
     
-    // عرض الكلمات فوراً
     displayWords(words);
 
-    // ثم محاولة جلب التعديلات من السحابة
     try {
         database.ref('nawaf_educational_data/' + char).once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 displayWords(snapshot.val());
-                status.innerText = "✅ تم تحميل تعديلاتك السحابية";
+                status.innerText = "✅ تم تحميل تعديلاتك الخاصة لهذا الحرف";
             } else {
-                status.innerText = "🤖 يتم عرض الكلمات الصحيحة الافتراضية";
+                status.innerText = "🤖 يتم عرض الكلمات المراجعة لغوياً";
             }
         });
-    } catch(e) { status.innerText = "⚠️ وضع عدم الاتصال"; }
+    } catch(e) { status.innerText = "⚠️ وضع المعاينة (يرجى ربط السحابة)"; }
 }
 
 function displayWords(words) {
@@ -119,6 +115,11 @@ function displayWords(words) {
     }
 }
 
+function generateGeneric(c) {
+    // خطة بديلة للحروف التي لم تكتمل في masterDB بعد
+    return [c+"َ...",c+"َ...",c+"َ...",c+"ُ...",c+"ُ...",c+"ُ...",c+"ِ...",c+"ِ...",c+"ِ...",c+"ا...",c+"ا...",c+"ا...",c+"و...",c+"و...",c+"و...",c+"ي...",c+"ي...",c+"ي..."];
+}
+
 function uploadData() {
     const char = document.getElementById('charSelector').value;
     const words = [];
@@ -126,7 +127,7 @@ function uploadData() {
         words.push(document.getElementById('td' + i).innerText);
     }
     database.ref('nawaf_educational_data/' + char).set(words).then(() => {
-        alert("تم حفظ تعديلاتك لحرف (" + char + ") في السحابة!");
+        alert("بطل يا نواف! تم حفظ تعديلات حرف (" + char + ") في السحابة.");
     });
 }
 
@@ -135,12 +136,11 @@ function applyColor(el) {
     const activeChar = document.getElementById('charSelector').value;
     let pattern = (activeChar === "أ") ? "[أإآا]" : (activeChar === "هـ") ? "[هـه]" : activeChar;
     
-    // Regex دقيق جداً: يلون الحرف مع حركة واحدة فقط تتبعه مباشرة
+    // تلوين الحرف مع حركته فقط
     const regex = new RegExp(`(${pattern}[\u064B-\u0652]?)`, 'g');
-    
     el.innerHTML = content.replace(regex, `<span class="hl">$1</span>`);
     
-    // تثبيت المؤشر في نهاية النص لضمان تجربة كتابة سلسة
+    // تثبيت المؤشر في مكان الكتابة
     const range = document.createRange();
     const sel = window.getSelection();
     if (el.childNodes.length > 0) {
