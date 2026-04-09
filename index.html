@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - الحركات المضمونة</title>
+    <title>منصة نواف - التلوين الفوري المضمون</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -12,46 +12,39 @@
         .container { background: white; max-width: 950px; margin: auto; border: 5px solid var(--dark-blue); border-radius: 20px; overflow: hidden; }
         .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
         
-        /* شريط الحركات الكبير باللون الأحمر */
-        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; }
+        /* شريط الحركات */
+        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 10px; border-bottom: 3px solid #DDD; }
         .h-btn { 
             background: #FFF; border: 4px solid var(--main-red); border-radius: 12px; 
-            width: 70px; height: 70px; font-size: 50px; font-weight: bold; color: var(--main-red);
+            width: 70px; height: 70px; font-size: 45px; font-weight: bold; color: var(--main-red);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
         .controls { padding: 10px; background: #EEE; display: flex; justify-content: center; gap: 15px; align-items: center; }
         
         table { width: 100%; border-collapse: collapse; }
-        td { border: 2px solid #CCC; height: 110px; position: relative; background: white; }
+        td { border: 2px solid #CCC; height: 110px; background: white; }
         
-        /* مربع الكتابة */
+        /* المربع الذكي */
         .word-input {
-            width: 100%; height: 100%; border: none; outline: none;
+            width: 100%; height: 100%; outline: none; border: none;
             text-align: center; font-size: 60px; font-weight: bold;
-            background: transparent; position: relative; z-index: 2;
-            color: transparent; caret-color: black; /* إخفاء النص الأسود لإظهار الملون */
-        }
-        
-        /* طبقة العرض الملونة */
-        .word-display {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; font-size: 60px; font-weight: bold; 
-            line-height: 110px; color: black; display: flex; align-items: center; justify-content: center;
+            display: block; line-height: 110px; white-space: nowrap;
+            overflow: hidden; cursor: text;
         }
 
-        .hl { color: var(--main-red) !important; }
+        .hl { color: var(--main-red) !important; } /* تلوين الحرف المختار بالأحمر */
         .side { background: var(--dark-blue); color: white; font-size: 20px; width: 130px; font-weight: bold; }
-        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف الذكية 🚀</div>
+    <div class="header">مدرسة نـواف - تحدي المستحيل 🏆</div>
 
     <div class="controls">
-        <select id="mainChar" onchange="loadFromCloud()" style="font-size: 20px;">
+        <select id="mainChar" onchange="loadFromCloud()" style="font-size: 20px; padding: 5px;">
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -78,12 +71,12 @@
     </div>
 
     <table>
-        <tr><td class="side">الفتحة</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
-        <tr><td class="side">الضمة</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
-        <tr><td class="side">الكسرة</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
-        <tr><td class="side">مد الألف</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
-        <tr><td class="side">مد الواو</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
-        <tr><td class="side">مد الياء</td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td><td><input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)"><div class="word-display"></div></td></tr>
+        <tr><td class="side">الفتحة</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
+        <tr><td class="side">الضمة</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
+        <tr><td class="side">الكسرة</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
+        <tr><td class="side">مد الألف</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
+        <tr><td class="side">مد الواو</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
+        <tr><td class="side">مد الياء</td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td><td><div contenteditable="true" class="word-input" onfocus="lastI=this" oninput="colorize(this)"></div></td></tr>
     </table>
 </div>
 
@@ -96,38 +89,54 @@
 
     function addH(h) {
         if (!lastI) return;
-        let val = lastI.value;
-        let start = lastI.selectionStart;
-
-        // استبدال الحركة لو موجودة
-        if (/[\u064B-\u0652]/.test(val.charAt(start - 1))) {
-            val = val.slice(0, start - 1) + val.slice(start);
-            start--;
+        
+        let sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+            let range = sel.getRangeAt(0);
+            
+            // إضافة الحركة مباشرة في موضع المؤشر
+            let node = document.createTextNode(h);
+            range.insertNode(node);
+            
+            // تحريك المؤشر بعد الحركة
+            range.setStartAfter(node);
+            sel.removeAllRanges();
+            sel.addRange(range);
         }
-
-        lastI.value = val.slice(0, start) + h + val.slice(start);
-        lastI.focus();
-        lastI.setSelectionRange(start + 1, start + 1);
-        draw(lastI); // تحديث التلوين فوراً
+        colorize(lastI);
     }
 
-    function draw(input) {
-        const display = input.nextElementSibling;
-        const char = document.getElementById('mainChar').value;
-        const text = input.value;
+    function colorize(el) {
+        let char = document.getElementById('mainChar').value;
+        let text = el.innerText;
         
-        if (!text.trim()) { display.innerHTML = ""; return; }
+        if (!text) return;
 
         let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
-        const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
+        // البحث عن الحرف المختار + الشدة + أي حركة أو تنوين
+        let regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
+        
+        // تحويل النص إلى ملون مع الحفاظ على المؤشر
+        let coloredHTML = text.replace(regex, `<span class="hl">$1</span>`);
+        
+        // حفظ مكان المؤشر النسبي
+        let sel = window.getSelection();
+        let offset = sel.anchorOffset;
 
-        display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
+        el.innerHTML = coloredHTML;
+
+        // إعادة وضع المؤشر في نهاية المربع ليتمكن من الكتابة فوراً
+        let range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
 
     function saveToCloud() {
         const char = document.getElementById('mainChar').value;
-        const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
-        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ ✅"));
+        const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.innerText);
+        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ بنجاح ✅"));
     }
 
     function loadFromCloud() {
@@ -136,8 +145,8 @@
             const words = snap.val() || Array(18).fill("");
             const inputs = document.querySelectorAll('.word-input');
             inputs.forEach((input, index) => {
-                input.value = words[index] || "";
-                draw(input);
+                input.innerText = words[index] || "";
+                colorize(input);
             });
         });
     }
