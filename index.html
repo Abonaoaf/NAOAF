@@ -2,52 +2,73 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرسة نواف - قاهر المستحيل</title>
+    <title>منصة نواف - قاهر المستحيل</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <style>
         :root { --main-red: #FF0000; --dark-blue: #1A2A3A; }
-        body { font-family: 'Arial', sans-serif; background: #F0F2F5; text-align: center; padding: 20px; }
-        .container { background: white; max-width: 900px; margin: auto; border-radius: 25px; border: 6px solid var(--dark-blue); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
-        .header { background: var(--main-red); color: white; padding: 20px; font-size: 30px; font-weight: bold; }
+        body { font-family: 'Arial', sans-serif; background: #F0F2F5; padding: 10px; text-align: center; }
+        .container { background: white; max-width: 950px; margin: auto; border: 6px solid var(--dark-blue); border-radius: 25px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        .header { background: var(--main-red); color: white; padding: 15px; font-size: 28px; font-weight: bold; }
         
-        .harakat-bar { background: #fff; padding: 15px; display: flex; justify-content: center; gap: 10px; border-bottom: 2px solid #eee; }
+        /* شريط الحركات */
+        .harakat-bar { background: #FFF; padding: 15px; display: flex; justify-content: center; gap: 8px; border-bottom: 3px solid #DDD; }
         .h-btn { 
-            background: white; border: 3px solid var(--main-red); border-radius: 15px; 
-            width: 65px; height: 65px; font-size: 40px; font-weight: bold; color: var(--main-red);
-            cursor: pointer; transition: 0.2s;
+            background: #FFF; border: 3px solid var(--main-red); border-radius: 12px; 
+            width: 60px; height: 60px; font-size: 40px; font-weight: bold; color: var(--main-red);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-        .h-btn:hover { background: var(--main-red); color: white; }
+        .h-btn:active { transform: scale(0.9); background: #ffebeb; }
 
-        table { width: 100%; border-collapse: collapse; background: white; }
-        td { border: 1px solid #ddd; height: 120px; position: relative; width: 30%; }
-        .side { background: var(--dark-blue); color: white; font-size: 22px; width: 140px; font-weight: bold; }
+        .controls { padding: 15px; background: #EEE; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        select { font-size: 20px; padding: 5px; font-weight: bold; border-radius: 8px; }
 
-        /* منطقة الكتابة السحرية */
-        .wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        td { border: 1px solid #CCC; height: 100px; position: relative; background: white; }
+        
+        .input-wrapper { position: relative; width: 100%; height: 100%; }
         
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 65px; font-weight: bold;
-            background: transparent; position: relative; z-index: 3;
-            color: black; /* نكتب بالأسود بشكل طبيعي جداً */
+            text-align: center; font-size: 55px; font-weight: bold;
+            background: transparent; position: relative; z-index: 2;
+            color: rgba(0,0,0,0.8); caret-color: black;
         }
-
-        /* طبقة التلوين الأحمر التي تظهر "فوق" الحرف المختار فقط */
-        .color-layer {
+        
+        .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; pointer-events: none;
+            pointer-events: none; z-index: 1; font-size: 55px; font-weight: bold; 
+            line-height: 100px; color: transparent; white-space: nowrap;
             display: flex; align-items: center; justify-content: center;
-            font-size: 65px; font-weight: bold; white-space: pre;
-            color: transparent; /* نخفي كل النص */
         }
 
-        /* الحرف المختار وحركته فقط هم من سيظهرون بالأحمر */
-        .hl { color: var(--main-red); }
+        .hl { color: var(--main-red) !important; } /* لون الحرف المختار مع حركته */
+        .side { background: var(--dark-blue); color: white; font-size: 18px; width: 120px; font-weight: bold; }
+        .btn-save { background: #27AE60; color: white; border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف - تحدي الذكاء 🥊</div>
+    <div class="header">مدرسة نـواف - لوحة القراءة الذكية 🚀</div>
+
+    <div class="controls">
+        <label>الحرف:</label>
+        <select id="mainChar" onchange="loadFromCloud()">
+            <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
+            <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
+            <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
+            <option value="ر">ر</option><option value="ز">ز</option><option value="س">س</option>
+            <option value="ش">ش</option><option value="ص" selected>ص</option><option value="ض">ض</option>
+            <option value="ط">ط</option><option value="ظ">ظ</option><option value="ع">ع</option>
+            <option value="غ">غ</option><option value="ف">ف</option><option value="ق">ق</option>
+            <option value="ك">ك</option><option value="ل">ل</option><option value="م">م</option>
+            <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
+            <option value="ي">ي</option>
+        </select>
+        <button class="btn-save" onclick="saveToCloud()">حفظ السحابة 💾</button>
+    </div>
 
     <div class="harakat-bar">
         <button class="h-btn" onmousedown="event.preventDefault(); addH('َ')"> َ </button>
@@ -60,50 +81,84 @@
         <button class="h-btn" onmousedown="event.preventDefault(); addH('ٍ')"> ٍ </button>
     </div>
 
-    <table>
-        <tr><td class="side">الفتحة</td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td></tr>
-        <tr><td class="side">الضمة</td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td></tr>
-        <tr><td class="side">الكسرة</td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td><td><div class="wrapper"><input type="text" class="word-input" onfocus="activeIn=this" oninput="sync(this)"><div class="color-layer"></div></div></td></tr>
-    </table>
+    <table id="mainTable">
+        </table>
 </div>
 
 <script>
-    let activeIn = null;
-    const targetChar = "ص"; // الحرف الذي نريد صيده وتلوينه
+    // إعدادات Firebase
+    const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+    try { firebase.initializeApp(firebaseConfig); } catch(e){}
+    const database = firebase.database();
+
+    let lastI = null;
+    const rows = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
+
+    function initTable() {
+        const table = document.getElementById('mainTable');
+        table.innerHTML = "";
+        rows.forEach(r => {
+            let tr = `<tr><td class="side">${r}</td>`;
+            for(let i=0; i<3; i++) {
+                tr += `<td><div class="input-wrapper">
+                        <input type="text" class="word-input" onfocus="lastI=this" oninput="draw(this)">
+                        <div class="word-display"></div>
+                      </div></td>`;
+            }
+            tr += `</tr>`;
+            table.innerHTML += tr;
+        });
+    }
 
     function addH(h) {
-        if (!activeIn) return;
-        let start = activeIn.selectionStart;
-        let val = activeIn.value;
-        
-        // استبدال الحركة إذا كانت موجودة
-        if (/[\u064B-\u0652]/.test(val.charAt(start - 1))) {
-            val = val.slice(0, start - 1) + val.slice(start);
-            start--;
+        if (!lastI) return;
+        let s = lastI.selectionStart;
+        let v = lastI.value;
+        // استبدال الحركة القديمة
+        if (/[\u064B-\u0652]/.test(v.charAt(s - 1))) {
+            v = v.slice(0, s - 1) + v.slice(s);
+            s--;
         }
-
-        activeIn.value = val.slice(0, start) + h + val.slice(start);
-        activeIn.focus();
-        activeIn.setSelectionRange(start + 1, start + 1);
-        sync(activeIn);
+        lastI.value = v.slice(0, s) + h + v.slice(s);
+        lastI.focus();
+        lastI.setSelectionRange(s + 1, s + 1);
+        draw(lastI);
     }
 
-    function sync(input) {
-        const layer = input.nextElementSibling;
-        const val = input.value;
-        if (!val) { layer.innerHTML = ""; return; }
+    function draw(input) {
+        const display = input.nextElementSibling;
+        const char = document.getElementById('mainChar').value;
+        const text = input.value;
+        if (!text) { display.innerHTML = ""; return; }
 
-        // صيد الحرف المختار مع أي حركة تتبعه (بما في ذلك الحركات التي يضعها المستخدم)
-        let p = (targetChar === "أ") ? "[أإآا]" : (targetChar === "هـ") ? "[هـه]" : targetChar;
-        let regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
+        let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
+        const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
 
-        // السحر هنا: الطبقة الملونة تأخذ نفس النص تماماً
-        // لكننا نجعل كل الحروف شفافة ماعدا "الحرف المختار وحركته" نجعله أحمر
-        layer.innerHTML = val.replace(regex, `<span class="hl">$1</span>`);
-        
-        // لجعل النص الأسود الأصلي يختفي "فقط" في مكان الحرف الأحمر لكي لا يتداخلا
-        // سنستخدم حيلة بسيطة: النص الأحمر في الطبقة الثانية يغطي الأسود تماماً.
+        // الحيلة: نجعل الحرف المختار وحركته في طبقة العرض أحمر، والبقية شفاف تماماً
+        // لكي يظهر النص الأسود من الطبقة التي تحتها
+        display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
     }
+
+    function saveToCloud() {
+        const char = document.getElementById('mainChar').value;
+        const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
+        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("تم الحفظ بنجاح ✅"));
+    }
+
+    function loadFromCloud() {
+        const char = document.getElementById('mainChar').value;
+        database.ref('nawaf_educational_data/' + char).once('value').then(snap => {
+            const words = snap.val() || Array(18).fill("");
+            const inputs = document.querySelectorAll('.word-input');
+            inputs.forEach((input, index) => {
+                input.value = words[index] || "";
+                draw(input);
+            });
+        });
+    }
+
+    initTable();
+    window.onload = loadFromCloud;
 </script>
 </body>
 </html>
