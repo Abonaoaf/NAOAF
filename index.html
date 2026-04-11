@@ -2,183 +2,180 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرسة الحروف - شقلبة وتلوين</title>
+    <title>السبورة التفاعلية - مدرسة الحروف</title>
     <style>
+        :root {
+            --primary-color: #e74c3c;
+        }
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50; /* لون خلفية غامق كالسبورة */
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+            margin: 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            background: white;
+        .board {
+            width: 90%;
+            max-width: 800px;
+            background-color: white;
+            color: #333;
+            border: 10px solid #8d6e63; /* إطار خشبي */
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background-color: #ff0000;
-            color: white;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            font-size: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
-        .toolbar {
-            padding: 20px;
-            background: #fafafa;
-            border-bottom: 2px solid #eee;
-            text-align: center;
-        }
-
-        select {
-            padding: 10px;
-            font-size: 18px;
-            border-radius: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: #2c3e50;
-            color: white;
-            padding: 15px;
-            width: 120px;
-        }
-
-        td {
-            border: 1px solid #eee;
-            padding: 15px;
-        }
-
-        .inputs-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-
-        .word-box {
+        .controls {
+            margin-bottom: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
         }
 
-        .editable-cell {
-            min-height: 40px;
-            padding: 8px;
+        .harakat-btns {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .harakat-btns button {
             font-size: 24px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            outline: none;
-            text-align: center;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            border: 2px solid #e74c3c;
+            background: white;
+            border-radius: 8px;
+            color: #e74c3c;
+            transition: 0.3s;
         }
 
-        .flipped-text {
-            font-size: 18px;
-            color: #7f8c8d;
-            background: #f9f9f9;
-            border-radius: 4px;
-            padding: 2px;
-            min-height: 25px;
-            text-align: center;
-            border: 1px solid #eee;
+        .harakat-btns button:hover {
+            background: #e74c3c;
+            color: white;
         }
 
-        .red-char {
-            color: #ff0000 !important;
+        #displayWord {
+            font-size: 120px; /* خط كبير جداً للسبورة */
+            margin: 40px 0;
+            min-height: 150px;
             font-weight: bold;
+        }
+
+        .highlight {
+            color: var(--primary-color);
+        }
+
+        input[type="text"] {
+            font-size: 24px;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+        }
+
+        .flipped-zone {
+            font-size: 30px;
+            color: #95a5a6;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">🏫 مدرسة الحروف - التلوين والشقلبة</div>
-    
-    <div class="toolbar">
-        <label>اختر الحرف:</label>
-        <select id="mainChar" onchange="refreshAll()">
-            </select>
+    <h2 style="color: #ecf0f1;">🎨 سبورة الحروف التفاعلية</h2>
+
+    <div class="controls">
+        <div>
+            <label>اختر الحرف:</label>
+            <select id="charSelect" onchange="updateBoard()">
+                </select>
+        </div>
+
+        <div class="color-picker">
+            <label>لون التمييز:</label>
+            <input type="color" id="colorPicker" value="#e74c3c" onchange="updateColor()">
+        </div>
     </div>
 
-    <table>
-        <tbody id="tableBody"></tbody>
-    </table>
-</div>
+    <div class="harakat-btns" id="harakatZone">
+        <button onclick="addHaraka('َ')"> َ </button>
+        <button onclick="addHaraka('ُ')"> ُ </button>
+        <button onclick="addHaraka('ِ')"> ِ </button>
+        <button onclick="addHaraka('ْ')"> ْ </button>
+        <button onclick="addHaraka('ً')"> ً </button>
+        <button onclick="addHaraka('ٌ')"> ٌ </button>
+        <button onclick="addHaraka('ٍ')"> ٍ </button>
+        <button onclick="addHaraka('ّ')"> ّ </button>
+    </div>
 
-<script>
-    const chars = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-    const categories = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
-    const select = document.getElementById('mainChar');
-    const tableBody = document.getElementById('tableBody');
+    <div class="board">
+        <input type="text" id="wordInput" placeholder="اكتب الكلمة هنا..." oninput="updateBoard()">
+        
+        <div id="displayWord"></div>
 
-    // تعبئة قائمة الحروف
-    chars.split('').forEach(c => {
-        let opt = document.createElement('option');
-        opt.value = c;
-        opt.innerText = c;
-        select.appendChild(opt);
-    });
+        <div class="flipped-zone">
+            <span>الشقلبة: </span>
+            <span id="flippedWord"></span>
+        </div>
+    </div>
 
-    // بناء الجدول
-    categories.forEach(cat => {
-        let row = `<tr><th>${cat}</th><td><div class="inputs-group">`;
-        for(let i=0; i<3; i++) {
-            row += `
-                <div class="word-box">
-                    <div class="editable-cell" contenteditable="true" oninput="processWord(this)"></div>
-                    <div class="flipped-text" title="الكلمة متشقلبة"></div>
-                </div>`;
+    <script>
+        const chars = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
+        const charSelect = document.getElementById('charSelect');
+        const wordInput = document.getElementById('wordInput');
+        const displayWord = document.getElementById('displayWord');
+        const flippedWord = document.getElementById('flippedWord');
+        const colorPicker = document.getElementById('colorPicker');
+
+        // تعبئة الحروف
+        chars.split('').forEach(c => {
+            let opt = document.createElement('option');
+            opt.value = c;
+            opt.innerText = c;
+            charSelect.appendChild(opt);
+        });
+
+        function addHaraka(h) {
+            wordInput.value += h;
+            updateBoard();
+            wordInput.focus();
         }
-        row += `</div></td></tr>`;
-        tableBody.innerHTML += row;
-    });
 
-    function processWord(element) {
-        const targetChar = document.getElementById('mainChar').value;
-        const flippedBox = element.nextElementSibling;
-        let text = element.innerText;
-
-        // 1. شقلبة الحروف (عكس النص)
-        // نستخدم Array.from للتعامل الصحيح مع الحروف العربية والحركات
-        flippedBox.innerText = Array.from(text).reverse().join('');
-
-        // 2. تلوين الحرف المختار
-        const regex = new RegExp(`(${targetChar}[\u064B-\u0652\u0670]?)`, 'g');
-        const newHTML = text.replace(regex, `<span class="red-char">$1</span>`);
-
-        // تحديث المحتوى بدون فقدان التركيز (Focus)
-        if (element.innerHTML !== newHTML) {
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
-            const offset = range.startOffset;
-
-            element.innerHTML = newHTML;
-
-            // إعادة تعيين مكان المؤشر
-            const newRange = document.createRange();
-            if (element.lastChild) {
-                newRange.setStart(element.lastChild, element.innerText.length);
-                newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
-            }
+        function updateColor() {
+            document.documentElement.style.setProperty('--primary-color', colorPicker.value);
+            updateBoard();
         }
-    }
 
-    function refreshAll() {
-        document.querySelectorAll('.editable-cell').forEach(cell => processWord(cell));
-    }
-</script>
+        function updateBoard() {
+            let text = wordInput.value;
+            let target = charSelect.value;
+            
+            // 1. معالجة التلوين (الحرف + الحركة)
+            const regex = new RegExp(`(${target}[\u064B-\u0652\u0670]?)`, 'g');
+            let coloredText = text.replace(regex, `<span class="highlight">$1</span>`);
+            displayWord.innerHTML = coloredText || "...";
 
+            // 2. معالجة الشقلبة
+            flippedWord.innerText = Array.from(text).reverse().join('');
+        }
+    </script>
 </body>
 </html>
