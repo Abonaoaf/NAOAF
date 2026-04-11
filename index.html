@@ -2,59 +2,53 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - الإصدار المعتمد</title>
+    <title>منصة نواف - النسخة المصلحة بالكامل</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --red: #FF0000; --navy: #1A2A3A; }
         body { font-family: 'Arial', sans-serif; background: #F4F7F6; padding: 20px; text-align: center; }
-        .container { background: white; max-width: 950px; margin: auto; border: 8px solid var(--navy); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .header { background: var(--red); color: white; padding: 20px; font-size: 32px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .container { background: white; max-width: 950px; margin: auto; border: 8px solid var(--navy); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); [span_2](start_span)}
+        .header { background: var(--red); color: white; padding: 20px; font-size: 32px; font-weight: bold; }[span_2](end_span)
         
-        .harakat-bar { background: #fff; padding: 20px; display: flex; justify-content: center; gap: 10px; border-bottom: 4px solid #eee; flex-wrap: wrap; }
-        .h-btn { background: white; border: 4px solid var(--red); border-radius: 15px; width: 70px; height: 70px; font-size: 45px; font-weight: bold; color: var(--red); cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
-        .h-btn:active { transform: translateY(4px); background: #fff0f0; }
-
-        .controls { padding: 20px; background: #f9f9f9; display: flex; justify-content: center; gap: 20px; align-items: center; border-bottom: 2px solid #ddd; }
-        select { font-size: 22px; padding: 8px 15px; font-weight: bold; border-radius: 10px; border: 2px solid var(--navy); cursor: pointer; }
-
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { border: 2px solid #ddd; height: 120px; position: relative; background: white; padding: 0; }
-        .side { background: var(--navy); color: white; font-size: 22px; width: 150px; font-weight: bold; }
-
-        /* منطقة الكتابة والظهور - الإصلاح الجوهري هنا */
-        .box { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .harakat-bar { background: #fff; padding: 20px; display: flex; justify-content: center; gap: 10px; border-bottom: 4px solid #eee; flex-wrap: wrap; [span_3](start_span)}
+        .h-btn { background: white; border: 4px solid var(--red); border-radius: 15px; width: 70px; height: 70px; font-size: 45px; font-weight: bold; color: var(--red); cursor: pointer; }[span_3](end_span)
         
+        .controls { padding: 20px; background: #f9f9f9; display: flex; justify-content: center; gap: 20px; align-items: center; border-bottom: 2px solid #ddd; [span_4](start_span)}
+        select { font-size: 22px; padding: 8px 15px; font-weight: bold; border-radius: 10px; border: 2px solid var(--navy); }[span_4](end_span)
+
+        table { width: 100%; border-collapse: collapse; [span_5](start_span)}
+        td { border: 2px solid #ddd; height: 120px; position: relative; background: white; }[span_5](end_span)
+        .side { background: var(--navy); color: white; font-size: 22px; width: 150px; font-weight: bold; [span_6](start_span)}
+
+        /* تعديل جوهري لسهولة الرؤية */
+        .box { position: relative; width: 100%; height: 100%; }
         .word-input {
             width: 100%; height: 100%; border: none; outline: none;
             text-align: center; font-size: 65px; font-weight: bold;
-            background: transparent; position: relative; z-index: 2;
-            color: transparent; /* جعل النص المكتوب شفافاً لمنع تداخل الطبقات */
-            caret-color: var(--navy); /* جعل مؤشر الكتابة مرئياً */
+            background: white; position: absolute; top: 0; left: 0; z-index: 1;
+            color: #333; caret-color: red;
         }
-        
+        /* هذه الطبقة ستظهر فقط عند التلوين وتغطي النص الأصلي */
         .word-display {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; font-size: 65px; font-weight: bold; 
-            line-height: 120px; color: #333; /* اللون الأساسي للنص غير الملون */
-            white-space: pre; display: flex; align-items: center; justify-content: center;
+            pointer-events: none; z-index: 2; font-size: 65px; font-weight: bold; 
+            line-height: 120px; background: white; display: none; /* مخفية افتراضياً */
         }
+        .hl { color: var(--red); }[span_6](end_span)
         
-        .hl { color: var(--red); } /* تلوين الحرف المختار وحركته */
-        
-        .btn-save { background: #27AE60; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px #1e8449; }
-        .btn-save:active { box-shadow: 0 0; transform: translateY(4px); }
+        .btn-save { background: #27AE60; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; [span_7](start_span)}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">مدرسة نـواف - الإصدار النهائي الصامد 🏆</div>
+    <div class="header">مدرسة نـواف - الإصدار النهائي الصامد 🏆</div>[span_7](end_span)
 
     <div class="controls">
         <label style="font-weight: bold; font-size: 20px;">اختر حرف التلوين:</label>
-        <select id="mainChar" onchange="loadFromCloud()">
+        [span_8](start_span)<select id="mainChar" onchange="loadFromCloud()">[span_8](end_span)
             <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
             <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
             <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
@@ -64,23 +58,23 @@
             <option value="غ">غ</option><option value="ف">ف</option><option value="ق">ق</option>
             <option value="ك">ك</option><option value="ل">ل</option><option value="م">م</option>
             <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
-            <option value="ي">ي</option>
+            [span_9](start_span)<option value="ي">ي</option>[span_9](end_span)
         </select>
-        <button class="btn-save" onclick="saveToCloud()">حفظ في السحابة 💾</button>
+        [span_10](start_span)<button class="btn-save" onclick="saveToCloud()">حفظ في السحابة 💾</button>[span_10](end_span)
     </div>
 
     <div class="harakat-bar">
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('َ')"> َ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ُ')"> ُ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ِ')"> ِ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ْ')"> ْ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ّ')"> ّ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ً')"> ً </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ٌ')"> ٌ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ٍ')"> ٍ </button>
+        [span_11](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('َ')"> َ </button>[span_11](end_span)
+        [span_12](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ُ')"> ُ </button>[span_12](end_span)
+        [span_13](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ِ')"> ِ </button>[span_13](end_span)
+        [span_14](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ْ')"> ْ </button>[span_14](end_span)
+        [span_15](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ّ')"> ّ </button>[span_15](end_span)
+        [span_16](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ً')"> ً </button>[span_16](end_span)
+        [span_17](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ٌ')"> ٌ </button>[span_17](end_span)
+        [span_18](start_span)<button class="h-btn" onmousedown="event.preventDefault(); addH('ٍ')"> ٍ </button>[span_18](end_span)
     </div>
 
-    <table>
+    <table id="mainTable">
         <tr><td class="side">الفتحة</td>
             <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
             <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
@@ -96,27 +90,12 @@
             <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
             <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
-        <tr><td class="side">مد الألف</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-        </tr>
-        <tr><td class="side">مد الواو</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-        </tr>
-        <tr><td class="side">مد الياء</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-        </tr>
     </table>
 </div>
 
 <script>
-    // يجب تعبئة هذه البيانات من مشروع Firebase الخاص بك ليعمل الحفظ
-    const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+    // بيانات Firebase (اتركها كما هي إذا لم يكن لديك قاعدة بيانات حالياً)
+    [span_19](start_span)const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };[span_19](end_span)
     try { firebase.initializeApp(firebaseConfig); } catch(e){}
     const database = firebase.database();
 
@@ -124,40 +103,48 @@
 
     function addH(h) {
         if (!cur) return;
-        let s = cur.selectionStart;
-        let v = cur.value;
-        // استبدال حركة قديمة بحركة جديدة إذا كانت موجودة خلف المؤشر مباشرة
-        if (s > 0 && /[\u064B-\u0652]/.test(v.charAt(s - 1))) {
-            v = v.slice(0, s - 1) + v.slice(s);
+        [span_20](start_span)let s = cur.selectionStart;[span_20](end_span)
+        [span_21](start_span)let v = cur.value;[span_21](end_span)
+        [span_22](start_span)if (s > 0 && /[\u064B-\u0652]/.test(v.charAt(s - 1))) {[span_22](end_span)
+            [span_23](start_span)v = v.slice(0, s - 1) + v.slice(s);[span_23](end_span)
             s--;
         }
-        cur.value = v.slice(0, s) + h + v.slice(s);
+        [span_24](start_span)cur.value = v.slice(0, s) + h + v.slice(s);[span_24](end_span)
         cur.focus();
-        cur.setSelectionRange(s + 1, s + 1);
+        [span_25](start_span)cur.setSelectionRange(s + 1, s + 1);[span_25](end_span)
         upd(cur);
     }
 
     function upd(input) {
         const display = input.nextElementSibling;
-        const char = document.getElementById('mainChar').value;
+        [span_26](start_span)const char = document.getElementById('mainChar').value;[span_26](end_span)
         const text = input.value;
-        if (!text) { display.innerHTML = ""; return; }
+        
+        if (!text) { 
+            [span_27](start_span)display.style.display = "none";[span_27](end_span)
+            return; 
+        }
 
-        let pattern = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
-        [span_2](start_span)// RegExp لتلوين الحرف مع شدته وحركته إن وجدا[span_2](end_span)
-        const regex = new RegExp(`(${pattern}[\u0651]?[\u064B-\u0652]?)`, 'g');
-        display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
+        let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? [span_28](start_span)"[هـه]" : char;[span_28](end_span)
+        [span_29](start_span)const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');[span_29](end_span)
+        
+        if (regex.test(text)) {
+            display.style.display = "flex";
+            [span_30](start_span)display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);[span_30](end_span)
+        } else {
+            display.style.display = "none";
+        }
     }
 
     function saveToCloud() {
-        const char = document.getElementById('mainChar').value;
-        const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
-        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("✅ تم حفظ البيانات لـ " + char));
+        [span_31](start_span)const char = document.getElementById('mainChar').value;[span_31](end_span)
+        [span_32](start_span)const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);[span_32](end_span)
+        [span_33](start_span)database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("✅ تم حفظ البيانات"));[span_33](end_span)
     }
 
     function loadFromCloud() {
-        const char = document.getElementById('mainChar').value;
-        database.ref('nawaf_educational_data/' + char).once('value').then(snap => {
+        [span_34](start_span)const char = document.getElementById('mainChar').value;[span_34](end_span)
+        [span_35](start_span)database.ref('nawaf_educational_data/' + char).once('value').then(snap => {[span_35](end_span)
             const words = snap.val() || Array(18).fill("");
             const inputs = document.querySelectorAll('.word-input');
             inputs.forEach((input, index) => {
@@ -170,5 +157,4 @@
     window.onload = loadFromCloud;
 </script>
 </body>
-                                                                                                                                                  </html>
-                                                                                                                                                  
+</html>
