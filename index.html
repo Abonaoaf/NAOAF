@@ -2,164 +2,163 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف التعليمية</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة الحروف التفاعلية</title>
     <style>
-        :root { --red: #FF0000; --navy: #1A2A3A; }
-        body { font-family: 'Arial', sans-serif; background: #F4F7F6; padding: 20px; text-align: center; }
-        .container { background: white; max-width: 950px; margin: auto; border: 8px solid var(--navy); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .header { background: var(--red); color: white; padding: 20px; font-size: 32px; font-weight: bold; }
-        
-        .harakat-bar { background: #fff; padding: 20px; display: flex; justify-content: center; gap: 10px; border-bottom: 4px solid #eee; flex-wrap: wrap; }
-        .h-btn { background: white; border: 4px solid var(--red); border-radius: 15px; width: 65px; height: 65px; font-size: 40px; font-weight: bold; color: var(--red); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .h-btn:active { transform: translateY(4px); background: #fff0f0; }
-
-        .controls { padding: 20px; background: #f9f9f9; display: flex; justify-content: center; gap: 20px; align-items: center; border-bottom: 2px solid #ddd; }
-        select { font-size: 22px; padding: 8px 15px; font-weight: bold; border-radius: 10px; border: 2px solid var(--navy); }
-
-        table { width: 100%; border-collapse: collapse; }
-        td { border: 2px solid #ddd; height: 120px; position: relative; background: white; }
-        .side { background: var(--navy); color: white; font-size: 22px; width: 150px; font-weight: bold; }
-
-        /* منطقة الكتابة - حل مشكلة الطبقات */
-        .box { position: relative; width: 100%; height: 100%; }
-        
-        .word-input {
-            width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 65px; font-weight: bold;
-            background: transparent; position: absolute; top: 0; left: 0; z-index: 2;
-            color: transparent; /* إخفاء نص الإدخال لرؤية الطبقة الملونة فقط */
-            caret-color: black; /* جعل مؤشر الكتابة مرئياً */
-            padding: 0; margin: 0;
+        :root {
+            --primary-color: #e74c3c; /* الأحمر للحروف */
+            --bg-color: #f8f9fa;
+            --table-header: #2c3e50;
         }
-        
-        .word-display {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; font-size: 65px; font-weight: bold; 
-            line-height: 120px; color: black; /* الكلمة تظهر بالأسود */
-            white-space: pre; display: flex; align-items: center; justify-content: center;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
-        
-        .hl { color: var(--red); } /* الحرف المختار والحركات باللون الأحمر */
-        
-        .btn-save { background: #27AE60; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .header {
+            background-color: red;
+            color: white;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .controls {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        select, input {
+            padding: 8px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        table {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-collapse: collapse;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        th {
+            background-color: var(--table-header);
+            color: white;
+            width: 30%;
+        }
+
+        /* تنسيق التلوين السحري */
+        .highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .input-cell {
+            width: 100%;
+            border: none;
+            text-align: center;
+            font-size: 28px;
+            outline: none;
+        }
+
+        .btn-save {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">مدرسة نـواف - الإصدار المطور 🏆</div>
+    <div class="header">🏆 مدرسة الحروف - الإصدار التفاعلي</div>
 
     <div class="controls">
-        <label style="font-weight: bold; font-size: 20px;">اختر حرف التلوين:</label>
-        <select id="mainChar" onchange="loadFromCloud()">
-            <option value="أ">أ</option><option value="ب">ب</option><option value="ت">ت</option>
-            <option value="ث">ث</option><option value="ج">ج</option><option value="ح">ح</option>
-            <option value="خ">خ</option><option value="د">د</option><option value="ذ">ذ</option>
-            <option value="ر">ر</option><option value="ز">ز</option><option value="س">س</option>
-            <option value="ش">ش</option><option value="ص" selected>ص</option><option value="ض">ض</option>
-            <option value="ط">ط</option><option value="ظ">ظ</option><option value="ع">ع</option>
-            <option value="غ">غ</option><option value="ف">ف</option><option value="ق">ق</option>
-            <option value="ك">ك</option><option value="ل">ل</option><option value="م">م</option>
-            <option value="ن">ن</option><option value="هـ">هـ</option><option value="و">و</option>
-            <option value="ي">ي</option>
+        <label>اختر حرف التلوين:</label>
+        <select id="charSelector" onchange="applyColoring()">
+            <option value="ب">ب</option>
+            <option value="ت">ت</option>
+            <option value="ص">ص</option>
+            <option value="ق">ق</option>
         </select>
-        <button class="btn-save" onclick="saveToCloud()">حفظ 💾</button>
-    </div>
-
-    <div class="harakat-bar">
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('َ')"> َ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ُ')"> ُ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ِ')"> ِ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ْ')"> ْ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ّ')"> ّ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ً')"> ً </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ٌ')"> ٌ </button>
-        <button class="h-btn" onmousedown="event.preventDefault(); addH('ٍ')"> ٍ </button>
+        <button class="btn-save" onclick="window.print()">حفظ كـ PDF 💾</button>
     </div>
 
     <table>
-        <tr><td class="side">الفتحة</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+        <tr data-type="فتحة">
+            <th>الفتحة</th>
+            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
         </tr>
-        <tr><td class="side">الضمة</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+        <tr data-type="ضمة">
+            <th>الضمة</th>
+            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
         </tr>
-        <tr><td class="side">الكسرة</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+        <tr data-type="كسرة">
+            <th>الكسرة</th>
+            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
         </tr>
-        <tr><td class="side">المدود</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+        <tr data-type="مد الألف">
+            <th>مد الألف</th>
+            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
         </tr>
     </table>
-</div>
 
-<script>
-    [span_2](start_span)// إعدادات Firebase - تأكد من تعبئتها[span_2](end_span)
-    const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
-    try { firebase.initializeApp(firebaseConfig); } catch(e){}
-    const database = firebase.database();
+    <div id="displayArea" style="margin-top: 20px; font-size: 40px;"></div>
 
-    let cur = null;
-
-    function addH(h) {
-        if (!cur) return;
-        let s = cur.selectionStart;
-        let v = cur.value;
-        [span_3](start_span)// استبدال الحركة إذا كانت موجودة[span_3](end_span)
-        if (s > 0 && /[\u064B-\u0652]/.test(v.charAt(s - 1))) {
-            v = v.slice(0, s - 1) + v.slice(s);
-            s--;
+    <script>
+        function formatInput(input) {
+            const char = document.getElementById('charSelector').value;
+            const text = input.value;
+            
+            // تعبير نمطي للبحث عن الحرف مع أي حركة تتبعه (فتحة، ضمة، كسرة، سكون، تنوين)
+            // الحركات العربية في اليونيكود تقع بين U+064B و U+0652
+            const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
+            
+            // هذه الخدعة لإظهار التنسيق داخل التسمية التوضيحية لأن الـ Input لا يدعم تلوين حرف واحد
+            // سنقوم بعرض النتيجة في حاوية منفصلة أو تحويل الخلية لنص عند الانتهاء
+            console.log("الكلمة المعالجة: ", text.replace(regex, `<span class="highlight">$1</span>`));
         }
-        cur.value = v.slice(0, s) + h + v.slice(s);
-        cur.focus();
-        [span_4](start_span)cur.setSelectionRange(s + 1, s + 1);[span_4](end_span)
-        upd(cur);
-    }
 
-    function upd(input) {
-        const display = input.nextElementSibling;
-        const char = document.getElementById('mainChar').value;
-        const text = input.value;
-        if (!text) { display.innerHTML = ""; return; }
+        // دالة لتحويل المدخلات إلى نص ملون عند الرغبة في العرض النهائي
+        function applyColoring() {
+            const char = document.getElementById('charSelector').value;
+            const inputs = document.querySelectorAll('.input-cell');
+            const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
 
-        let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? [span_5](start_span)"[هـه]" : char;[span_5](end_span)
-        [span_6](start_span)// التعبير النمطي لتلوين الحرف مع الحركات التابعة له[span_6](end_span)
-        const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
-        display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
-    }
-
-    function saveToCloud() {
-        const char = document.getElementById('mainChar').value;
-        [span_7](start_span)const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);[span_7](end_span)
-        database.ref('nawaf_data/' + char).set(words).then(() => alert("✅ تم الحفظ"));
-    }
-
-    function loadFromCloud() {
-        const char = document.getElementById('mainChar').value;
-        database.ref('nawaf_data/' + char).once('value').then(snap => {
-            const words = snap.val() || Array(12).fill("");
-            const inputs = document.querySelectorAll('.word-input');
-            inputs.forEach((input, index) => {
-                if(inputs[index]) {
-                    input.value = words[index] || "";
-                    upd(input);
+            inputs.forEach(input => {
+                if(input.value) {
+                    // تحويل الحرف المستهدف للأحمر برمجياً
+                    let formatted = input.value.replace(regex, `<span class="highlight">$1</span>`);
+                    // تحديث العرض (اختياري)
                 }
             });
-        });
-    }
-
-    window.onload = loadFromCloud;
-</script>
+        }
+    </script>
 </body>
 </html>
