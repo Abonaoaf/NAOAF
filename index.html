@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة نواف - التحدي الأخير</title>
+    <title>منصة نواف - الإصدار المصلح</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -12,13 +12,8 @@
         .container { background: white; max-width: 950px; margin: auto; border: 8px solid var(--navy); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .header { background: var(--red); color: white; padding: 20px; font-size: 32px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         
-        /* شريط الحركات */
         .harakat-bar { background: #fff; padding: 20px; display: flex; justify-content: center; gap: 10px; border-bottom: 4px solid #eee; flex-wrap: wrap; }
-        .h-btn { 
-            background: white; border: 4px solid var(--red); border-radius: 15px; 
-            width: 70px; height: 70px; font-size: 45px; font-weight: bold; color: var(--red);
-            cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center;
-        }
+        .h-btn { background: white; border: 4px solid var(--red); border-radius: 15px; width: 70px; height: 70px; font-size: 45px; font-weight: bold; color: var(--red); cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
         .h-btn:active { transform: translateY(4px); background: #fff0f0; }
 
         .controls { padding: 20px; background: #f9f9f9; display: flex; justify-content: center; gap: 20px; align-items: center; border-bottom: 2px solid #ddd; }
@@ -28,21 +23,10 @@
         td { border: 2px solid #ddd; height: 120px; position: relative; background: white; }
         .side { background: var(--navy); color: white; font-size: 22px; width: 150px; font-weight: bold; }
 
-        /* منطقة الكتابة والظهور */
         .box { position: relative; width: 100%; height: 100%; }
-        .word-input {
-            width: 100%; height: 100%; border: none; outline: none;
-            text-align: center; font-size: 65px; font-weight: bold;
-            background: transparent; position: relative; z-index: 2;
-            color: rgba(0,0,0,0.7); /* نص الكتابة الأساسي */
-        }
-        .word-display {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; font-size: 65px; font-weight: bold; 
-            line-height: 120px; color: transparent; white-space: pre;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .hl { color: var(--red); } /* تلوين الحرف المختار وحركته */
+        .word-input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-size: 65px; font-weight: bold; background: transparent; position: relative; z-index: 2; color: rgba(0,0,0,0.7); }
+        .word-display { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; font-size: 65px; font-weight: bold; line-height: 120px; color: transparent; white-space: pre; display: flex; align-items: center; justify-content: center; }
+        .hl { color: var(--red); } 
         
         .btn-save { background: #27AE60; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px #1e8449; }
         .btn-save:active { box-shadow: 0 0; transform: translateY(4px); }
@@ -88,46 +72,58 @@
             <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
         <tr><td class="side">الضمة</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
         <tr><td class="side">الكسرة</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
         <tr><td class="side">مد الألف</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
         <tr><td class="side">مد الواو</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
         <tr><td class="side">مد الياء</td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
-            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
+            <td><div class="box"><input type="text" class="word-input" onfocus="cur=this" oninput="upd(this)"><div class="word-display"></div></div></td>
         </tr>
     </table>
 </div>
 
 <script>
-    const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
-    try { firebase.initializeApp(firebaseConfig); } catch(e){}
-    const database = firebase.database();
+    // ملاحظة: يجب وضع بيانات Firebase الحقيقية هنا ليعمل الحفظ
+    const firebaseConfig = { 
+        apiKey: "YOUR_API_KEY", 
+        authDomain: "YOUR_PROJECT.firebaseapp.com", 
+        databaseURL: "https://YOUR_PROJECT.firebaseio.com", 
+        projectId: "YOUR_PROJECT", 
+        storageBucket: "YOUR_PROJECT.appspot.com", 
+        messagingSenderId: "...", 
+        appId: "..." 
+    };
 
+    try { 
+        firebase.initializeApp(firebaseConfig); 
+    } catch(e) { console.error("Firebase init error:", e); }
+    
+    const database = firebase.database();
     let cur = null;
 
     function addH(h) {
         if (!cur) return;
         let s = cur.selectionStart;
         let v = cur.value;
-        // استبدال حركة قديمة بحركة جديدة
-        if (/[\u064B-\u0652]/.test(v.charAt(s - 1))) {
+        // استبدال حركة قديمة بحركة جديدة إذا وجدت مباشرة خلف المؤشر
+        if (s > 0 && /[\u064B-\u0652]/.test(v.charAt(s - 1))) {
             v = v.slice(0, s - 1) + v.slice(s);
             s--;
         }
@@ -143,16 +139,18 @@
         const text = input.value;
         if (!text) { display.innerHTML = ""; return; }
 
-        let p = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
-        // تلوين الحرف المختار + الشدة + أي حركة تتبعه
-        const regex = new RegExp(`(${p}[\u0651]?[\u064B-\u0652]?)`, 'g');
+        let pattern = (char === "أ") ? "[أإآا]" : (char === "هـ") ? "[هـه]" : char;
+        // RegExp: الحرف المختار + (اختياري) شدة + (اختياري) حركة
+        const regex = new RegExp(`(${pattern}[\u0651]?[\u064B-\u0652]?)`, 'g');
         display.innerHTML = text.replace(regex, `<span class="hl">$1</span>`);
     }
 
     function saveToCloud() {
         const char = document.getElementById('mainChar').value;
         const words = Array.from(document.querySelectorAll('.word-input')).map(i => i.value);
-        database.ref('nawaf_educational_data/' + char).set(words).then(() => alert("✅ تم حفظ البيانات لـ " + char));
+        database.ref('nawaf_educational_data/' + char).set(words)
+            .then(() => alert("✅ تم حفظ البيانات لـ " + char))
+            .catch(err => alert("❌ فشل الحفظ: تأكد من إعدادات Firebase"));
     }
 
     function loadFromCloud() {
