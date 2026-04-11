@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سبورة نواف المتكاملة</title>
+    <title>سبورة نواف الفيفي الذكية</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,35 +16,34 @@
             user-select: none;
         }
 
-        .header {
-            font-size: 28px;
-            margin: 10px 0;
+        .main-title {
+            font-size: 32px;
             color: #ffce00;
             text-shadow: 2px 2px #000;
+            margin: 10px 0 5px 0;
         }
 
-        /* الجزء العلوي: اختيار الحرف المستهدف */
+        .sub-title {
+            font-size: 18px;
+            color: #4caf50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* الجزء العلوي: اختيار الحرف واللون */
         .selection-zone {
             background: #333;
             padding: 10px;
             border-radius: 15px;
             width: 95%;
-            max-width: 900px;
+            max-width: 950px;
             margin-bottom: 10px;
-            border: 2px solid #ff0000;
-        }
-
-        .section-title {
-            font-size: 16px;
-            color: #ffaaaa;
-            margin-bottom: 8px;
-            text-align: center;
-            font-weight: bold;
+            border: 2px solid #555;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
             gap: 6px;
         }
 
@@ -63,10 +62,33 @@
         }
 
         .char-select-btn.active {
-            background: #ff0000;
+            background: var(--target-color, #ff0000);
             color: white;
-            box-shadow: 0 0 10px #ff0000;
+            box-shadow: 0 0 10px var(--target-color, #ff0000);
         }
+
+        /* أيقونة اختيار اللون */
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #444;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+
+        .color-picker-container input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .color-icon { font-size: 24px; }
 
         /* السبورة */
         .board {
@@ -81,7 +103,6 @@
             justify-content: center;
             color: #333;
             margin: 15px 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         }
 
         #displayArea {
@@ -91,7 +112,7 @@
             line-height: 1.2;
         }
 
-        .highlight { color: #ff0000; }
+        .highlight { color: var(--target-color, #ff0000); }
 
         /* منطقة التحكم السفلية */
         .keyboard-zone {
@@ -100,15 +121,12 @@
             border-radius: 20px;
             width: 95%;
             max-width: 900px;
-            border: 1px solid #444;
         }
 
-        /* ألوان الحركات المخصصة */
-        .btn-harkat { background: #4caf50; color: white; font-size: 40px; } /* فتحة ضمة كسرة */
-        .btn-special { background: #9c27b0; color: white; font-size: 40px; } /* سكون شدة */
-        .btn-tanwin { background: #2196f3; color: white; font-size: 40px; } /* تنوينات */
-
-        .write-btn { background: #eee; color: #333; font-size: 30px; }
+        .btn-harkat { background: #4caf50; color: white; font-size: 38px; }
+        .btn-special { background: #9c27b0; color: white; font-size: 38px; }
+        .btn-tanwin { background: #2196f3; color: white; font-size: 38px; }
+        .write-btn { background: #eee; color: #333; font-size: 28px; }
         
         .action-btns {
             display: grid;
@@ -117,19 +135,23 @@
             margin-top: 15px;
         }
 
-        .btn-action { font-size: 20px; padding: 15px; border-radius: 10px; color: white; }
+        .btn-action { font-size: 18px; padding: 15px; border-radius: 10px; color: white; border:none; cursor:pointer; }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
+
+        .section-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="header">🌟 سبورة نواف الذكية 🌟</div>
+    <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
+    <div class="sub-title">لكل أصدقائي 🌟</div>
 
     <div class="selection-zone">
-        <div class="section-title">اختر حرف الدرس (سيظهر بالأحمر):</div>
-        <div class="grid" id="selectGrid"></div>
+        <div class="section-title">اختر حرف الدرس ولون التمييز:</div>
+        <div class="grid" id="selectGrid">
+            </div>
     </div>
 
     <div class="board">
@@ -137,7 +159,6 @@
     </div>
 
     <div class="keyboard-zone">
-        <div class="section-title">الحركات والتنوين:</div>
         <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 15px;">
             <button class="btn btn-harkat" onclick="addChar('َ')">َ</button>
             <button class="btn btn-harkat" onclick="addChar('ُ')">ُ</button>
@@ -149,29 +170,27 @@
             <button class="btn btn-tanwin" onclick="addChar('ٍ')">ٍ</button>
         </div>
 
-        <div class="section-title">لوحة الحروف:</div>
         <div class="grid" id="writeGrid"></div>
 
         <div class="action-btns">
-            <button class="btn btn-action btn-space" onclick="addChar(' ')">مسافة (فراغ)</button>
-            <button class="btn btn-action btn-delete" onclick="deleteLast()">مسح حرف</button>
-            <button class="btn btn-action btn-clear" onclick="clearAll()">مسح الكل</button>
+            <button class="btn-action btn-space" onclick="addChar(' ')">مسافة ⎵</button>
+            <button class="btn-action btn-delete" onclick="deleteLast()">مسح حرف ⌫</button>
+            <button class="btn-action btn-clear" onclick="clearAll()">جديد 🗑️</button>
         </div>
     </div>
 
     <script>
-        // إضافة إ، ة، آ، حروف المد
         const allChars = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
         let targetChar = 'ب';
         let currentWord = "";
+        let targetColor = "#ff0000";
 
         const selectGrid = document.getElementById('selectGrid');
         const writeGrid = document.getElementById('writeGrid');
         const displayArea = document.getElementById('displayArea');
 
-        // بناء اللوحات
+        // إنشاء لوحات الحروف
         allChars.split('').forEach(c => {
-            // لوحة الاختيار
             const sBtn = document.createElement('button');
             sBtn.className = 'btn char-select-btn';
             if(c === targetChar) sBtn.classList.add('active');
@@ -184,13 +203,23 @@
             };
             selectGrid.appendChild(sBtn);
 
-            // لوحة الكتابة
             const wBtn = document.createElement('button');
             wBtn.className = 'btn write-btn';
             wBtn.innerText = c;
             wBtn.onclick = () => addChar(c);
             writeGrid.appendChild(wBtn);
         });
+
+        // إضافة أيقونة اختيار اللون في نهاية الشبكة العلوية
+        const colorContainer = document.createElement('div');
+        colorContainer.className = 'btn color-picker-container';
+        colorContainer.innerHTML = `<span class="color-icon">🎨</span><input type="color" id="picker" value="#ff0000">`;
+        colorContainer.querySelector('input').oninput = (e) => {
+            targetColor = e.target.value;
+            document.documentElement.style.setProperty('--target-color', targetColor);
+            updateDisplay();
+        };
+        selectGrid.appendChild(colorContainer);
 
         function addChar(c) {
             currentWord += c;
@@ -208,7 +237,6 @@
         }
 
         function updateDisplay() {
-            // regex يشمل الحركات والتنوين والشدة
             const regex = new RegExp(`(${targetChar}[\u064B-\u0652]?)`, 'g');
             const formatted = currentWord.replace(regex, `<span class="highlight">$1</span>`);
             displayArea.innerHTML = formatted || "...";
