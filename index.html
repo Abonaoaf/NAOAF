@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>سبورة نواف الذكية</title>
     <style>
+        :root { --main-text-color: black; }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #1a1a1a;
@@ -16,8 +17,26 @@
             user-select: none;
         }
 
-        .main-title { font-size: 32px; color: #ffce00; margin: 15px 0 5px 0; }
-        .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 15px; }
+        /* الجزء العلوي لاختيار حرف الدرس */
+        .settings-bar {
+            background: #34495e;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 95%;
+            max-width: 900px;
+            justify-content: center;
+        }
+
+        select {
+            font-size: 20px;
+            padding: 5px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
         .board {
             width: 95%;
@@ -25,21 +44,24 @@
             background: white;
             border: 12px solid #5d4037;
             border-radius: 25px;
-            min-height: 250px;
+            min-height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         #displayArea {
-            font-size: 160px;
+            font-size: 150px;
             font-weight: bold;
-            text-align: center;
             direction: rtl;
-            color: red; 
-            transition: color 0.3s;
+            color: var(--main-text-color);
+            display: block;
+            white-space: nowrap;
         }
+
+        /* تلوين حرف الدرس المختار أحمر ثابت */
+        .target-char { color: #ff0000; display: inline; }
 
         .keyboard-zone {
             background: #2c3e50;
@@ -49,36 +71,23 @@
             max-width: 950px;
         }
 
-        .pens-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+        .pens-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .pen { width: 60px; height: 60px; border-radius: 50%; cursor: pointer; border: 4px solid #fff; }
+        .pen.active { border-color: #ffce00; transform: scale(1.1); }
 
-        .pen {
-            width: 75px; height: 75px;
-            border-radius: 50%; cursor: pointer;
-            border: 5px solid #fff;
-        }
-
-        .pen.active { border-color: #ffce00; transform: scale(1.1); box-shadow: 0 0 15px white; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; }
-        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; }
         .btn {
-            font-size: 40px; height: 90px; cursor: pointer; border: none;
-            border-radius: 15px; background: white; color: black;
+            font-size: 35px; height: 80px; cursor: pointer; border: none;
+            border-radius: 12px; background: white; color: black;
             font-weight: bold; display: flex; align-items: center; justify-content: center;
         }
 
-        /* ألوان الحركات المطلوبة */
-        .btn-green { background: #4caf50; color: white; } /* فتحة ضمة كسرة */
-        .btn-purple { background: #9c27b0; color: white; } /* شدة سكون */
-        .btn-blue { background: #2196f3; color: white; } /* تنوين */
+        .btn-green { background: #4caf50; color: white; }
+        .btn-purple { background: #9c27b0; color: white; }
+        .btn-blue { background: #2196f3; color: white; }
 
         .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .btn-action { font-size: 22px; padding: 20px; border-radius: 15px; color: white; border: none; font-weight: bold; }
+        .btn-action { font-size: 20px; padding: 15px; border-radius: 12px; color: white; border: none; font-weight: bold; cursor: pointer; }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
@@ -87,20 +96,25 @@
 <body>
 
     <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
-    <div class="sub-title">اختر لون القلم واكتب اسمك الجميل يا بطل 🌟</div>
+    
+    <div class="settings-bar">
+        <span>اختر حرف الدرس:</span>
+        <select id="targetSelect" onchange="updateDisplay()">
+            <option value="">بدون</option>
+        </select>
+        <span style="margin-right: 20px;">لون الكتابة:</span>
+        <div class="pens-container" style="margin-bottom: 0;">
+            <div class="pen active" style="background: black;" onclick="changeWriteColor('black', this)"></div>
+            <div class="pen" style="background: green;" onclick="changeWriteColor('green', this)"></div>
+            <div class="pen" style="background: blue;" onclick="changeWriteColor('blue', this)"></div>
+        </div>
+    </div>
 
     <div class="board">
-        <div id="displayArea">نواف</div>
+        <div id="displayArea">ابدأ..</div>
     </div>
 
     <div class="keyboard-zone">
-        <div class="pens-container">
-            <div class="pen active" style="background: red;" onclick="changeBoardColor('red', this)"></div>
-            <div class="pen" style="background: blue;" onclick="changeBoardColor('blue', this)"></div>
-            <div class="pen" style="background: green;" onclick="changeBoardColor('green', this)"></div>
-            <div class="pen" style="background: black;" onclick="changeBoardColor('black', this)"></div>
-        </div>
-
         <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
             <button class="btn btn-green" onclick="addChar('َ')">َ</button>
             <button class="btn btn-green" onclick="addChar('ُ')">ُ</button>
@@ -122,23 +136,28 @@
     </div>
 
     <script>
-        // أضفت حرف "ا" في بداية لوحة الحروف لسهولة استخدامه في المد
         const letters = "اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
-        let currentText = "نواف";
+        let currentText = "";
+        const targetSelect = document.getElementById('targetSelect');
+        const displayArea = document.getElementById('displayArea');
 
-        const grid = document.getElementById('lettersGrid');
+        // تعبئة القائمة المنسدلة ولوحة الحروف
         letters.split('').forEach(l => {
+            // للقائمة المنسدلة
+            const opt = document.createElement('option');
+            opt.value = l;
+            opt.innerText = l;
+            targetSelect.appendChild(opt);
+
+            // للوحة الحروف
             const b = document.createElement('button');
             b.className = 'btn';
             b.innerText = l;
             b.onclick = () => addChar(l);
-            grid.appendChild(b);
+            document.getElementById('lettersGrid').appendChild(b);
         });
 
         function addChar(c) {
-            if (document.getElementById('displayArea').innerText === "نواف" && currentText === "نواف") {
-                currentText = "";
-            }
             currentText += c;
             updateDisplay();
         }
@@ -153,15 +172,30 @@
             updateDisplay();
         }
 
-        function updateDisplay() {
-            const area = document.getElementById('displayArea');
-            area.innerText = currentText || "ابدأ";
-        }
-
-        function changeBoardColor(color, el) {
-            document.getElementById('displayArea').style.color = color;
+        function changeWriteColor(color, el) {
+            document.documentElement.style.setProperty('--main-text-color', color);
             document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            if (!currentText) {
+                displayArea.innerText = "ابدأ..";
+                return;
+            }
+
+            const target = targetSelect.value;
+            if (!target) {
+                displayArea.innerHTML = currentText;
+                return;
+            }
+
+            // تلوين حرف الدرس باللون الأحمر مع الحفاظ على الاتصال
+            // نستخدم RegExp يبحث عن الحرف مع حركاته
+            const regex = new RegExp(`(${target}[\u064B-\u0652]?)`, 'g');
+            const formatted = currentText.replace(regex, `<span class="target-char">$1</span>`);
+            displayArea.innerHTML = formatted;
         }
     </script>
 </body>
