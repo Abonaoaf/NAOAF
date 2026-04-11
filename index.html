@@ -20,6 +20,7 @@
         .main-title { font-size: 32px; color: #ffce00; margin: 15px 0 5px 0; }
         .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 10px; }
 
+        /* السبورة */
         .board {
             width: 95%;
             max-width: 900px;
@@ -32,23 +33,21 @@
             justify-content: center;
             color: #333;
             margin-bottom: 20px;
-            overflow: hidden;
         }
 
         #displayArea {
             font-size: 140px;
             font-weight: bold;
             text-align: center;
-            /* الحل السحري لاتصال الحروف */
             display: block;
             direction: rtl;
             white-space: nowrap;
         }
 
-        /* تنسيق الحرف الملون لضمان اتصاله */
+        /* تلوين الحرف مع الحفاظ على الاتصال */
         .highlight {
             color: var(--target-color);
-            display: inline; 
+            display: inline;
         }
 
         .keyboard-zone {
@@ -70,9 +69,23 @@
         .btn-special { background: #9c27b0; color: white; font-size: 45px; }
         .btn-tanwin { background: #2196f3; color: white; font-size: 45px; }
         
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-action { font-size: 20px; padding: 15px; border-radius: 12px; color: white; border: none; font-weight: bold; }
-        .btn-space { background: #555; grid-column: span 2; }
+        /* لوحة اختيار الحرف المنبثقة لمنع التشتت */
+        #charPickerOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-action { font-size: 18px; padding: 15px; border-radius: 12px; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .btn-space { background: #555; }
+        .btn-target { background: #e67e22; } /* زر اختيار حرف الدرس */
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
         .color-btn { background: #fff; position: relative; font-size: 25px; }
@@ -103,42 +116,66 @@
         <div class="grid" id="writeGrid"></div>
 
         <div class="action-btns">
+            <button class="btn-action btn-target" onclick="showPicker()">حرف الدرس: <span id="currentT">؟</span></button>
             <button class="btn-action btn-space" onclick="addChar(' ')">مسافة</button>
             <button class="btn-action btn-delete" onclick="deleteLast()">مسح</button>
             <button class="btn-action btn-clear" onclick="clearAll()">جديد</button>
-            <button class="btn color-btn">🎨<input type="color" oninput="changeColor(this.value)"></button>
         </div>
+    </div>
+
+    <div id="charPickerOverlay">
+        <h2 style="color: #ffce00;">اختر الحرف الذي تريد تلوينه:</h2>
+        <div class="grid" id="pickerGrid" style="max-width: 800px;"></div>
+        <button class="btn-action btn-clear" style="margin-top: 30px; width: 200px;" onclick="hidePicker()">إغلاق</button>
     </div>
 
     <script>
         const allChars = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
         let currentWord = "";
-        let lastChar = "";
+        let targetChar = ""; 
 
         const writeGrid = document.getElementById('writeGrid');
+        const pickerGrid = document.getElementById('pickerGrid');
         const displayArea = document.getElementById('displayArea');
 
+        // بناء لوحة الكتابة ولوحة الاختيار
         allChars.split('').forEach(c => {
+            // لوحة الكتابة
             const btn = document.createElement('button');
             btn.className = 'btn';
             btn.innerText = c;
-            btn.onclick = () => { lastChar = c; addChar(c); };
+            btn.onclick = () => addChar(c);
             writeGrid.appendChild(btn);
+
+            // لوحة اختيار حرف الدرس
+            const pBtn = document.createElement('button');
+            pBtn.className = 'btn';
+            pBtn.innerText = c;
+            pBtn.onclick = () => {
+                targetChar = c;
+                document.getElementById('currentT').innerText = c;
+                hidePicker();
+                updateDisplay();
+            };
+            pickerGrid.appendChild(pBtn);
         });
 
         function addChar(c) { currentWord += c; updateDisplay(); }
         function deleteLast() { currentWord = currentWord.slice(0, -1); updateDisplay(); }
-        function clearAll() { currentWord = ""; lastChar = ""; updateDisplay(); }
-        function changeColor(val) { document.documentElement.style.setProperty('--target-color', val); updateDisplay(); }
+        function clearAll() { currentWord = ""; updateDisplay(); }
+        function showPicker() { document.getElementById('charPickerOverlay').style.display = 'flex'; }
+        function hidePicker() { document.getElementById('charPickerOverlay').style.display = 'none'; }
 
         function updateDisplay() {
             if (!currentWord) { displayArea.innerText = "ابدأ.."; return; }
             
-            // الحل البرمجي لضمان اتصال الحروف:
-            // نستخدم RegExp يبحث عن الحرف الأخير مع حركاته
-            const regex = new RegExp(`(${lastChar}[\u064B-\u0652]?)`, 'g');
-            
-            // نقوم بتغليف الحرف المطلوب بـ span دون إضافة فراغات أو تغيير نوع العرض
+            if (!targetChar) {
+                displayArea.innerText = currentWord;
+                return;
+            }
+
+            // التلوين مع الحفاظ على اتصال الحروف العربية
+            const regex = new RegExp(`(${targetChar}[\u064B-\u0652]?)`, 'g');
             const formatted = currentWord.replace(regex, `<span class="highlight">$1</span>`);
             displayArea.innerHTML = formatted;
         }
