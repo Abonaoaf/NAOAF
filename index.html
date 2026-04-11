@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سبورة نواف الفيفي - الإصدار النهائي</title>
+    <title>سبورة نواف الفيفي الذكية</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -14,13 +14,12 @@
             padding: 10px;
             margin: 0;
             user-select: none;
-            touch-action: manipulation;
         }
 
-        .main-title { font-size: 32px; color: #ffce00; margin: 15px 0 5px 0; }
+        .main-title { font-size: 32px; color: #ffce00; margin-top: 15px; }
         .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 10px; }
 
-        /* منطقة السبورة - ضمان اتصال الحروف */
+        /* منطقة السبورة - الحل الجديد */
         .board {
             width: 95%;
             max-width: 900px;
@@ -32,16 +31,16 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            overflow: hidden;
         }
 
         #displayArea {
-            font-size: 150px; /* حجم ضخم جداً */
+            font-size: 150px;
             font-weight: bold;
-            display: flex;
-            flex-direction: row-reverse; /* لضمان اتصال الحروف العربية */
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            color: #333;
+            direction: rtl;
+            white-space: nowrap;
+            letter-spacing: -5px; /* لضمان التلاحم */
         }
 
         /* لوحة التحكم */
@@ -53,7 +52,6 @@
             max-width: 950px;
         }
 
-        /* اختيار الأقلام */
         .pens-container {
             display: flex;
             justify-content: center;
@@ -76,31 +74,24 @@
             font-size: 38px; height: 85px; cursor: pointer; border: none;
             border-radius: 15px; background: white; color: black;
             font-weight: bold; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px #ccc;
         }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
 
-        /* تلوين أزرار الحركات للتمييز */
-        .btn-fatha { background: #4caf50; color: white; } /* أخضر */
-        .btn-shadda { background: #9c27b0; color: white; } /* بنفسجي */
-        .btn-tanwin { background: #2196f3; color: white; } /* أزرق */
+        /* تلوين الحركات حسب الفئة */
+        .btn-green { background: #4caf50; color: white; } /* فتحة ضمة كسرة */
+        .btn-purple { background: #9c27b0; color: white; } /* شدة سكون */
+        .btn-blue { background: #2196f3; color: white; } /* تنوين */
 
         .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 20px; }
         .btn-action { font-size: 22px; padding: 20px; border-radius: 15px; color: white; border: none; cursor: pointer; font-weight: bold; }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
-
-        .char-span { 
-            line-height: 1;
-            margin-left: -2px; /* تداخل بسيط لضمان الاتصال */
-        }
     </style>
 </head>
 <body>
 
     <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
-    <div class="sub-title">اختر لون القلم ثم اكتب يا بطل 🌟</div>
+    <div class="sub-title">لكل أصدقائي 🌟</div>
 
     <div class="board">
         <div id="displayArea"></div>
@@ -115,17 +106,17 @@
         </div>
 
         <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
-            <button class="btn btn-fatha" onclick="addChar('َ')">َ</button>
-            <button class="btn btn-fatha" onclick="addChar('ُ')">ُ</button>
-            <button class="btn btn-fatha" onclick="addChar('ِ')">ِ</button>
-            <button class="btn btn-shadda" onclick="addChar('ْ')">ْ</button>
-            <button class="btn btn-shadda" onclick="addChar('ّ')">ّ</button>
-            <button class="btn btn-tanwin" onclick="addChar('ً')">ً</button>
-            <button class="btn btn-tanwin" onclick="addChar('ٌ')">ٌ</button>
-            <button class="btn btn-tanwin" onclick="addChar('ٍ')">ٍ</button>
+            <button class="btn btn-green" onclick="addChar('َ')">َ</button>
+            <button class="btn btn-green" onclick="addChar('ُ')">ُ</button>
+            <button class="btn btn-green" onclick="addChar('ِ')">ِ</button>
+            <button class="btn btn-purple" onclick="addChar('ْ')">ْ</button>
+            <button class="btn btn-purple" onclick="addChar('ّ')">ّ</button>
+            <button class="btn btn-blue" onclick="addChar('ً')">ً</button>
+            <button class="btn btn-blue" onclick="addChar('ٌ')">ٌ</button>
+            <button class="btn btn-blue" onclick="addChar('ٍ')">ٍ</button>
         </div>
 
-        <div class="grid" id="writeGrid"></div>
+        <div id="lettersGrid" class="grid"></div>
 
         <div class="action-btns">
             <button class="btn-action btn-space" onclick="addChar(' ')">مسافة</button>
@@ -135,25 +126,23 @@
     </div>
 
     <script>
-        const allChars = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
-        let activeColor = 'red';
+        const letters = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
         let wordData = []; 
+        let activeColor = 'red';
 
-        function setPen(color, element) {
+        function setPen(color, el) {
             activeColor = color;
             document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
-            element.classList.add('active');
+            el.classList.add('active');
         }
 
-        const writeGrid = document.getElementById('writeGrid');
-        const displayArea = document.getElementById('displayArea');
-
-        allChars.split('').forEach(c => {
-            const btn = document.createElement('button');
-            btn.className = 'btn';
-            btn.innerText = c;
-            btn.onclick = () => addChar(c);
-            writeGrid.appendChild(btn);
+        const grid = document.getElementById('lettersGrid');
+        letters.split('').forEach(l => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = l;
+            b.onclick = () => addChar(l);
+            grid.appendChild(b);
         });
 
         function addChar(c) {
@@ -161,31 +150,24 @@
             render();
         }
 
-        function deleteLast() {
-            wordData.pop();
-            render();
-        }
-
-        function clearAll() {
-            wordData = [];
-            render();
-        }
+        function deleteLast() { wordData.pop(); render(); }
+        function clearAll() { wordData = []; render(); }
 
         function render() {
-            displayArea.innerHTML = "";
-            if (wordData.length === 0) {
-                displayArea.style.color = "#ccc";
-                displayArea.innerText = "اكتب..";
-                return;
-            }
+            const area = document.getElementById('displayArea');
+            area.innerHTML = "";
+            if (wordData.length === 0) { area.innerText = "اكتب.."; return; }
 
-            // رسم الحروف من اليمين للياسر مع التصاق تام
+            // السر في الاتصال: نستخدم ميزة نادرة تسمى mix-blend-mode أو تجميع النصوص
+            // هنا سنستخدم span واحد لكل حرف مع الحفاظ على صفرية المسافة
             wordData.forEach(item => {
-                const span = document.createElement('span');
-                span.className = "char-span";
-                span.innerText = item.char;
-                span.style.color = item.color;
-                displayArea.appendChild(span);
+                const s = document.createElement('span');
+                s.innerText = item.char;
+                s.style.color = item.color;
+                // إجبار الحرف على عدم حجز مساحة جانبية تفصله عن جاره
+                s.style.display = "inline-block";
+                s.style.width = "auto";
+                area.appendChild(s);
             });
         }
     </script>
