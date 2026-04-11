@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سبورة البطل نواف</title>
+    <title>سبورة نواف - لوحة التحكم الكاملة</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -11,167 +11,207 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
+            margin: 0;
+            user-select: none; /* لمنع تحديد النص أثناء الضغط السريع */
         }
 
         .header {
-            font-size: 32px;
-            margin-bottom: 20px;
+            font-size: 28px;
+            margin: 10px 0;
             color: #ffce00;
             text-shadow: 2px 2px #000;
         }
 
-        /* حاوية الحروف الكبيرة */
-        .alphabet-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            gap: 10px;
-            width: 100%;
-            max-width: 900px;
+        /* الجزء العلوي: اختيار الحرف المراد تلوينه */
+        .selection-zone {
             background: #333;
-            padding: 15px;
+            padding: 10px;
             border-radius: 15px;
-            margin-bottom: 20px;
+            width: 95%;
+            max-width: 900px;
+            margin-bottom: 10px;
+            border: 2px solid #ff0000;
         }
 
-        .char-btn {
-            font-size: 30px;
+        .section-title {
+            font-size: 16px;
+            color: #ffaaaa;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* الشبكات (الحروف، الحركات، لوحة الكتابة) */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+            gap: 5px;
+        }
+
+        .btn {
+            font-size: 24px;
             padding: 10px;
             cursor: pointer;
             border: none;
             border-radius: 8px;
             background: white;
             color: black;
-            transition: 0.2s;
-        }
-
-        .char-btn.active {
-            background: #ff0000;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        /* أزرار الحركات الضخمة */
-        .harakat-container {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .haraka-btn {
-            font-size: 50px; /* حجم كبير جداً */
-            width: 80px;
-            height: 80px;
-            cursor: pointer;
-            border: 4px solid #4caf50;
-            background: #fff;
-            border-radius: 50%;
-            color: #2e7d32;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* السبورة */
+        .char-select-btn.active {
+            background: #ff0000;
+            color: white;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        /* السبورة الكبيرة */
         .board {
-            width: 100%;
-            max-width: 850px;
+            width: 95%;
+            max-width: 900px;
             background: white;
-            border: 15px solid #5d4037;
+            border: 12px solid #5d4037;
             border-radius: 20px;
-            min-height: 250px;
+            min-height: 200px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #333;
-        }
-
-        #wordInput {
-            width: 90%;
-            font-size: 40px;
-            text-align: center;
-            margin-top: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
+            margin: 15px 0;
         }
 
         #displayArea {
-            font-size: 150px; /* حجم الكلمة المعروضة */
-            margin: 20px 0;
+            font-size: 120px;
             font-weight: bold;
-            min-height: 180px;
+            word-break: break-all;
+            text-align: center;
         }
 
-        .highlight {
-            color: #ff0000;
+        .highlight { color: #ff0000; }
+
+        /* منطقة التحكم السفلية (لوحة مفاتيح نواف) */
+        .keyboard-zone {
+            background: #222;
+            padding: 15px;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 900px;
         }
 
-        .settings {
-            margin-top: 20px;
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
+
+        .btn-action {
+            flex: 1;
+            font-size: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .btn-space { background: #555; }
+        .btn-delete { background: #c0392b; }
+        .btn-clear { background: #7f8c8d; }
+
+        .haraka-btn { background: #4caf50; color: white; font-size: 35px; }
+        .tanwin-btn { background: #2196f3; color: white; font-size: 35px; }
+        .write-btn { background: #eee; color: #333; font-size: 30px; }
     </style>
 </head>
 <body>
 
     <div class="header">🏆 سبورة البطل نواف الذكية</div>
 
-    <div class="alphabet-grid" id="alphabetGrid"></div>
-
-    <div class="harakat-container">
-        <button class="haraka-btn" onclick="addHaraka('َ')">َ</button>
-        <button class="haraka-btn" onclick="addHaraka('ُ')">ُ</button>
-        <button class="haraka-btn" onclick="addHaraka('ِ')">ِ</button>
-        <button class="haraka-btn" onclick="addHaraka('ْ')">ْ</button>
-        <button class="haraka-btn" onclick="addHaraka('ّ')">ّ</button>
+    <div class="selection-zone">
+        <div class="section-title">اختر الحرف الذي تريد تلوينه بالأحمر:</div>
+        <div class="grid" id="selectGrid"></div>
     </div>
 
     <div class="board">
-        <input type="text" id="wordInput" placeholder="اكتب الكلمة هنا يا بطل..." oninput="draw()">
-        <div id="displayArea"></div>
+        <div id="displayArea">...</div>
+    </div>
+
+    <div class="keyboard-zone">
+        <div class="section-title">اضغط على الحروف والحركات لتكتب الكلمة:</div>
+        
+        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 10px;">
+            <button class="btn haraka-btn" onclick="addChar('َ')">َ</button>
+            <button class="btn haraka-btn" onclick="addChar('ُ')">ُ</button>
+            <button class="btn haraka-btn" onclick="addChar('ِ')">ِ</button>
+            <button class="btn haraka-btn" onclick="addChar('ْ')">ْ</button>
+            <button class="btn haraka-btn" onclick="addChar('ّ')">ّ</button>
+            <button class="btn tanwin-btn" onclick="addChar('ً')">ً</button>
+            <button class="btn tanwin-btn" onclick="addChar('ٌ')">ٌ</button>
+            <button class="btn tanwin-btn" onclick="addChar('ٍ')">ٍ</button>
+        </div>
+
+        <div class="grid" id="writeGrid"></div>
+
+        <div class="action-btns">
+            <button class="btn btn-action btn-space" onclick="addChar(' ')">مسافة ⎵</button>
+            <button class="btn btn-action btn-delete" onclick="deleteLast()">مسح حرف ⌫</button>
+            <button class="btn btn-action btn-clear" onclick="clearAll()">مسح الكل 🗑️</button>
+        </div>
     </div>
 
     <script>
         const chars = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-        let selectedChar = 'ب'; // افتراضي
+        let targetChar = 'ب';
+        let currentWord = "";
 
-        // إنشاء أزرار الحروف
-        const grid = document.getElementById('alphabetGrid');
+        const selectGrid = document.getElementById('selectGrid');
+        const writeGrid = document.getElementById('writeGrid');
+        const displayArea = document.getElementById('displayArea');
+
+        // إنشاء أزرار اختيار الحرف المستهدف
         chars.split('').forEach(c => {
             const btn = document.createElement('button');
-            btn.className = 'char-btn';
-            if(c === selectedChar) btn.classList.add('active');
+            btn.className = 'btn char-select-btn';
+            if(c === targetChar) btn.classList.add('active');
             btn.innerText = c;
             btn.onclick = () => {
-                document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.char-select-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                selectedChar = c;
-                draw();
+                targetChar = c;
+                updateDisplay();
             };
-            grid.appendChild(btn);
+            selectGrid.appendChild(btn);
+
+            // إنشاء أزرار الكتابة
+            const wBtn = document.createElement('button');
+            wBtn.className = 'btn write-btn';
+            wBtn.innerText = c;
+            wBtn.onclick = () => addChar(c);
+            writeGrid.appendChild(wBtn);
         });
 
-        function addHaraka(h) {
-            const input = document.getElementById('wordInput');
-            input.value += h;
-            draw();
-            input.focus();
+        function addChar(c) {
+            currentWord += c;
+            updateDisplay();
         }
 
-        function draw() {
-            const input = document.getElementById('wordInput').value;
-            const display = document.getElementById('displayArea');
-            
-            // تلوين الحرف المختار مع أي حركة تتبعه
-            const regex = new RegExp(`(${selectedChar}[\u064B-\u0652\u0670]?)`, 'g');
-            const result = input.replace(regex, `<span class="highlight">$1</span>`);
-            
-            display.innerHTML = result || "...";
+        function deleteLast() {
+            currentWord = currentWord.slice(0, -1);
+            updateDisplay();
         }
 
-        // تشغيل أولي
-        draw();
+        function clearAll() {
+            currentWord = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            // التلوين الذكي: الحرف المستهدف + أي حركة/تنوين تتبعه
+            const regex = new RegExp(`(${targetChar}[\u064B-\u0652]?)`, 'g');
+            const formatted = currentWord.replace(regex, `<span class="highlight">$1</span>`);
+            displayArea.innerHTML = formatted || "...";
+        }
     </script>
 </body>
 </html>
