@@ -19,7 +19,6 @@
         .main-title { font-size: 32px; color: #ffce00; margin: 15px 0 5px 0; }
         .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 15px; }
 
-        /* السبورة - تضمن اتصال الحروف لأن النص كتلة واحدة */
         .board {
             width: 95%;
             max-width: 900px;
@@ -38,7 +37,6 @@
             font-weight: bold;
             text-align: center;
             direction: rtl;
-            /* اللون يتغير للكلمة كاملة */
             color: red; 
             transition: color 0.3s;
         }
@@ -51,7 +49,6 @@
             max-width: 950px;
         }
 
-        /* أقلام الألوان */
         .pens-container {
             display: flex;
             justify-content: center;
@@ -67,7 +64,6 @@
 
         .pen.active { border-color: #ffce00; transform: scale(1.1); box-shadow: 0 0 15px white; }
 
-        /* شبكة أزرار كبيرة */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; }
         
         .btn {
@@ -76,10 +72,10 @@
             font-weight: bold; display: flex; align-items: center; justify-content: center;
         }
 
-        /* ألوان الحركات للتمييز */
-        .btn-green { background: #4caf50; color: white; }
-        .btn-purple { background: #9c27b0; color: white; }
-        .btn-blue { background: #2196f3; color: white; }
+        /* ألوان الحركات المطلوبة */
+        .btn-green { background: #4caf50; color: white; } /* فتحة ضمة كسرة */
+        .btn-purple { background: #9c27b0; color: white; } /* شدة سكون */
+        .btn-blue { background: #2196f3; color: white; } /* تنوين */
 
         .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 20px; }
         .btn-action { font-size: 22px; padding: 20px; border-radius: 15px; color: white; border: none; font-weight: bold; }
@@ -91,10 +87,10 @@
 <body>
 
     <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
-    <div class="sub-title">اختر لون القلم واكتب كلمتك يا بطل 🌟</div>
+    <div class="sub-title">اختر لون القلم واكتب اسمك الجميل يا بطل 🌟</div>
 
     <div class="board">
-        <div id="displayArea">ابدأ</div>
+        <div id="displayArea">نواف</div>
     </div>
 
     <div class="keyboard-zone">
@@ -126,10 +122,10 @@
     </div>
 
     <script>
-        const letters = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
-        let currentText = "";
+        // أضفت حرف "ا" في بداية لوحة الحروف لسهولة استخدامه في المد
+        const letters = "اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
+        let currentText = "نواف";
 
-        // بناء لوحة الحروف
         const grid = document.getElementById('lettersGrid');
         letters.split('').forEach(l => {
             const b = document.createElement('button');
@@ -140,6 +136,9 @@
         });
 
         function addChar(c) {
+            if (document.getElementById('displayArea').innerText === "نواف" && currentText === "نواف") {
+                currentText = "";
+            }
             currentText += c;
             updateDisplay();
         }
@@ -160,10 +159,7 @@
         }
 
         function changeBoardColor(color, el) {
-            // تغيير لون الكلمة كاملة في السبورة
             document.getElementById('displayArea').style.color = color;
-            
-            // تمييز القلم المختار
             document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
         }
