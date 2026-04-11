@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سبورة نواف الذكية - هدية لكل أصدقائي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سبورة نواف الفيفي الذكية</title>
     <style>
         :root { --main-text-color: black; }
         body {
@@ -15,11 +16,12 @@
             padding: 10px;
             margin: 0;
             user-select: none;
+            touch-action: manipulation;
         }
 
-        .main-title { font-size: 36px; color: #ffce00; margin-top: 10px; }
+        .main-title { font-size: 32px; color: #ffce00; margin-top: 10px; text-shadow: 2px 2px #000; }
         
-        /* شريط الأدوات المطور */
+        /* شريط الأدوات */
         .settings-bar {
             background: #34495e;
             padding: 15px;
@@ -28,60 +30,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             width: 95%;
             max-width: 1000px;
+            border: 2px solid #555;
         }
 
-        .tool-row { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .tool-row { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center; font-size: 20px; }
+        select { font-size: 22px; padding: 5px 15px; border-radius: 10px; cursor: pointer; background: white; }
 
-        select { font-size: 24px; padding: 5px 15px; border-radius: 10px; cursor: pointer; }
-
-        /* منطقة السبورة */
+        /* منطقة السبورة العملاقة */
         .board {
             width: 95%;
             max-width: 1000px;
             background: white;
             border: 15px solid #5d4037;
             border-radius: 30px;
-            min-height: 320px;
+            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            transition: background-color 0.3s;
         }
 
         #displayArea {
-            font-size: 180px;
+            font-size: 180px; /* حجم عملاق */
             font-weight: bold;
             direction: rtl;
             color: var(--main-text-color);
-            display: block;
             white-space: nowrap;
             padding: 0 30px;
+            transition: transform 0.3s;
         }
 
-        .target-char { color: #ff0000 !important; display: inline; }
+        /* لون حرف الدرس المختار */
+        .target-char { color: #ff0000 !important; }
 
-        .keyboard-zone {
-            background: #2c3e50;
-            padding: 25px;
-            border-radius: 30px;
-            width: 95%;
-            max-width: 1000px;
-        }
-
-        /* حاوية الأقلام الملونة الجديدة */
+        /* حاوية الأقلام */
         .pens-container { 
             display: flex; 
             justify-content: center; 
             gap: 12px; 
             flex-wrap: wrap;
-            padding: 10px;
         }
 
         .pen { 
-            width: 55px; height: 55px; 
+            width: 50px; height: 50px; 
             border-radius: 50%; cursor: pointer; 
             border: 4px solid #fff; 
             transition: 0.2s;
@@ -89,29 +85,43 @@
 
         .pen.active { transform: scale(1.2); border-color: #ffce00; box-shadow: 0 0 15px white; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 12px; }
-        .btn {
-            font-size: 45px; height: 95px; cursor: pointer; border: none;
-            border-radius: 18px; background: white; color: black;
-            font-weight: bold; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 6px #ddd;
+        /* لوحة المفاتيح */
+        .keyboard-zone {
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 30px;
+            width: 95%;
+            max-width: 1000px;
         }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
 
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+        
+        .btn {
+            font-size: 40px; height: 85px; cursor: pointer; border: none;
+            border-radius: 15px; background: white; color: black;
+            font-weight: bold; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px #ddd;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: none; }
+
+        /* ألوان الحركات للتمييز */
         .btn-green { background: #4caf50; color: white; }
         .btn-purple { background: #9c27b0; color: white; }
         .btn-blue { background: #2196f3; color: white; }
 
-        .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; margin-top: 25px; }
-        .btn-action { font-size: 26px; padding: 22px; border-radius: 18px; color: white; border: none; font-weight: bold; cursor: pointer; }
+        /* أزرار التحكم */
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-action { font-size: 20px; padding: 18px; border-radius: 15px; color: white; border: none; font-weight: bold; cursor: pointer; }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
+        .btn-success { background: #f1c40f; color: #000; } /* زر أحسنت */
+
     </style>
 </head>
 <body>
 
-    <div class="main-title">نواف الفيفي - سبورتي هدية لكل أصدقائي</div>
+    <div class="main-title">نواف الفيفي - سبورتي الذكية 🌟</div>
     
     <div class="settings-bar">
         <div class="tool-row">
@@ -125,15 +135,20 @@
             <div class="pen active" style="background: black;" onclick="changeWriteColor('black', this)"></div>
             <div class="pen" style="background: blue;" onclick="changeWriteColor('blue', this)"></div>
             <div class="pen" style="background: green;" onclick="changeWriteColor('green', this)"></div>
-            <div class="pen" style="background: #e67e22;" onclick="changeWriteColor('#e67e22', this)"></div> <div class="pen" style="background: #9b59b6;" onclick="changeWriteColor('#9b59b6', this)"></div> <div class="pen" style="background: #5d4037;" onclick="changeWriteColor('#5d4037', this)"></div> <div class="pen" style="background: #7f8c8d;" onclick="changeWriteColor('#7f8c8d', this)"></div> <div class="pen" style="background: #1abc9c;" onclick="changeWriteColor('#1abc9c', this)"></div> </div>
+            <div class="pen" style="background: #e67e22;" onclick="changeWriteColor('#e67e22', this)"></div>
+            <div class="pen" style="background: #9b59b6;" onclick="changeWriteColor('#9b59b6', this)"></div>
+            <div class="pen" style="background: #5d4037;" onclick="changeWriteColor('#5d4037', this)"></div>
+            <div class="pen" style="background: #7f8c8d;" onclick="changeWriteColor('#7f8c8d', this)"></div>
+            <div class="pen" style="background: #1abc9c;" onclick="changeWriteColor('#1abc9c', this)"></div>
+        </div>
     </div>
 
-    <div class="board">
+    <div class="board" id="boardFrame">
         <div id="displayArea">نواف</div>
     </div>
 
     <div class="keyboard-zone">
-        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 25px;">
+        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
             <button class="btn btn-green" onclick="addHarka('َ')">َ</button>
             <button class="btn btn-green" onclick="addHarka('ُ')">ُ</button>
             <button class="btn btn-green" onclick="addHarka('ِ')">ِ</button>
@@ -150,6 +165,7 @@
             <button class="btn-action btn-space" onclick="addChar(' ')">مسافة</button>
             <button class="btn-action btn-delete" onclick="deleteLast()">مسح ⌫</button>
             <button class="btn-action btn-clear" onclick="clearAll()">جديد 🗑️</button>
+            <button class="btn-action btn-success" onclick="showSuccess()">أحسنت! ⭐</button>
         </div>
     </div>
 
@@ -160,7 +176,9 @@
         
         const targetSelect = document.getElementById('targetSelect');
         const displayArea = document.getElementById('displayArea');
+        const boardFrame = document.getElementById('boardFrame');
 
+        // إنشاء لوحة المفاتيح والقائمة
         letters.split('').forEach(l => {
             const opt = document.createElement('option');
             opt.value = l; opt.innerText = l;
@@ -178,6 +196,7 @@
             updateDisplay();
         }
 
+        // منطق الحركات: استبدال الحركة الموجودة لمنع التكرار
         function addHarka(h) {
             if (currentText.length === 0) return;
             let last = currentText.slice(-1);
@@ -205,6 +224,7 @@
             updateDisplay();
         }
 
+        // تحديث شاشة العرض مع تلوين حرف الدرس بالأحمر
         function updateDisplay() {
             if (!currentText) {
                 displayArea.innerText = "اكتب..";
@@ -215,11 +235,24 @@
                 displayArea.innerHTML = currentText;
                 return;
             }
-            // تلوين حرف الدرس دائماً بالأحمر والبقية بلون القلم المختار
+            // التلوين مع الحفاظ على الاتصال
             const regex = new RegExp(`(${target}[\u064B-\u0652]?)`, 'g');
             const formatted = currentText.replace(regex, `<span class="target-char">$1</span>`);
             displayArea.innerHTML = formatted;
         }
+
+        // وظيفة التشجيع (أحسنت يا بطل)
+        function showSuccess() {
+            if (!currentText) return;
+            boardFrame.style.backgroundColor = "#fff9c4"; // تحول للون ذهبي بسيط
+            displayArea.style.transform = "scale(1.1)";
+            
+            setTimeout(() => {
+                boardFrame.style.backgroundColor = "white";
+                displayArea.style.transform = "scale(1)";
+            }, 600);
+        }
+
         updateDisplay();
     </script>
 </body>
