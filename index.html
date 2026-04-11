@@ -2,180 +2,176 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>السبورة التفاعلية - مدرسة الحروف</title>
+    <title>سبورة البطل نواف</title>
     <style>
-        :root {
-            --primary-color: #e74c3c;
-        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2c3e50; /* لون خلفية غامق كالسبورة */
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            margin: 0;
         }
 
-        .board {
-            width: 90%;
-            max-width: 800px;
-            background-color: white;
-            color: #333;
-            border: 10px solid #8d6e63; /* إطار خشبي */
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .controls {
+        .header {
+            font-size: 32px;
             margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
+            color: #ffce00;
+            text-shadow: 2px 2px #000;
         }
 
-        .harakat-btns {
-            display: flex;
+        /* حاوية الحروف الكبيرة */
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
             gap: 10px;
-            margin: 15px 0;
+            width: 100%;
+            max-width: 900px;
+            background: #333;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        .harakat-btns button {
-            font-size: 24px;
-            width: 50px;
-            height: 50px;
+        .char-btn {
+            font-size: 30px;
+            padding: 10px;
             cursor: pointer;
-            border: 2px solid #e74c3c;
-            background: white;
+            border: none;
             border-radius: 8px;
-            color: #e74c3c;
-            transition: 0.3s;
+            background: white;
+            color: black;
+            transition: 0.2s;
         }
 
-        .harakat-btns button:hover {
-            background: #e74c3c;
+        .char-btn.active {
+            background: #ff0000;
             color: white;
+            transform: scale(1.1);
         }
 
-        #displayWord {
-            font-size: 120px; /* خط كبير جداً للسبورة */
-            margin: 40px 0;
-            min-height: 150px;
+        /* أزرار الحركات الضخمة */
+        .harakat-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .haraka-btn {
+            font-size: 50px; /* حجم كبير جداً */
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            border: 4px solid #4caf50;
+            background: #fff;
+            border-radius: 50%;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* السبورة */
+        .board {
+            width: 100%;
+            max-width: 850px;
+            background: white;
+            border: 15px solid #5d4037;
+            border-radius: 20px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        #wordInput {
+            width: 90%;
+            font-size: 40px;
+            text-align: center;
+            margin-top: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        #displayArea {
+            font-size: 150px; /* حجم الكلمة المعروضة */
+            margin: 20px 0;
             font-weight: bold;
+            min-height: 180px;
         }
 
         .highlight {
-            color: var(--primary-color);
+            color: #ff0000;
         }
 
-        input[type="text"] {
-            font-size: 24px;
-            padding: 10px;
-            width: 80%;
-            text-align: center;
-            border-radius: 5px;
-            border: 2px solid #ddd;
-        }
-
-        .flipped-zone {
-            font-size: 30px;
-            color: #95a5a6;
-            border-top: 1px dashed #ccc;
-            padding-top: 10px;
-        }
-
-        .color-picker {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .settings {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h2 style="color: #ecf0f1;">🎨 سبورة الحروف التفاعلية</h2>
+    <div class="header">🏆 سبورة البطل نواف الذكية</div>
 
-    <div class="controls">
-        <div>
-            <label>اختر الحرف:</label>
-            <select id="charSelect" onchange="updateBoard()">
-                </select>
-        </div>
+    <div class="alphabet-grid" id="alphabetGrid"></div>
 
-        <div class="color-picker">
-            <label>لون التمييز:</label>
-            <input type="color" id="colorPicker" value="#e74c3c" onchange="updateColor()">
-        </div>
-    </div>
-
-    <div class="harakat-btns" id="harakatZone">
-        <button onclick="addHaraka('َ')"> َ </button>
-        <button onclick="addHaraka('ُ')"> ُ </button>
-        <button onclick="addHaraka('ِ')"> ِ </button>
-        <button onclick="addHaraka('ْ')"> ْ </button>
-        <button onclick="addHaraka('ً')"> ً </button>
-        <button onclick="addHaraka('ٌ')"> ٌ </button>
-        <button onclick="addHaraka('ٍ')"> ٍ </button>
-        <button onclick="addHaraka('ّ')"> ّ </button>
+    <div class="harakat-container">
+        <button class="haraka-btn" onclick="addHaraka('َ')">َ</button>
+        <button class="haraka-btn" onclick="addHaraka('ُ')">ُ</button>
+        <button class="haraka-btn" onclick="addHaraka('ِ')">ِ</button>
+        <button class="haraka-btn" onclick="addHaraka('ْ')">ْ</button>
+        <button class="haraka-btn" onclick="addHaraka('ّ')">ّ</button>
     </div>
 
     <div class="board">
-        <input type="text" id="wordInput" placeholder="اكتب الكلمة هنا..." oninput="updateBoard()">
-        
-        <div id="displayWord"></div>
-
-        <div class="flipped-zone">
-            <span>الشقلبة: </span>
-            <span id="flippedWord"></span>
-        </div>
+        <input type="text" id="wordInput" placeholder="اكتب الكلمة هنا يا بطل..." oninput="draw()">
+        <div id="displayArea"></div>
     </div>
 
     <script>
         const chars = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
-        const charSelect = document.getElementById('charSelect');
-        const wordInput = document.getElementById('wordInput');
-        const displayWord = document.getElementById('displayWord');
-        const flippedWord = document.getElementById('flippedWord');
-        const colorPicker = document.getElementById('colorPicker');
+        let selectedChar = 'ب'; // افتراضي
 
-        // تعبئة الحروف
+        // إنشاء أزرار الحروف
+        const grid = document.getElementById('alphabetGrid');
         chars.split('').forEach(c => {
-            let opt = document.createElement('option');
-            opt.value = c;
-            opt.innerText = c;
-            charSelect.appendChild(opt);
+            const btn = document.createElement('button');
+            btn.className = 'char-btn';
+            if(c === selectedChar) btn.classList.add('active');
+            btn.innerText = c;
+            btn.onclick = () => {
+                document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedChar = c;
+                draw();
+            };
+            grid.appendChild(btn);
         });
 
         function addHaraka(h) {
-            wordInput.value += h;
-            updateBoard();
-            wordInput.focus();
+            const input = document.getElementById('wordInput');
+            input.value += h;
+            draw();
+            input.focus();
         }
 
-        function updateColor() {
-            document.documentElement.style.setProperty('--primary-color', colorPicker.value);
-            updateBoard();
-        }
-
-        function updateBoard() {
-            let text = wordInput.value;
-            let target = charSelect.value;
+        function draw() {
+            const input = document.getElementById('wordInput').value;
+            const display = document.getElementById('displayArea');
             
-            // 1. معالجة التلوين (الحرف + الحركة)
-            const regex = new RegExp(`(${target}[\u064B-\u0652\u0670]?)`, 'g');
-            let coloredText = text.replace(regex, `<span class="highlight">$1</span>`);
-            displayWord.innerHTML = coloredText || "...";
-
-            // 2. معالجة الشقلبة
-            flippedWord.innerText = Array.from(text).reverse().join('');
+            // تلوين الحرف المختار مع أي حركة تتبعه
+            const regex = new RegExp(`(${selectedChar}[\u064B-\u0652\u0670]?)`, 'g');
+            const result = input.replace(regex, `<span class="highlight">$1</span>`);
+            
+            display.innerHTML = result || "...";
         }
+
+        // تشغيل أولي
+        draw();
     </script>
 </body>
 </html>
