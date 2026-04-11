@@ -2,163 +2,186 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدرسة الحروف التفاعلية</title>
+    <title>مدرسة الحروف الذكية</title>
     <style>
-        :root {
-            --primary-color: #e74c3c; /* الأحمر للحروف */
-            --bg-color: #f8f9fa;
-            --table-header: #2c3e50;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         .header {
-            background-color: red;
+            background-color: #ff0000;
             color: white;
-            width: 100%;
-            max-width: 800px;
+            padding: 20px;
             text-align: center;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
             font-size: 24px;
             font-weight: bold;
         }
 
-        .controls {
-            background: white;
-            width: 100%;
-            max-width: 800px;
+        .toolbar {
             padding: 20px;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            border-bottom: 1px solid #ddd;
+            gap: 15px;
+            background: #fafafa;
+            border-bottom: 2px solid #eee;
         }
 
-        select, input {
-            padding: 8px;
+        select {
+            padding: 10px 25px;
             font-size: 18px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            cursor: pointer;
         }
 
         table {
             width: 100%;
-            max-width: 800px;
-            background: white;
             border-collapse: collapse;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: center;
-            font-size: 28px;
         }
 
         th {
-            background-color: var(--table-header);
+            background-color: #2c3e50;
             color: white;
-            width: 30%;
+            padding: 15px;
+            font-size: 20px;
+            width: 150px;
         }
 
-        /* تنسيق التلوين السحري */
-        .highlight {
-            color: var(--primary-color);
+        td {
+            border: 1px solid #eee;
+            padding: 10px;
+        }
+
+        /* خانة الكتابة السحرية */
+        .editable-cell {
+            min-height: 40px;
+            padding: 10px;
+            font-size: 28px;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+            outline: none;
+            background: #fff;
+            color: black;
+            text-align: center;
+        }
+
+        .editable-cell:focus {
+            border-color: #ff0000;
+            background: #fffef0;
+        }
+
+        .red-char {
+            color: #ff0000 !important;
             font-weight: bold;
         }
 
-        .input-cell {
-            width: 100%;
-            border: none;
-            text-align: center;
-            font-size: 28px;
-            outline: none;
-        }
-
-        .btn-save {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .inputs-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">🏆 مدرسة الحروف - الإصدار التفاعلي</div>
-
-    <div class="controls">
-        <label>اختر حرف التلوين:</label>
-        <select id="charSelector" onchange="applyColoring()">
-            <option value="ب">ب</option>
-            <option value="ت">ت</option>
-            <option value="ص">ص</option>
-            <option value="ق">ق</option>
-        </select>
-        <button class="btn-save" onclick="window.print()">حفظ كـ PDF 💾</button>
+<div class="container">
+    <div class="header">🏫 مدرسة الحروف - التلوين التلقائي</div>
+    
+    <div class="toolbar">
+        <label style="font-size: 20px;">اختر الحرف المستهدف:</label>
+        <select id="mainChar" onchange="resetAllCells()">
+            </select>
     </div>
 
     <table>
-        <tr data-type="فتحة">
-            <th>الفتحة</th>
-            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
-        </tr>
-        <tr data-type="ضمة">
-            <th>الضمة</th>
-            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
-        </tr>
-        <tr data-type="كسرة">
-            <th>الكسرة</th>
-            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
-        </tr>
-        <tr data-type="مد الألف">
-            <th>مد الألف</th>
-            <td><input type="text" class="input-cell" oninput="formatInput(this)" placeholder="اكتب كلمة..."></td>
-        </tr>
+        <tbody id="tableBody">
+            </tbody>
     </table>
+</div>
 
-    <div id="displayArea" style="margin-top: 20px; font-size: 40px;"></div>
+<script>
+    const chars = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي";
+    const categories = ["الفتحة", "الضمة", "الكسرة", "مد الألف", "مد الواو", "مد الياء"];
+    const select = document.getElementById('mainChar');
+    const tableBody = document.getElementById('tableBody');
 
-    <script>
-        function formatInput(input) {
-            const char = document.getElementById('charSelector').value;
-            const text = input.value;
+    // 1. تعبئة قائمة الحروف
+    chars.split('').forEach(c => {
+        let opt = document.createElement('option');
+        opt.value = c;
+        opt.innerHTML = c;
+        select.appendChild(opt);
+    });
+
+    // 2. بناء الجدول (6 أنواع × 3 كلمات)
+    categories.forEach(cat => {
+        let row = `
+            <tr>
+                <th>${cat}</th>
+                <td>
+                    <div class="inputs-group">
+                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
+                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
+                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+
+    // 3. دالة معالجة التلوين الفوري
+    function handleInput(element) {
+        const targetChar = document.getElementById('mainChar').value;
+        let text = element.innerText;
+        
+        // حفظ مكان المؤشر (Cursor Position)
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const offset = range.startOffset;
+
+        // Regex للبحث عن الحرف مع حركاته (فتحة، ضمة، كسرة، سكون، تنوين، شدة)
+        const regex = new RegExp(`(${targetChar}[\u064B-\u0652\u0670]?)`, 'g');
+        
+        // تطبيق التلوين عبر HTML
+        const newHTML = text.replace(regex, `<span class="red-char">$1</span>`);
+        
+        if (element.innerHTML !== newHTML) {
+            element.innerHTML = newHTML;
             
-            // تعبير نمطي للبحث عن الحرف مع أي حركة تتبعه (فتحة، ضمة، كسرة، سكون، تنوين)
-            // الحركات العربية في اليونيكود تقع بين U+064B و U+0652
-            const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
-            
-            // هذه الخدعة لإظهار التنسيق داخل التسمية التوضيحية لأن الـ Input لا يدعم تلوين حرف واحد
-            // سنقوم بعرض النتيجة في حاوية منفصلة أو تحويل الخلية لنص عند الانتهاء
-            console.log("الكلمة المعالجة: ", text.replace(regex, `<span class="highlight">$1</span>`));
+            // إعادة المؤشر لمكانه الصحيح بعد تحديث الـ HTML
+            const newRange = document.createRange();
+            const newSelection = window.getSelection();
+            if (element.lastChild) {
+                newRange.setStart(element.lastChild, element.innerText.length); 
+                newRange.collapse(true);
+                newSelection.removeAllRanges();
+                newSelection.addRange(newRange);
+            }
         }
+    }
 
-        // دالة لتحويل المدخلات إلى نص ملون عند الرغبة في العرض النهائي
-        function applyColoring() {
-            const char = document.getElementById('charSelector').value;
-            const inputs = document.querySelectorAll('.input-cell');
-            const regex = new RegExp(`(${char}[\u064B-\u0652]?)`, 'g');
+    function resetAllCells() {
+        document.querySelectorAll('.editable-cell').forEach(cell => {
+            handleInput(cell); // إعادة معالجة الكلمات المكتوبة بناءً على الحرف الجديد
+        });
+    }
+</script>
 
-            inputs.forEach(input => {
-                if(input.value) {
-                    // تحويل الحرف المستهدف للأحمر برمجياً
-                    let formatted = input.value.replace(regex, `<span class="highlight">$1</span>`);
-                    // تحديث العرض (اختياري)
-                }
-            });
-        }
-    </script>
 </body>
-</html>
+    </html>
+    
