@@ -17,7 +17,6 @@
             user-select: none;
         }
 
-        /* الجزء العلوي لاختيار حرف الدرس */
         .settings-bar {
             background: #34495e;
             padding: 15px;
@@ -29,14 +28,10 @@
             width: 95%;
             max-width: 900px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
-        select {
-            font-size: 20px;
-            padding: 5px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        select { font-size: 20px; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
 
         .board {
             width: 95%;
@@ -60,7 +55,6 @@
             white-space: nowrap;
         }
 
-        /* تلوين حرف الدرس المختار أحمر ثابت */
         .target-char { color: #ff0000; display: inline; }
 
         .keyboard-zone {
@@ -95,14 +89,14 @@
 </head>
 <body>
 
-    <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
+    <div class="main-title" style="margin-top:10px;">نواف الفيفي - سبورتي الذكية</div>
     
     <div class="settings-bar">
-        <span>اختر حرف الدرس:</span>
+        <span>حرف الدرس:</span>
         <select id="targetSelect" onchange="updateDisplay()">
             <option value="">بدون</option>
         </select>
-        <span style="margin-right: 20px;">لون الكتابة:</span>
+        <span style="margin-right: 15px;">لون القلم:</span>
         <div class="pens-container" style="margin-bottom: 0;">
             <div class="pen active" style="background: black;" onclick="changeWriteColor('black', this)"></div>
             <div class="pen" style="background: green;" onclick="changeWriteColor('green', this)"></div>
@@ -116,14 +110,14 @@
 
     <div class="keyboard-zone">
         <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
-            <button class="btn btn-green" onclick="addChar('َ')">َ</button>
-            <button class="btn btn-green" onclick="addChar('ُ')">ُ</button>
-            <button class="btn btn-green" onclick="addChar('ِ')">ِ</button>
-            <button class="btn btn-purple" onclick="addChar('ْ')">ْ</button>
-            <button class="btn btn-purple" onclick="addChar('ّ')">ّ</button>
-            <button class="btn btn-blue" onclick="addChar('ً')">ً</button>
-            <button class="btn btn-blue" onclick="addChar('ٌ')">ٌ</button>
-            <button class="btn btn-blue" onclick="addChar('ٍ')">ٍ</button>
+            <button class="btn btn-green" onclick="addHarka('َ')">َ</button>
+            <button class="btn btn-green" onclick="addHarka('ُ')">ُ</button>
+            <button class="btn btn-green" onclick="addHarka('ِ')">ِ</button>
+            <button class="btn btn-purple" onclick="addHarka('ْ')">ْ</button>
+            <button class="btn btn-purple" onclick="addHarka('ّ')">ّ</button>
+            <button class="btn btn-blue" onclick="addHarka('ً')">ً</button>
+            <button class="btn btn-blue" onclick="addHarka('ٌ')">ٌ</button>
+            <button class="btn btn-blue" onclick="addHarka('ٍ')">ٍ</button>
         </div>
 
         <div id="lettersGrid" class="grid"></div>
@@ -137,28 +131,40 @@
 
     <script>
         const letters = "اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
+        const harkat = "ًٌٍَُِّْ";
         let currentText = "";
+        
         const targetSelect = document.getElementById('targetSelect');
         const displayArea = document.getElementById('displayArea');
 
-        // تعبئة القائمة المنسدلة ولوحة الحروف
+        // بناء اللوحة
         letters.split('').forEach(l => {
-            // للقائمة المنسدلة
             const opt = document.createElement('option');
-            opt.value = l;
-            opt.innerText = l;
+            opt.value = l; opt.innerText = l;
             targetSelect.appendChild(opt);
 
-            // للوحة الحروف
             const b = document.createElement('button');
-            b.className = 'btn';
-            b.innerText = l;
+            b.className = 'btn'; b.innerText = l;
             b.onclick = () => addChar(l);
             document.getElementById('lettersGrid').appendChild(b);
         });
 
         function addChar(c) {
             currentText += c;
+            updateDisplay();
+        }
+
+        // منطق ذكي للحركات: استبدال الحركة السابقة بحركة جديدة
+        function addHarka(h) {
+            if (currentText.length === 0) return;
+            
+            let last = currentText.slice(-1);
+            // إذا كان آخر شيء مدخلاً هو "حركة"، نقوم بمسحها أولاً قبل إضافة الجديدة
+            if (harkat.includes(last)) {
+                currentText = currentText.slice(0, -1);
+            }
+            
+            currentText += h;
             updateDisplay();
         }
 
@@ -191,8 +197,7 @@
                 return;
             }
 
-            // تلوين حرف الدرس باللون الأحمر مع الحفاظ على الاتصال
-            // نستخدم RegExp يبحث عن الحرف مع حركاته
+            // تلوين حرف الدرس باللون الأحمر مع حركته
             const regex = new RegExp(`(${target}[\u064B-\u0652]?)`, 'g');
             const formatted = currentText.replace(regex, `<span class="target-char">$1</span>`);
             displayArea.innerHTML = formatted;
