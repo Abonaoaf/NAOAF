@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>سبورة نواف الفيفي الذكية</title>
     <style>
+        :root {
+            --target-color: #ff0000;
+        }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #1a1a1a;
@@ -11,73 +14,70 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             margin: 0;
             user-select: none;
         }
 
         .main-title {
-            font-size: 32px;
+            font-size: 36px;
             color: #ffce00;
             text-shadow: 2px 2px #000;
             margin: 10px 0 5px 0;
         }
 
         .sub-title {
-            font-size: 18px;
+            font-size: 20px;
             color: #4caf50;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: bold;
         }
 
         /* الجزء العلوي: اختيار الحرف واللون */
         .selection-zone {
             background: #333;
-            padding: 10px;
+            padding: 15px;
             border-radius: 15px;
             width: 95%;
-            max-width: 950px;
-            margin-bottom: 10px;
-            border: 2px solid #555;
+            max-width: 1000px;
+            margin-bottom: 15px;
+            border: 3px solid #555;
         }
 
+        /* شبكة مربعات أكبر */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-            gap: 6px;
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            gap: 10px;
         }
 
         .btn {
-            font-size: 26px;
-            padding: 12px;
+            font-size: 32px; /* حجم خط أكبر */
+            height: 70px;   /* ارتفاع أكبر للمربعات */
             cursor: pointer;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: white;
             color: black;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.2s;
         }
 
         .char-select-btn.active {
-            background: var(--target-color, #ff0000);
+            background: var(--target-color);
             color: white;
-            box-shadow: 0 0 10px var(--target-color, #ff0000);
+            box-shadow: 0 0 15px var(--target-color);
+            transform: scale(1.05);
         }
 
         /* أيقونة اختيار اللون */
         .color-picker-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: #444;
-            border-radius: 10px;
-            cursor: pointer;
+            border: 3px solid #fff;
             position: relative;
-            overflow: hidden;
-            border: 2px solid #fff;
         }
 
         .color-picker-container input {
@@ -88,59 +88,67 @@
             cursor: pointer;
         }
 
-        .color-icon { font-size: 24px; }
-
         /* السبورة */
         .board {
             width: 95%;
-            max-width: 900px;
+            max-width: 1000px;
             background: white;
-            border: 12px solid #5d4037;
-            border-radius: 20px;
-            min-height: 220px;
+            border: 15px solid #5d4037;
+            border-radius: 25px;
+            min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #333;
-            margin: 15px 0;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         #displayArea {
-            font-size: 130px;
+            font-size: 140px;
             font-weight: bold;
             text-align: center;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
-        .highlight { color: var(--target-color, #ff0000); }
+        .highlight { color: var(--target-color); }
 
         /* منطقة التحكم السفلية */
         .keyboard-zone {
             background: #222;
-            padding: 15px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 25px;
             width: 95%;
-            max-width: 900px;
+            max-width: 1000px;
+            border: 2px solid #444;
         }
 
-        .btn-harkat { background: #4caf50; color: white; font-size: 38px; }
-        .btn-special { background: #9c27b0; color: white; font-size: 38px; }
-        .btn-tanwin { background: #2196f3; color: white; font-size: 38px; }
-        .write-btn { background: #eee; color: #333; font-size: 28px; }
+        .btn-harkat { background: #4caf50; color: white; font-size: 45px; }
+        .btn-special { background: #9c27b0; color: white; font-size: 45px; }
+        .btn-tanwin { background: #2196f3; color: white; font-size: 45px; }
+        .write-btn { background: #eee; color: #333; font-size: 35px; }
         
         .action-btns {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 20px;
         }
 
-        .btn-action { font-size: 18px; padding: 15px; border-radius: 10px; color: white; border:none; cursor:pointer; }
+        .btn-action { 
+            font-size: 22px; 
+            padding: 20px; 
+            border-radius: 15px; 
+            color: white; 
+            border:none; 
+            cursor:pointer; 
+            font-weight: bold;
+        }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
 
-        .section-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-align: center; }
+        .section-title { font-size: 18px; color: #ffaaaa; margin-bottom: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -149,9 +157,8 @@
     <div class="sub-title">لكل أصدقائي 🌟</div>
 
     <div class="selection-zone">
-        <div class="section-title">اختر حرف الدرس ولون التمييز:</div>
-        <div class="grid" id="selectGrid">
-            </div>
+        <div class="section-title">1. اختر حرف الدرس واللون:</div>
+        <div class="grid" id="selectGrid"></div>
     </div>
 
     <div class="board">
@@ -159,7 +166,9 @@
     </div>
 
     <div class="keyboard-zone">
-        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 15px;">
+        <div class="section-title">2. اكتب الكلمة بالحركات:</div>
+        
+        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
             <button class="btn btn-harkat" onclick="addChar('َ')">َ</button>
             <button class="btn btn-harkat" onclick="addChar('ُ')">ُ</button>
             <button class="btn btn-harkat" onclick="addChar('ِ')">ِ</button>
@@ -173,9 +182,9 @@
         <div class="grid" id="writeGrid"></div>
 
         <div class="action-btns">
-            <button class="btn-action btn-space" onclick="addChar(' ')">مسافة ⎵</button>
+            <button class="btn-action btn-space" onclick="addChar(' ')">مسافة كبيرة ⎵</button>
             <button class="btn-action btn-delete" onclick="deleteLast()">مسح حرف ⌫</button>
-            <button class="btn-action btn-clear" onclick="clearAll()">جديد 🗑️</button>
+            <button class="btn-action btn-clear" onclick="clearAll()">كلمة جديدة 🗑️</button>
         </div>
     </div>
 
@@ -183,13 +192,12 @@
         const allChars = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
         let targetChar = 'ب';
         let currentWord = "";
-        let targetColor = "#ff0000";
 
         const selectGrid = document.getElementById('selectGrid');
         const writeGrid = document.getElementById('writeGrid');
         const displayArea = document.getElementById('displayArea');
 
-        // إنشاء لوحات الحروف
+        // بناء لوحة اختيار الحرف
         allChars.split('').forEach(c => {
             const sBtn = document.createElement('button');
             sBtn.className = 'btn char-select-btn';
@@ -203,6 +211,7 @@
             };
             selectGrid.appendChild(sBtn);
 
+            // بناء لوحة الكتابة (نفس الحروف بمربعات كبيرة)
             const wBtn = document.createElement('button');
             wBtn.className = 'btn write-btn';
             wBtn.innerText = c;
@@ -210,13 +219,12 @@
             writeGrid.appendChild(wBtn);
         });
 
-        // إضافة أيقونة اختيار اللون في نهاية الشبكة العلوية
+        // إضافة اختيار اللون
         const colorContainer = document.createElement('div');
         colorContainer.className = 'btn color-picker-container';
-        colorContainer.innerHTML = `<span class="color-icon">🎨</span><input type="color" id="picker" value="#ff0000">`;
+        colorContainer.innerHTML = `🎨<input type="color" id="picker" value="#ff0000">`;
         colorContainer.querySelector('input').oninput = (e) => {
-            targetColor = e.target.value;
-            document.documentElement.style.setProperty('--target-color', targetColor);
+            document.documentElement.style.setProperty('--target-color', e.target.value);
             updateDisplay();
         };
         selectGrid.appendChild(colorContainer);
