@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرسة الحروف الذكية</title>
+    <title>مدرسة الحروف - شقلبة وتلوين</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -15,11 +15,11 @@
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             background: white;
             border-radius: 15px;
-            overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         .header {
@@ -28,24 +28,19 @@
             padding: 20px;
             text-align: center;
             font-size: 24px;
-            font-weight: bold;
         }
 
         .toolbar {
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
             background: #fafafa;
             border-bottom: 2px solid #eee;
+            text-align: center;
         }
 
         select {
-            padding: 10px 25px;
+            padding: 10px;
             font-size: 18px;
             border-radius: 8px;
-            border: 2px solid #ddd;
-            cursor: pointer;
         }
 
         table {
@@ -57,59 +52,66 @@
             background-color: #2c3e50;
             color: white;
             padding: 15px;
-            font-size: 20px;
-            width: 150px;
+            width: 120px;
         }
 
         td {
             border: 1px solid #eee;
-            padding: 10px;
+            padding: 15px;
         }
 
-        /* خانة الكتابة السحرية */
+        .inputs-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .word-box {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
         .editable-cell {
             min-height: 40px;
-            padding: 10px;
-            font-size: 28px;
-            border: 1px dashed #ccc;
+            padding: 8px;
+            font-size: 24px;
+            border: 2px solid #ddd;
             border-radius: 5px;
             outline: none;
-            background: #fff;
-            color: black;
             text-align: center;
         }
 
-        .editable-cell:focus {
-            border-color: #ff0000;
-            background: #fffef0;
+        .flipped-text {
+            font-size: 18px;
+            color: #7f8c8d;
+            background: #f9f9f9;
+            border-radius: 4px;
+            padding: 2px;
+            min-height: 25px;
+            text-align: center;
+            border: 1px solid #eee;
         }
 
         .red-char {
             color: #ff0000 !important;
             font-weight: bold;
         }
-
-        .inputs-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">🏫 مدرسة الحروف - التلوين التلقائي</div>
+    <div class="header">🏫 مدرسة الحروف - التلوين والشقلبة</div>
     
     <div class="toolbar">
-        <label style="font-size: 20px;">اختر الحرف المستهدف:</label>
-        <select id="mainChar" onchange="resetAllCells()">
+        <label>اختر الحرف:</label>
+        <select id="mainChar" onchange="refreshAll()">
             </select>
     </div>
 
     <table>
-        <tbody id="tableBody">
-            </tbody>
+        <tbody id="tableBody"></tbody>
     </table>
 </div>
 
@@ -119,69 +121,64 @@
     const select = document.getElementById('mainChar');
     const tableBody = document.getElementById('tableBody');
 
-    // 1. تعبئة قائمة الحروف
+    // تعبئة قائمة الحروف
     chars.split('').forEach(c => {
         let opt = document.createElement('option');
         opt.value = c;
-        opt.innerHTML = c;
+        opt.innerText = c;
         select.appendChild(opt);
     });
 
-    // 2. بناء الجدول (6 أنواع × 3 كلمات)
+    // بناء الجدول
     categories.forEach(cat => {
-        let row = `
-            <tr>
-                <th>${cat}</th>
-                <td>
-                    <div class="inputs-group">
-                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
-                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
-                        <div class="editable-cell" contenteditable="true" oninput="handleInput(this)"></div>
-                    </div>
-                </td>
-            </tr>
-        `;
+        let row = `<tr><th>${cat}</th><td><div class="inputs-group">`;
+        for(let i=0; i<3; i++) {
+            row += `
+                <div class="word-box">
+                    <div class="editable-cell" contenteditable="true" oninput="processWord(this)"></div>
+                    <div class="flipped-text" title="الكلمة متشقلبة"></div>
+                </div>`;
+        }
+        row += `</div></td></tr>`;
         tableBody.innerHTML += row;
     });
 
-    // 3. دالة معالجة التلوين الفوري
-    function handleInput(element) {
+    function processWord(element) {
         const targetChar = document.getElementById('mainChar').value;
+        const flippedBox = element.nextElementSibling;
         let text = element.innerText;
-        
-        // حفظ مكان المؤشر (Cursor Position)
-        const selection = window.getSelection();
-        const range = selection.getRangeAt(0);
-        const offset = range.startOffset;
 
-        // Regex للبحث عن الحرف مع حركاته (فتحة، ضمة، كسرة، سكون، تنوين، شدة)
+        // 1. شقلبة الحروف (عكس النص)
+        // نستخدم Array.from للتعامل الصحيح مع الحروف العربية والحركات
+        flippedBox.innerText = Array.from(text).reverse().join('');
+
+        // 2. تلوين الحرف المختار
         const regex = new RegExp(`(${targetChar}[\u064B-\u0652\u0670]?)`, 'g');
-        
-        // تطبيق التلوين عبر HTML
         const newHTML = text.replace(regex, `<span class="red-char">$1</span>`);
-        
+
+        // تحديث المحتوى بدون فقدان التركيز (Focus)
         if (element.innerHTML !== newHTML) {
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const offset = range.startOffset;
+
             element.innerHTML = newHTML;
-            
-            // إعادة المؤشر لمكانه الصحيح بعد تحديث الـ HTML
+
+            // إعادة تعيين مكان المؤشر
             const newRange = document.createRange();
-            const newSelection = window.getSelection();
             if (element.lastChild) {
-                newRange.setStart(element.lastChild, element.innerText.length); 
+                newRange.setStart(element.lastChild, element.innerText.length);
                 newRange.collapse(true);
-                newSelection.removeAllRanges();
-                newSelection.addRange(newRange);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
             }
         }
     }
 
-    function resetAllCells() {
-        document.querySelectorAll('.editable-cell').forEach(cell => {
-            handleInput(cell); // إعادة معالجة الكلمات المكتوبة بناءً على الحرف الجديد
-        });
+    function refreshAll() {
+        document.querySelectorAll('.editable-cell').forEach(cell => processWord(cell));
     }
 </script>
 
 </body>
-    </html>
-    
+</html>
