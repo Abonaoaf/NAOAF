@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>سبورة نواف الذكية</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -16,10 +16,9 @@
             align-items: center;
             padding: 5px;
             margin: 0;
-            overflow-x: hidden;
         }
 
-        .main-title { font-size: 28px; color: #ffce00; margin: 10px 0; }
+        .main-title { font-size: 32px; color: #ffce00; margin: 10px 0; }
 
         .settings-bar {
             background: #34495e;
@@ -30,16 +29,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* تعديل منطقة السبورة لتكون عملاقة في كل المتصفحات */
+        /* تكبير مساحة السبورة */
         .board {
-            width: 95vw; /* عرض كامل الشاشة */
+            width: 95%;
             background: white;
-            border: 10px solid #5d4037;
-            border-radius: 25px;
-            min-height: 250px;
+            border: 15px solid #5d4037;
+            border-radius: 30px;
+            min-height: 400px; /* زيادة الارتفاع ليتناسب مع الخط */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -47,42 +46,45 @@
             overflow-x: auto;
         }
 
+        /* تكبير الحروف جداً بمقاس ثابت */
         #displayArea {
-            font-size: 45vw; /* حجم الخط يعتمد على عرض الشاشة ليظل عملاقاً */
+            font-size: 250px; /* حجم ضخم جداً وثابت */
             font-weight: bold;
             direction: rtl;
             color: var(--main-text-color);
             white-space: nowrap;
-            padding: 0 20px;
+            padding: 0 40px;
+            line-height: 1;
         }
 
         .target-char { color: #ff0000 !important; }
 
-        .pens-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .pen { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 3px solid #fff; }
-        .pen.active { transform: scale(1.1); border-color: #ffce00; }
+        .pens-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .pen { width: 55px; height: 55px; border-radius: 50%; cursor: pointer; border: 4px solid #fff; }
+        .pen.active { transform: scale(1.15); border-color: #ffce00; box-shadow: 0 0 15px white; }
 
         .keyboard-zone {
             background: #2c3e50;
-            padding: 15px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 25px;
             width: 95%;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; }
         .btn {
-            font-size: 35px; height: 75px; cursor: pointer; border: none;
-            border-radius: 12px; background: white; color: black;
+            font-size: 45px; height: 90px; cursor: pointer; border: none;
+            border-radius: 15px; background: white; color: black;
             font-weight: bold; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px #ddd;
         }
 
         .btn-green { background: #4caf50; color: white; }
         .btn-purple { background: #9c27b0; color: white; }
         .btn-blue { background: #2196f3; color: white; }
 
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn-action { font-size: 16px; padding: 15px 5px; border-radius: 12px; color: white; border: none; font-weight: bold; }
-        .btn-success { background: #f1c40f; color: #000; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .btn-action { font-size: 20px; padding: 20px 5px; border-radius: 15px; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .btn-success { background: #f1c40f; color: #000; font-size: 24px; }
     </style>
 </head>
 <body>
@@ -90,8 +92,8 @@
     <div class="main-title">نواف الفيفي - سبورتي هدية لكل أصدقائي🎊</div>
     
     <div class="settings-bar">
-        <div style="font-size: 20px;">حرف الدرس: 
-            <select id="targetSelect" style="font-size: 20px;" onchange="updateDisplay()"><option value="">بدون</option></select>
+        <div style="font-size: 24px;">حرف الدرس: 
+            <select id="targetSelect" style="font-size: 24px; padding: 5px;" onchange="updateDisplay()"><option value="">بدون</option></select>
         </div>
         <div class="pens-container">
             <div class="pen active" style="background: black;" onclick="changeWriteColor('black', this)"></div>
@@ -106,7 +108,7 @@
     <div class="board"><div id="displayArea">نواف</div></div>
 
     <div class="keyboard-zone">
-        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 15px;">
+        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
             <button class="btn btn-green" onclick="addHarka('َ')">َ</button>
             <button class="btn btn-green" onclick="addHarka('ُ')">ُ</button>
             <button class="btn btn-green" onclick="addHarka('ِ')">ِ</button>
@@ -161,7 +163,7 @@
         }
         function celebrate() {
             if (!currentText) return;
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 }, scalar: 1.5 });
         }
         updateDisplay();
     </script>
