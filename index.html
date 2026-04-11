@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سبورة نواف الفيفي الذكية</title>
+    <title>سبورة نواف الذكية</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,10 +16,10 @@
             user-select: none;
         }
 
-        .main-title { font-size: 32px; color: #ffce00; margin-top: 15px; }
-        .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 10px; }
+        .main-title { font-size: 32px; color: #ffce00; margin: 15px 0 5px 0; }
+        .sub-title { font-size: 18px; color: #4caf50; margin-bottom: 15px; }
 
-        /* منطقة السبورة - الحل الجديد */
+        /* السبورة - تضمن اتصال الحروف لأن النص كتلة واحدة */
         .board {
             width: 95%;
             max-width: 900px;
@@ -34,16 +34,15 @@
         }
 
         #displayArea {
-            font-size: 150px;
+            font-size: 160px;
             font-weight: bold;
             text-align: center;
-            color: #333;
             direction: rtl;
-            white-space: nowrap;
-            letter-spacing: -5px; /* لضمان التلاحم */
+            /* اللون يتغير للكلمة كاملة */
+            color: red; 
+            transition: color 0.3s;
         }
 
-        /* لوحة التحكم */
         .keyboard-zone {
             background: #2c3e50;
             padding: 20px;
@@ -52,6 +51,7 @@
             max-width: 950px;
         }
 
+        /* أقلام الألوان */
         .pens-container {
             display: flex;
             justify-content: center;
@@ -60,29 +60,29 @@
         }
 
         .pen {
-            width: 70px; height: 70px;
+            width: 75px; height: 75px;
             border-radius: 50%; cursor: pointer;
-            border: 5px solid #fff; transition: 0.2s;
+            border: 5px solid #fff;
         }
 
-        .pen.active { transform: scale(1.2); border-color: #ffce00; box-shadow: 0 0 20px rgba(255,206,0,0.6); }
+        .pen.active { border-color: #ffce00; transform: scale(1.1); box-shadow: 0 0 15px white; }
 
-        /* شبكة الحروف والحركات */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 12px; }
+        /* شبكة أزرار كبيرة */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; }
         
         .btn {
-            font-size: 38px; height: 85px; cursor: pointer; border: none;
+            font-size: 40px; height: 90px; cursor: pointer; border: none;
             border-radius: 15px; background: white; color: black;
             font-weight: bold; display: flex; align-items: center; justify-content: center;
         }
 
-        /* تلوين الحركات حسب الفئة */
-        .btn-green { background: #4caf50; color: white; } /* فتحة ضمة كسرة */
-        .btn-purple { background: #9c27b0; color: white; } /* شدة سكون */
-        .btn-blue { background: #2196f3; color: white; } /* تنوين */
+        /* ألوان الحركات للتمييز */
+        .btn-green { background: #4caf50; color: white; }
+        .btn-purple { background: #9c27b0; color: white; }
+        .btn-blue { background: #2196f3; color: white; }
 
         .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .btn-action { font-size: 22px; padding: 20px; border-radius: 15px; color: white; border: none; cursor: pointer; font-weight: bold; }
+        .btn-action { font-size: 22px; padding: 20px; border-radius: 15px; color: white; border: none; font-weight: bold; }
         .btn-space { background: #555; }
         .btn-delete { background: #c0392b; }
         .btn-clear { background: #7f8c8d; }
@@ -91,18 +91,18 @@
 <body>
 
     <div class="main-title">نواف الفيفي - سبورتي الذكية</div>
-    <div class="sub-title">لكل أصدقائي 🌟</div>
+    <div class="sub-title">اختر لون القلم واكتب كلمتك يا بطل 🌟</div>
 
     <div class="board">
-        <div id="displayArea"></div>
+        <div id="displayArea">ابدأ</div>
     </div>
 
     <div class="keyboard-zone">
         <div class="pens-container">
-            <div class="pen active" style="background: red;" onclick="setPen('red', this)"></div>
-            <div class="pen" style="background: blue;" onclick="setPen('blue', this)"></div>
-            <div class="pen" style="background: green;" onclick="setPen('green', this)"></div>
-            <div class="pen" style="background: black;" onclick="setPen('black', this)"></div>
+            <div class="pen active" style="background: red;" onclick="changeBoardColor('red', this)"></div>
+            <div class="pen" style="background: blue;" onclick="changeBoardColor('blue', this)"></div>
+            <div class="pen" style="background: green;" onclick="changeBoardColor('green', this)"></div>
+            <div class="pen" style="background: black;" onclick="changeBoardColor('black', this)"></div>
         </div>
 
         <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
@@ -127,15 +127,9 @@
 
     <script>
         const letters = "أإآبتثجحخدذرزسشصضطظعغفقكلمنهويةوي";
-        let wordData = []; 
-        let activeColor = 'red';
+        let currentText = "";
 
-        function setPen(color, el) {
-            activeColor = color;
-            document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
-            el.classList.add('active');
-        }
-
+        // بناء لوحة الحروف
         const grid = document.getElementById('lettersGrid');
         letters.split('').forEach(l => {
             const b = document.createElement('button');
@@ -146,29 +140,32 @@
         });
 
         function addChar(c) {
-            wordData.push({ char: c, color: activeColor });
-            render();
+            currentText += c;
+            updateDisplay();
         }
 
-        function deleteLast() { wordData.pop(); render(); }
-        function clearAll() { wordData = []; render(); }
+        function deleteLast() {
+            currentText = currentText.slice(0, -1);
+            updateDisplay();
+        }
 
-        function render() {
+        function clearAll() {
+            currentText = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
             const area = document.getElementById('displayArea');
-            area.innerHTML = "";
-            if (wordData.length === 0) { area.innerText = "اكتب.."; return; }
+            area.innerText = currentText || "ابدأ";
+        }
 
-            // السر في الاتصال: نستخدم ميزة نادرة تسمى mix-blend-mode أو تجميع النصوص
-            // هنا سنستخدم span واحد لكل حرف مع الحفاظ على صفرية المسافة
-            wordData.forEach(item => {
-                const s = document.createElement('span');
-                s.innerText = item.char;
-                s.style.color = item.color;
-                // إجبار الحرف على عدم حجز مساحة جانبية تفصله عن جاره
-                s.style.display = "inline-block";
-                s.style.width = "auto";
-                area.appendChild(s);
-            });
+        function changeBoardColor(color, el) {
+            // تغيير لون الكلمة كاملة في السبورة
+            document.getElementById('displayArea').style.color = color;
+            
+            // تمييز القلم المختار
+            document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
         }
     </script>
 </body>
