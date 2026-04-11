@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سبورة نواف الذكية - النسخة المطورة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>سبورة نواف الذكية</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root { --main-text-color: black; }
@@ -16,117 +16,97 @@
             align-items: center;
             padding: 5px;
             margin: 0;
-            user-select: none;
+            overflow-x: hidden;
         }
 
-        .main-title { font-size: 36px; color: #ffce00; margin-top: 10px; text-shadow: 2px 2px #000; }
-        
+        .main-title { font-size: 28px; color: #ffce00; margin: 10px 0; }
+
         .settings-bar {
             background: #34495e;
             padding: 15px;
             border-radius: 20px;
             margin-bottom: 10px;
+            width: 95%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            width: 98%;
-            max-width: 1100px;
         }
 
-        .tool-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        select { font-size: 26px; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
-
-        /* منطقة السبورة - تكبير المساحة */
+        /* تعديل منطقة السبورة لتكون عملاقة في كل المتصفحات */
         .board {
-            width: 98%;
-            max-width: 1100px;
+            width: 95vw; /* عرض كامل الشاشة */
             background: white;
-            border: 18px solid #5d4037;
-            border-radius: 35px;
-            min-height: 380px; /* زيادة الارتفاع */
+            border: 10px solid #5d4037;
+            border-radius: 25px;
+            min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 15px;
-            position: relative;
             overflow-x: auto;
         }
 
         #displayArea {
-            font-size: 220px; /* تكبير الحروف جداً */
+            font-size: 45vw; /* حجم الخط يعتمد على عرض الشاشة ليظل عملاقاً */
             font-weight: bold;
             direction: rtl;
             color: var(--main-text-color);
             white-space: nowrap;
-            padding: 0 40px;
-            z-index: 2;
+            padding: 0 20px;
         }
 
         .target-char { color: #ff0000 !important; }
 
-        .pens-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .pen { width: 55px; height: 55px; border-radius: 50%; cursor: pointer; border: 4px solid #fff; }
-        .pen.active { transform: scale(1.2); border-color: #ffce00; box-shadow: 0 0 15px white; }
+        .pens-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .pen { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 3px solid #fff; }
+        .pen.active { transform: scale(1.1); border-color: #ffce00; }
 
         .keyboard-zone {
             background: #2c3e50;
-            padding: 20px;
-            border-radius: 30px;
-            width: 98%;
-            max-width: 1100px;
+            padding: 15px;
+            border-radius: 20px;
+            width: 95%;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
         .btn {
-            font-size: 45px; height: 95px; cursor: pointer; border: none;
-            border-radius: 18px; background: white; color: black;
+            font-size: 35px; height: 75px; cursor: pointer; border: none;
+            border-radius: 12px; background: white; color: black;
             font-weight: bold; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 6px #ddd;
         }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
 
         .btn-green { background: #4caf50; color: white; }
         .btn-purple { background: #9c27b0; color: white; }
         .btn-blue { background: #2196f3; color: white; }
 
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .btn-action { font-size: 22px; padding: 20px; border-radius: 18px; color: white; border: none; font-weight: bold; cursor: pointer; }
-        .btn-space { background: #555; }
-        .btn-delete { background: #c0392b; }
-        .btn-clear { background: #7f8c8d; }
-        .btn-success { background: #f1c40f; color: #000; font-size: 26px; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn-action { font-size: 16px; padding: 15px 5px; border-radius: 12px; color: white; border: none; font-weight: bold; }
+        .btn-success { background: #f1c40f; color: #000; }
     </style>
 </head>
 <body>
 
-    <div class="main-title">نواف الفيفي - سبورتي هدية لكل أصدقائي 🎊</div>
+    <div class="main-title">نواف الفيفي - سبورتي 🎊</div>
     
     <div class="settings-bar">
-        <div class="tool-row">
-            <span>حرف الدرس:</span>
-            <select id="targetSelect" onchange="updateDisplay()">
-                <option value="">بدون</option>
-            </select>
+        <div style="font-size: 20px;">حرف الدرس: 
+            <select id="targetSelect" style="font-size: 20px;" onchange="updateDisplay()"><option value="">بدون</option></select>
         </div>
-        
         <div class="pens-container">
             <div class="pen active" style="background: black;" onclick="changeWriteColor('black', this)"></div>
             <div class="pen" style="background: blue;" onclick="changeWriteColor('blue', this)"></div>
             <div class="pen" style="background: green;" onclick="changeWriteColor('green', this)"></div>
             <div class="pen" style="background: #e67e22;" onclick="changeWriteColor('#e67e22', this)"></div>
             <div class="pen" style="background: #9b59b6;" onclick="changeWriteColor('#9b59b6', this)"></div>
-            <div class="pen" style="background: #5d4037;" onclick="changeWriteColor('#5d4037', this)"></div>
             <div class="pen" style="background: #e91e63;" onclick="changeWriteColor('#e91e63', this)"></div>
         </div>
     </div>
 
-    <div class="board" id="boardFrame">
-        <div id="displayArea">نواف</div>
-    </div>
+    <div class="board"><div id="displayArea">نواف</div></div>
 
     <div class="keyboard-zone">
-        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 20px;">
+        <div class="grid" style="grid-template-columns: repeat(8, 1fr); margin-bottom: 15px;">
             <button class="btn btn-green" onclick="addHarka('َ')">َ</button>
             <button class="btn btn-green" onclick="addHarka('ُ')">ُ</button>
             <button class="btn btn-green" onclick="addHarka('ِ')">ِ</button>
@@ -136,89 +116,53 @@
             <button class="btn btn-blue" onclick="addHarka('ٌ')">ٌ</button>
             <button class="btn btn-blue" onclick="addHarka('ٍ')">ٍ</button>
         </div>
-
         <div id="lettersGrid" class="grid"></div>
-
         <div class="action-btns">
-            <button class="btn-action btn-space" onclick="addChar(' ')">مسافة</button>
-            <button class="btn-action btn-delete" onclick="deleteLast()">مسح ⌫</button>
-            <button class="btn-action btn-clear" onclick="clearAll()">جديد 🗑️</button>
+            <button class="btn-action" style="background:#555" onclick="addChar(' ')">مسافة</button>
+            <button class="btn-action" style="background:#c0392b" onclick="deleteLast()">مسح</button>
+            <button class="btn-action" style="background:#7f8c8d" onclick="clearAll()">جديد</button>
             <button class="btn-action btn-success" onclick="celebrate()">أحسنت! 🎊</button>
         </div>
     </div>
 
     <script>
-        // إضافة حرف (ى) بشكل مستقل
         const letters = "اأإآبتثجحخدذرزسشصضطظعغفقكلمنهويةىي";
         const harkat = "ًٌٍَُِّْ";
         let currentText = "نواف";
-        
         const targetSelect = document.getElementById('targetSelect');
         const displayArea = document.getElementById('displayArea');
 
         letters.split('').forEach(l => {
-            const opt = document.createElement('option');
-            opt.value = l; opt.innerText = l;
+            const opt = document.createElement('option'); opt.value = l; opt.innerText = l;
             targetSelect.appendChild(opt);
-
-            const b = document.createElement('button');
-            b.className = 'btn'; b.innerText = l;
+            const b = document.createElement('button'); b.className = 'btn'; b.innerText = l;
             b.onclick = () => addChar(l);
             document.getElementById('lettersGrid').appendChild(b);
         });
 
-        function addChar(c) {
-            if (currentText === "نواف") currentText = "";
-            currentText += c;
-            updateDisplay();
+        function addChar(c) { if (currentText === "نواف") currentText = ""; currentText += c; updateDisplay(); }
+        function addHarka(h) { 
+            if (!currentText) return;
+            if (harkat.includes(currentText.slice(-1))) currentText = currentText.slice(0, -1);
+            currentText += h; updateDisplay(); 
         }
-
-        function addHarka(h) {
-            if (currentText.length === 0) return;
-            let last = currentText.slice(-1);
-            if (harkat.includes(last)) currentText = currentText.slice(0, -1);
-            currentText += h;
-            updateDisplay();
-        }
-
         function deleteLast() { currentText = currentText.slice(0, -1); updateDisplay(); }
         function clearAll() { currentText = ""; updateDisplay(); }
-
         function changeWriteColor(color, el) {
             document.documentElement.style.setProperty('--main-text-color', color);
             document.querySelectorAll('.pen').forEach(p => p.classList.remove('active'));
-            el.classList.add('active');
-            updateDisplay();
+            el.classList.add('active'); updateDisplay();
         }
-
         function updateDisplay() {
             if (!currentText) { displayArea.innerText = "اكتب.."; return; }
             const target = targetSelect.value;
-            if (!target) { displayArea.innerHTML = currentText; return; }
             const regex = new RegExp(`(${target}[\u064B-\u0652]?)`, 'g');
-            displayArea.innerHTML = currentText.replace(regex, `<span class="target-char">$1</span>`);
+            displayArea.innerHTML = target ? currentText.replace(regex, `<span class="target-char">$1</span>`) : currentText;
         }
-
         function celebrate() {
             if (!currentText) return;
-            
-            // تكبير كمية أوراق الفوز المنثورة
-            var count = 200;
-            var defaults = { origin: { y: 0.7 } };
-
-            function fire(particleRatio, opts) {
-              confetti(Object.assign({}, defaults, opts, {
-                particleCount: Math.floor(count * particleRatio)
-              }));
-            }
-
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-            fire(0.1, { spread: 120, startVelocity: 45 });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
-
         updateDisplay();
     </script>
 </body>
